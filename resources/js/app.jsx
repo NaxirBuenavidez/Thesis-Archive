@@ -1,10 +1,13 @@
 import './bootstrap';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { ConfigProvider, App as AntApp } from 'antd';
+import { ConfigProvider, App as AntApp, Typography, Space, Button } from 'antd';
+import MainLayout from './components/MainLayout';
 
 // Import Ant Design styles
 import 'antd/dist/reset.css';
+
+const { Title, Paragraph } = Typography;
 
 // Main App Component
 function App() {
@@ -12,15 +15,25 @@ function App() {
         <ConfigProvider
             theme={{
                 token: {
-                    colorPrimary: '#1890ff',
+                    colorPrimary: '#1677ff',
+                    borderRadius: 8,
                 },
             }}
         >
             <AntApp>
-                <div style={{ padding: '24px' }}>
-                    <h1>Welcome to Thesis Archive</h1>
-                    <p>React with Ant Design is ready!</p>
-                </div>
+                <MainLayout>
+                    <Typography>
+                        <Title level={2}>Welcome to Thesis Archive</Title>
+                        <Paragraph>
+                            This project is now configured with Laravel 12, React 18, and Ant Design 5.
+                            The application is mounting successfully and is ready for development.
+                        </Paragraph>
+                        <Space size="middle">
+                            <Button type="primary" size="large">Get Started</Button>
+                            <Button size="large" href="https://ant.design" target="_blank">AntD Documentation</Button>
+                        </Space>
+                    </Typography>
+                </MainLayout>
             </AntApp>
         </ConfigProvider>
     );
