@@ -15,11 +15,35 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call(RoleSeeder::class);
 
+        $roles = \App\Models\Role::all();
+
+        // Create SpAdmin
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+            'name' => 'SpAdmin User',
+            'email' => 'spadmin@example.com',
+            'role_id' => $roles->where('slug', 'spadmin')->first()->id,
+        ])->profile()->save(\App\Models\Profile::factory()->make());
+
+        // Create Admin
+        User::factory()->create([
+            'name' => 'Admin',
+            'email' => 'admin@admin.com',
+            'password' => \Illuminate\Support\Facades\Hash::make('Admin123!'),
+            'role_id' => $roles->where('slug', 'admin')->first()->id,
+        ])->profile()->save(\App\Models\Profile::factory()->make());
+
+        // Create Client
+        User::factory()->create([
+            'name' => 'Client User',
+            'email' => 'client@example.com',
+            'role_id' => $roles->where('slug', 'client')->first()->id,
+        ])->profile()->save(\App\Models\Profile::factory()->make());
+
+        // Create some random users
+        User::factory(10)->create()->each(function ($user) {
+            $user->profile()->save(\App\Models\Profile::factory()->make());
+        });
     }
 }

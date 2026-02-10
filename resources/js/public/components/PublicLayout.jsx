@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Layout, Menu, theme, Drawer, Button, Grid, Avatar, Typography, Space, ConfigProvider, Breadcrumb } from 'antd';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext'; // Import useAuth
 import {
     MenuOutlined,
     DashboardOutlined,
@@ -174,6 +175,12 @@ export default function PublicLayout({ children }) {
         </div>
     );
 
+    const { logout } = useAuth(); // Get logout from context
+
+    const handleLogout = () => {
+        logout();
+    };
+
     const MenuComponent = (
         <ConfigProvider
             theme={{
@@ -227,6 +234,9 @@ export default function PublicLayout({ children }) {
                     selectable={false}
                     onClick={({ key }) => {
                         if (isMobile) setDrawerVisible(false);
+                        if (key === 'signout') {
+                            handleLogout();
+                        }
                     }}
                 />
             </div>
