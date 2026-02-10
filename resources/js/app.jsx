@@ -1,45 +1,30 @@
 import './bootstrap';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { ConfigProvider, App as AntApp, Typography, Space, Button } from 'antd';
-import MainLayout from './components/MainLayout';
+import { AppProvider } from './providers/AppProvider';
+// import PrivateApp from './private/PrivateApp'; // Removed for now
 
-// Import Ant Design styles
-import 'antd/dist/reset.css';
+import { RouterProvider } from 'react-router-dom';
+import router from './router';
 
-const { Title, Paragraph } = Typography;
-
-// Main App Component
 function App() {
+    // For now, let's just render PublicApp. 
+    // In a real app, we'd use a Router (react-router-dom) to switch between them.
+    // Or check a global variable/prop to decide.
+    // Let's assume we are on the public side for now.
+    const isPrivate = window.location.pathname.startsWith('/admin');
+
     return (
-        <ConfigProvider
-            theme={{
-                token: {
-                    colorPrimary: '#1677ff',
-                    borderRadius: 8,
-                },
-            }}
-        >
-            <AntApp>
-                <MainLayout>
-                    <Typography>
-                        <Title level={2}>Welcome to Thesis Archive</Title>
-                        <Paragraph>
-                            This project is now configured with Laravel 12, React 18, and Ant Design 5.
-                            The application is mounting successfully and is ready for development.
-                        </Paragraph>
-                        <Space size="middle">
-                            <Button type="primary" size="large">Get Started</Button>
-                            <Button size="large" href="https://ant.design" target="_blank">AntD Documentation</Button>
-                        </Space>
-                    </Typography>
-                </MainLayout>
-            </AntApp>
-        </ConfigProvider>
+        <AppProvider>
+            {isPrivate ? (
+                <div style={{ padding: 20 }}>Admin Interface (Coming Soon)</div>
+            ) : (
+                <RouterProvider router={router} />
+            )}
+        </AppProvider>
     );
 }
 
-// Mount the React app
 const container = document.getElementById('app');
 if (container) {
     const root = createRoot(container);
