@@ -2,16 +2,17 @@
 import React from 'react';
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import PublicLayout from './public/components/PublicLayout';
-import Dashboard from './public/pages/Dashboard';
-import Users from './public/pages/Users';
-import Repository from './public/pages/Repository';
-import ThesisManagement from './public/pages/ThesisManagement';
-import ReviewManager from './public/pages/ReviewManager';
-import Permissions from './public/pages/SystemSettings/Permissions';
-import ActivityLog from './public/pages/SystemSettings/ActivityLog';
-import SystemManager from './public/pages/SystemSettings/SystemManager';
-import Reports from './public/pages/SystemSettings/Reports';
-import Login from './public/pages/Login';
+import Dashboard from './public/pages/pageDashboard';
+import Users from './public/pages/pageUsers';
+import Profile from './public/pages/Profile';
+import Repository from './public/pages/pageRepository';
+import ThesisManagement from './public/pages/pageThesisManagement';
+import ReviewManager from './public/pages/pageReviewManager';
+import Permissions from './public/pages/SystemSettings/pagePermissions';
+import ActivityLog from './public/pages/SystemSettings/pageActivityLog';
+import SystemManager from './public/pages/SystemSettings/pageSystemManager';
+import Reports from './public/pages/SystemSettings/pageReports';
+import Login from './public/pages/pageLogin';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
                     {
                         path: "/users",
                         element: <Users />,
+                    },
+                    {
+                        path: "/profile",
+                        element: <Profile />,
                     },
                     {
                         path: "/repository",

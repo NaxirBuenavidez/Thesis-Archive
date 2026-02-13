@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Checkbox, App, theme, Typography, Card, Layout } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { UserOutlined, LockOutlined, GoogleOutlined } from '@ant-design/icons';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { loginArg } from '../../private/api/auth';
 
@@ -12,6 +12,7 @@ export default function Login() {
     const { message } = App.useApp();
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const { checkAuth } = useAuth(); // Destructure checkAuth from useAuth
     const { token } = useToken();
 
@@ -38,6 +39,17 @@ export default function Login() {
         } finally {
             setLoading(false);
         }
+    };
+
+    React.useEffect(() => {
+        const error = searchParams.get('error');
+        if (error) {
+            message.error(error);
+        }
+    }, [searchParams, message]);
+
+    const handleGoogleLogin = () => {
+        window.location.href = `${window.location.origin}/auth/google/redirect`;
     };
 
     return (
@@ -146,6 +158,30 @@ export default function Login() {
                             Log in
                         </Button>
                     </Form.Item>
+
+                    <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>
+                        <div style={{ flex: 1, height: '1px', background: 'rgba(0,0,0,0.1)' }} />
+                        <Text type="secondary" style={{ padding: '0 10px' }}>OR</Text>
+                        <div style={{ flex: 1, height: '1px', background: 'rgba(0,0,0,0.1)' }} />
+                    </div>
+
+                    <Button
+                        block
+                        icon={<GoogleOutlined />}
+                        onClick={handleGoogleLogin}
+                        style={{
+                            height: '45px',
+                            borderRadius: '8px',
+                            fontSize: '16px',
+                            fontWeight: 500,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px'
+                        }}
+                    >
+                        Sign in with Google
+                    </Button>
                 </Form>
 
                 <div style={{ textAlign: 'center', marginTop: 16 }}>

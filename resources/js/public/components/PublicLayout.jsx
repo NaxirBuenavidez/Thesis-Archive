@@ -163,15 +163,28 @@ export default function PublicLayout({ children }) {
         },
     ];
 
+    const { user } = useAuth(); // Get user from context
+
     const ProfileSection = (
         <div style={{ padding: '32px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-            <Avatar size={80} icon={<UserOutlined />} style={{ backgroundColor: 'rgba(255,255,255,0.2)', marginBottom: 16, border: '2px solid rgba(255,255,255,0.1)' }} />
-            {!collapsed && (
-                <div style={{ textAlign: 'center' }}>
-                    <Text style={{ color: '#fff', display: 'block', fontWeight: 700, fontSize: '16px', letterSpacing: '0.5px' }}>Admin User</Text>
-                    <Text style={{ color: 'rgba(255,255,255,0.65)', fontSize: '13px', marginTop: '4px', display: 'block' }}>Administrator</Text>
-                </div>
-            )}
+            <Link to="/profile" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textDecoration: 'none' }}>
+                <Avatar
+                    size={80}
+                    icon={<UserOutlined />}
+                    src={user?.profile?.avatar ? `/storage/${user.profile.avatar}` : null}
+                    style={{ backgroundColor: 'rgba(255,255,255,0.2)', marginBottom: 16, border: '2px solid rgba(255,255,255,0.1)', cursor: 'pointer' }}
+                />
+                {!collapsed && (
+                    <div style={{ textAlign: 'center' }}>
+                        <Text style={{ color: '#fff', display: 'block', fontWeight: 700, fontSize: '16px', letterSpacing: '0.5px' }}>
+                            {user?.name || 'User'}
+                        </Text>
+                        <Text style={{ color: 'rgba(255,255,255,0.65)', fontSize: '13px', marginTop: '4px', display: 'block' }}>
+                            {user?.role?.title ? user.role.title : 'User'}
+                        </Text>
+                    </div>
+                )}
+            </Link>
         </div>
     );
 

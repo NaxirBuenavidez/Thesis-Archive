@@ -18,10 +18,12 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name', // We might want to keep this or remove it in favor of profile names, but for now keep it.
+        'name',
         'email',
         'password',
         'role_id',
+        'google_id',
+        'avatar',
     ];
 
     /**
@@ -55,5 +57,10 @@ class User extends Authenticatable
     public function profile()
     {
         return $this->hasOne(Profile::class);
+    }
+
+    public function educationalBackgrounds()
+    {
+        return $this->hasMany(EducationalBackground::class);
     }
 }
