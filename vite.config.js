@@ -13,8 +13,15 @@ export default defineConfig({
         react(),
     ],
     server: {
+        host: 'thesis-archive.test',
+        hmr: {
+            host: 'thesis-archive.test',
+        },
         watch: {
             ignored: ['**/storage/framework/views/**'],
         },
+    },
+    build: {
+        sourcemap: false,
     },
 });
