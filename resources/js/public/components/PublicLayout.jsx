@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Layout, Menu, theme, Drawer, Button, Grid, Avatar, Typography, Space, ConfigProvider, Breadcrumb } from 'antd';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext'; // Import useAuth
 import {
     MenuOutlined,
@@ -55,6 +55,15 @@ export default function PublicLayout({ children }) {
         '/system-settings/reports': 'Reports',
     };
 
+    const [searchParams] = useSearchParams();
+    const currentTab = searchParams.get('tab');
+
+    const tabNameMap = {
+        '/thesis-management': { preview: 'Document Preview', modify: 'Modify Record', remove: 'Remove Record' },
+        '/review-manager': { public: 'Publicly Archive', private: 'Private Archive' },
+        '/system-settings/system-manager': { '1': 'Departments', '2': 'Programs', '3': 'Senior High Programs' },
+    };
+
     const extraBreadcrumbItems = pathSnippets.map((_, index) => {
         const url = `/${pathSnippets.slice(0, index + 1).join('/')}`;
         const name = breadcrumbNameMap[url] || url.split('/').pop().replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
@@ -63,6 +72,13 @@ export default function PublicLayout({ children }) {
             title: <Link to={url}>{name}</Link>,
         };
     });
+
+    if (currentTab && tabNameMap[location.pathname] && tabNameMap[location.pathname][currentTab]) {
+        extraBreadcrumbItems.push({
+            key: `tab-${currentTab}`,
+            title: tabNameMap[location.pathname][currentTab],
+        });
+    }
 
     const breadcrumbItems = [
         {
@@ -171,7 +187,7 @@ export default function PublicLayout({ children }) {
                 <Avatar
                     size={80}
                     icon={<UserOutlined />}
-                    src={user?.profile?.avatar ? `/storage/${user.profile.avatar}` : null}
+                    src={user?.profile?.avatar ? (user.profile.avatar.startsWith('http') || user.profile.avatar.startsWith('data:image') ? user.profile.avatar : `/storage/${user.profile.avatar}`) : null}
                     style={{ backgroundColor: 'rgba(255,255,255,0.2)', marginBottom: 16, border: '2px solid rgba(255,255,255,0.1)', cursor: 'pointer' }}
                 />
                 {!collapsed && (
@@ -324,19 +340,40 @@ export default function PublicLayout({ children }) {
                     {/* Placeholder for right side header items (notifications etc) */}
                     <div style={{ width: 64 }}></div>
                 </Header>
-                <Content style={{ margin: '0 16px' }}>
+                <Content style={{ margin: '0 16px', display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 64px)' }}>
                     <Breadcrumb style={{ margin: '16px 0' }} items={breadcrumbItems} />
                     <div
                         style={{
-                            padding: 24,
+                            padding: isMobile ? 12 : 24,
                             minHeight: 360,
                             background: colorBgContainer,
                             borderRadius: borderRadiusLG,
-                            marginBottom: 24
+                            marginBottom: 24,
+                            flex: 1
                         }}
                     >
                         {children || "Select an item from the menu"}
                     </div>
+                    <footer style={{ padding: isMobile ? '16px 12px' : '20px 24px', marginBottom: 16, background: colorBgContainer, borderRadius: borderRadiusLG, border: `1px solid ${colorTextTertiary}22`, flexShrink: 0 }}>
+                        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', gap: 12 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                <a href="https://privacy.gov.ph/" target="_blank" rel="noopener noreferrer" style={{ flexShrink: 0 }}>
+                                    <img src="/images/npc-logo.png" alt="National Privacy Commission" style={{ height: 100, width: 'auto', display: 'block' }} />
+                                </a>
+                                <div>
+                                    <a href="https://privacy.gov.ph/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                                        <Text strong style={{ fontSize: 13, display: 'block', lineHeight: 1.3, color: colorPrimary }}>Data Privacy Act of 2012 (RA 10173)</Text>
+                                    </a>
+                                    <Text type="secondary" style={{ fontSize: 11, lineHeight: 1.4, display: 'block', maxWidth: 600 }}>
+                                        This system complies with the Data Privacy Act of 2012 (Republic Act No. 10173) of the Philippines. All personal information collected, stored, and processed is handled in accordance with the <a href="https://privacy.gov.ph/" target="_blank" rel="noopener noreferrer" style={{ color: colorPrimary }}>National Privacy Commission</a> guidelines to ensure confidentiality, integrity, and security of data.
+                                    </Text>
+                                </div>
+                            </div>
+                            <div style={{ textAlign: isMobile ? 'left' : 'right', flexShrink: 0 }}>
+                                <Text type="secondary" style={{ fontSize: 11, display: 'block' }}>&copy; {new Date().getFullYear()} {appName}. All rights reserved.</Text>
+                            </div>
+                        </div>
+                    </footer>
                 </Content>
             </Layout>
         </Layout>

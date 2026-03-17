@@ -1,15 +1,20 @@
 import React from 'react';
-import { Typography, Tabs, Card, theme } from 'antd';
+import { useSearchParams } from 'react-router-dom';
+import { Typography, Tabs, Card, theme, Space } from 'antd';
 import { useAuth } from '../../../context/AuthContext';
 import { Spin } from 'antd';
 import TabDept from './components/tabDept';
 import TabProgram from './components/tabProgram';
+import { Building2, GraduationCap, School } from 'lucide-react';
 
 const { Title, Text } = Typography;
 
 export default function SystemManager() {
     const { user } = useAuth();
     const { token } = theme.useToken();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const activeTab = searchParams.get('tab') || '1';
+    const setActiveTab = (key) => setSearchParams({ tab: key }, { replace: true });
 
     if (!user) {
         return (
@@ -22,17 +27,17 @@ export default function SystemManager() {
     const items = [
         {
             key: '1',
-            label: 'Departments',
+            label: <Space><Building2 size={15} /> Departments</Space>,
             children: <TabDept />,
         },
         {
             key: '2',
-            label: 'Programs',
+            label: <Space><GraduationCap size={15} /> Programs</Space>,
             children: <TabProgram apiEndpoint="/api/programs" />,
         },
         {
             key: '3',
-            label: 'Senior High Programs',
+            label: <Space><School size={15} /> Senior High Programs</Space>,
             children: <TabProgram apiEndpoint="/api/senior-high-programs" isSeniorHigh={true} />,
         },
     ];
@@ -53,7 +58,7 @@ export default function SystemManager() {
                     background: token.colorBgContainer
                 }}
             >
-                <Tabs defaultActiveKey="1" items={items} />
+                <Tabs activeKey={activeTab} onChange={setActiveTab} items={items} />
             </Card>
         </div>
     );

@@ -6,15 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Department extends Model
 {
-    protected $fillable = ['name', 'code', 'description'];
+    protected $fillable = ['name', 'description'];
 
     public function programs()
     {
         return $this->hasMany(Program::class);
-    }
-
-    public function seniorHighPrograms()
-    {
-        return $this->hasMany(SeniorHighProgram::class);
     }
 }

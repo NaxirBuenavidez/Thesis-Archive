@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RoleSeeder::class,
-            DepartmentProgramSeeder::class,
+            SystemManagerSeeder::class,
         ]);
 
         $roles = \App\Models\Role::all();

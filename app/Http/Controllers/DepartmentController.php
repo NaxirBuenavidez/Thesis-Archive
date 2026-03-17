@@ -2,49 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Department;
 use Illuminate\Http\Request;
+
+use App\Models\Department;
 
 class DepartmentController extends Controller
 {
     public function index()
     {
-        return response()->json(Department::withCount('programs')->get());
+        return response()->json(Department::orderBy('name')->get());
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|unique:departments,name',
-            'code' => 'nullable|string',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
 
         $department = Department::create($validated);
-
         return response()->json($department, 201);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Department $department)
     {
-        $department = Department::findOrFail($id);
-        
         $validated = $request->validate([
-            'name' => 'required|string|unique:departments,name,' . $id,
-            'code' => 'nullable|string',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
 
         $department->update($validated);
-
         return response()->json($department);
     }
 
-    public function destroy($id)
+    public function destroy(Department $department)
     {
-        $department = Department::findOrFail($id);
         $department->delete();
-
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Department deleted successfully']);
     }
 }

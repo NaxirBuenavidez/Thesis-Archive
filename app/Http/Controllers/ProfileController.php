@@ -21,38 +21,33 @@ class ProfileController extends Controller
             'phone_number' => ['nullable', 'string', 'max:20'],
             'bio' => ['nullable', 'string'],
             'date_of_birth' => ['nullable', 'date'],
-            'educational_backgrounds' => ['nullable', 'array'],
-            'educational_backgrounds.*.id' => [
-                'nullable', 
-                'integer', 
-                Rule::exists('educational_backgrounds', 'id')->where(function ($query) use ($user) {
-                    return $query->where('user_id', $user->id);
-                })
-            ],
-            'educational_backgrounds.*.level' => ['required', 'string', 'max:255'],
-            'educational_backgrounds.*.school_name' => ['required', 'string', 'max:255'],
-            'educational_backgrounds.*.degree' => ['nullable', 'string', 'max:255'],
-            'educational_backgrounds.*.year_start' => ['required', 'integer'],
-            'educational_backgrounds.*.year_end' => ['nullable', 'integer'],
-            'educational_backgrounds.*.description' => ['nullable', 'string'],
+            // 'educational_backgrounds' => ['nullable', 'array'],
+            // 'educational_backgrounds.*.id' => [
+            //     'nullable', 
+            //     'integer', 
+            //     Rule::exists('educational_backgrounds', 'id')->where(function ($query) use ($user) {
+            //         return $query->where('user_id', $user->id);
+            //     })
+            // ],
+            // 'educational_backgrounds.*.level' => ['required', 'string', 'max:255'],
+            // 'educational_backgrounds.*.school_name' => ['required', 'string', 'max:255'],
+            // 'educational_backgrounds.*.degree' => ['nullable', 'string', 'max:255'],
+            // 'educational_backgrounds.*.year_start' => ['required', 'integer'],
+            // 'educational_backgrounds.*.year_end' => ['nullable', 'integer'],
+            // 'educational_backgrounds.*.description' => ['nullable', 'string'],
         ]);
 
         $profileData = collect($validated)->except('educational_backgrounds')->toArray();
-        $educationData = $validated['educational_backgrounds'] ?? [];
+        // $educationData = $validated['educational_backgrounds'] ?? [];
 
         $profile = $user->profile()->updateOrCreate(
             ['user_id' => $user->id],
             $profileData
         );
 
-        // Sync Educational Backgrounds
-        // 1. Get IDs of incoming education records
+        /* Sync Educational Backgrounds - Disabled as table/relationship is missing
         $incomingIds = collect($educationData)->pluck('id')->filter()->toArray();
-
-        // 2. Delete records that are not in the incoming list
         $user->educationalBackgrounds()->whereNotIn('id', $incomingIds)->delete();
-
-        // 3. Update or Create records
         foreach ($educationData as $edu) {
             $user->educationalBackgrounds()->updateOrCreate(
                 ['id' => $edu['id'] ?? null],
@@ -66,11 +61,12 @@ class ProfileController extends Controller
                 ]
             );
         }
+        */
 
         return response()->json([
             'message' => 'Profile updated successfully',
             'profile' => $profile,
-            'user' => $user->load('profile', 'educationalBackgrounds'), // Load education
+            'user' => $user->load('profile'), // Load profile only for now
         ]);
     }
 
@@ -84,18 +80,22 @@ class ProfileController extends Controller
         $profile = $user->profile ?? $user->profile()->create([]);
 
         if ($request->hasFile('avatar')) {
-            // Delete old avatar if exists
-            if ($profile->avatar) {
+            $file = $request->file('avatar');
+            $base64 = base64_encode(file_get_contents($file->path()));
+            $mimeType = $file->getMimeType();
+            $base64Image = 'data:' . $mimeType . ';base64,' . $base64;
+
+            // Delete old avatar from storage if it exists (legacy support)
+            if ($profile->avatar && !str_starts_with($profile->avatar, 'http') && !str_starts_with($profile->avatar, 'data:image')) {
                 Storage::disk('public')->delete($profile->avatar);
             }
 
-            $path = $request->file('avatar')->store('avatars', 'public');
-            $profile->update(['avatar' => $path]);
+            $profile->update(['avatar' => $base64Image]);
         }
 
         return response()->json([
             'message' => 'Avatar updated successfully',
-            'avatar_url' => asset('storage/' . $path),
+            'avatar_url' => $profile->avatar,
             'user' => $user->load('profile'),
         ]);
     }

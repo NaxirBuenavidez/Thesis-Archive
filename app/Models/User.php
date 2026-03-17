@@ -58,9 +58,4 @@ class User extends Authenticatable
     {
         return $this->hasOne(Profile::class);
     }
-
-    public function educationalBackgrounds()
-    {
-        return $this->hasMany(EducationalBackground::class);
-    }
 }

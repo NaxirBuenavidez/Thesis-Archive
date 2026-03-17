@@ -2,63 +2,54 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Program;
 use Illuminate\Http\Request;
+
+use App\Models\Program;
 
 class ProgramController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $query = Program::with('department');
+        return response()->json(Program::with('department')->orderBy('name')->get());
+    }
 
-        if ($request->has('department_id')) {
-            $query->where('department_id', $request->department_id);
-        }
-
-        if ($request->has('senior_high') && $request->senior_high == 'true') {
-             $query->whereHas('department', function($q) {
-                 $q->where('name', 'SENIOR HIGH SCHOOL');
-             });
-        }
-        
-        return response()->json($query->get());
+    public function seniorHigh()
+    {
+        return response()->json(Program::with('department')
+            ->whereHas('department', function ($query) {
+                $query->where('name', 'SENIOR HIGH SCHOOL');
+            })->orderBy('name')->get());
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'department_id' => 'required|exists:departments,id',
-            'name' => 'required|string',
-            'code' => 'required|string',
+            'name' => 'required|string|max:255',
+            'code' => 'required|string|max:50',
             'description' => 'nullable|string',
         ]);
 
         $program = Program::create($validated);
-
         return response()->json($program->load('department'), 201);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Program $program)
     {
-        $program = Program::findOrFail($id);
-
         $validated = $request->validate([
             'department_id' => 'required|exists:departments,id',
-            'name' => 'required|string',
-            'code' => 'required|string',
+            'name' => 'required|string|max:255',
+            'code' => 'required|string|max:50',
             'description' => 'nullable|string',
         ]);
 
         $program->update($validated);
-
         return response()->json($program->load('department'));
     }
 
-    public function destroy($id)
+    public function destroy(Program $program)
     {
-        $program = Program::findOrFail($id);
         $program->delete();
-
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Program deleted successfully']);
     }
 }

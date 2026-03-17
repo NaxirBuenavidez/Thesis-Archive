@@ -41,7 +41,7 @@ export default function ProfileHeader({ user, checkAuth }) {
             <div style={{ position: 'relative', display: 'inline-block', marginBottom: 24 }}>
                 <Avatar
                     size={!screens.lg ? 120 : 160}
-                    src={user.profile?.avatar ? `/storage/${user.profile.avatar}` : null}
+                    src={user.profile?.avatar ? (user.profile.avatar.startsWith('http') || user.profile.avatar.startsWith('data:image') ? user.profile.avatar : `/storage/${user.profile.avatar}`) : null}
                     icon={<User size={!screens.lg ? 48 : 64} />}
                     style={{
                         border: `4px solid ${colorPrimary}`,
