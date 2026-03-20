@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Profile;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -61,6 +62,13 @@ class UserController extends Controller
         Profile::create([
             'user_id' => $user->id,
         ]);
+
+        NotificationController::dispatch(
+            'new_user',
+            'New User Registered',
+            "{$user->name} ({$user->email}) has been added to the system.",
+            ['user_id' => $user->id, 'email' => $user->email]
+        );
 
         return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
     }

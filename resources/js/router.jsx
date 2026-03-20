@@ -22,10 +22,37 @@ import GlobalLoader from './public/components/GlobalLoader';
 
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useAuth();
-    if (loading) return null; // Or a spinner
+    if (loading) return (
+        <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#f0f2f5' }}>
+            <div style={{
+                width: 48, height: 48, borderRadius: '50%',
+                border: '4px solid #e0e4ff',
+                borderTop: '4px solid #2845D6',
+                animation: 'spin 0.8s linear infinite'
+            }} />
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        </div>
+    );
     if (!user) return <Navigate to="/login" replace />;
     return children;
 };
+
+// Redirect authenticated users away from /login
+const AlreadyAuthedRoute = ({ children }) => {
+    const { user, loading } = useAuth();
+    if (loading) return null;
+    if (user) return <Navigate to="/" replace />;
+    return children;
+};
+
+// Restrict a route to specific role slugs — redirects to / if not allowed
+const RoleRoute = ({ children, allowedRoles }) => {
+    const { user } = useAuth();
+    const slug = user?.role?.slug;
+    if (!slug || !allowedRoles.includes(slug)) return <Navigate to="/" replace />;
+    return children;
+};
+
 
 const router = createBrowserRouter([
     {
@@ -40,7 +67,7 @@ const router = createBrowserRouter([
         children: [
             {
                 path: "/login",
-                element: <Login />,
+                element: <AlreadyAuthedRoute><Login /></AlreadyAuthedRoute>,
             },
             {
                 path: "/",
@@ -72,11 +99,11 @@ const router = createBrowserRouter([
                     },
                     {
                         path: "/system-settings/permissions",
-                        element: <Permissions />,
+                        element: <RoleRoute allowedRoles={['spadmin']}><Permissions /></RoleRoute>,
                     },
                     {
                         path: "/system-settings/activity-log",
-                        element: <ActivityLog />,
+                        element: <RoleRoute allowedRoles={['spadmin']}><ActivityLog /></RoleRoute>,
                     },
                     {
                         path: "/system-settings/system-manager",

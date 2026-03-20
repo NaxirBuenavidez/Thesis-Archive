@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Space, message, Input, Button, Tooltip } from 'antd';
+import { Space, Input, Button, Tooltip } from 'antd';
+import { Feedback } from '../../../components/UI/SystemNotifications';
 import { ReloadOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import TableDept from './departments/tableDept';
 import ModalDept from './departments/modalDept';
@@ -21,7 +22,7 @@ export default function tabDept() {
             const response = await window.axios.get('/api/departments');
             setData(response.data);
         } catch (error) {
-            message.error('Failed to fetch departments');
+            Feedback.error('Failed to fetch departments');
         } finally {
             setLoading(false);
         }
@@ -36,19 +37,19 @@ export default function tabDept() {
         try {
             if (editingId) {
                 await window.axios.put(`/api/departments/${editingId}`, values);
-                message.success('Department updated successfully');
+                Feedback.success('Department updated successfully');
             } else {
                 await window.axios.post('/api/departments', values);
-                message.success('Department created successfully');
+                Feedback.success('Department created successfully');
             }
             setIsModalOpen(false);
             setEditingId(null);
             fetchDepartments();
         } catch (error) {
             if (error.response && error.response.data && error.response.data.message) {
-                message.error(error.response.data.message);
+                Feedback.error(error.response.data.message);
             } else {
-                message.error('Failed to save department');
+                Feedback.error('Failed to save department');
             }
         } finally {
             setSubmitLoading(false);
@@ -68,10 +69,10 @@ export default function tabDept() {
     const handleDelete = async (id) => {
         try {
             await window.axios.delete(`/api/departments/${id}`);
-            message.success('Department deleted successfully');
+            Feedback.success('Department deleted successfully');
             fetchDepartments();
         } catch (error) {
-            message.error('Failed to delete department');
+            Feedback.error('Failed to delete department');
         }
     };
 
@@ -85,7 +86,7 @@ export default function tabDept() {
                 <Input
                     placeholder="Search departments..."
                     prefix={<SearchOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
-                    style={{ width: 250 }}
+                    style={{ flex: 1, minWidth: 160, maxWidth: 300 }}
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
                     allowClear

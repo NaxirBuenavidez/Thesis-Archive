@@ -17,10 +17,60 @@ class EnsureSecurityHeaders
     {
         $response = $next($request);
 
+        // Classic headers
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
         $response->headers->set('X-XSS-Protection', '1; mode=block');
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
+
+        // Force HTTPS for 1 year (only meaningful over HTTPS, safe to include)
+        $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+
+        // Disable sensitive browser features
+        $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
+
+        // Content Security Policy
+        // In local dev, also allow the Vite dev server host so HMR and assets aren't blocked.
+        $viteHost = config('app.vite_dev_server_url', env('VITE_DEV_SERVER_URL', ''));
+        $isDev    = app()->environment('local', 'development');
+
+        $scriptSrc = "'self' 'unsafe-inline' 'unsafe-eval'";
+        $styleSrc  = "'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.bunny.net";
+        $fontSrc   = "'self' https://fonts.gstatic.com https://fonts.bunny.net data:";
+        $connectSrc = "'self' ws: wss:";
+
+        if ($isDev && $viteHost) {
+            $scriptSrc  .= " {$viteHost}";
+            $styleSrc   .= " {$viteHost}";
+            $connectSrc .= " {$viteHost}";
+        } elseif ($isDev) {
+            // Fallback: allow any localhost/127 port in dev so Vite always works
+            $scriptSrc  .= " http://localhost:* https://localhost:* http://127.0.0.1:*";
+            $styleSrc   .= " http://localhost:* https://localhost:* http://127.0.0.1:*";
+            $connectSrc .= " http://localhost:* https://localhost:* ws://localhost:* wss://localhost:* http://127.0.0.1:*";
+            // Also allow the current host on any port (covers thesis-archive.test:5173 etc.)
+            $scriptSrc  .= " https:";
+            $styleSrc   .= " https:";
+        }
+
+        $csp = implode('; ', [
+            "default-src 'self'",
+            "script-src {$scriptSrc}",
+            "style-src {$styleSrc}",
+            "font-src {$fontSrc}",
+            "img-src 'self' data: blob: https: http:",   // Allow logo uploads + Google avatars
+            "connect-src {$connectSrc}",
+            "frame-ancestors 'self'",
+            "base-uri 'self'",
+            "form-action 'self'",
+        ]);
+        $response->headers->set('Content-Security-Policy', $csp);
+
+        // Prevent caching of authenticated responses
+        if ($request->is('api/*') || $request->is('login') || $request->is('logout')) {
+            $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+            $response->headers->set('Pragma', 'no-cache');
+        }
 
         return $response;
     }

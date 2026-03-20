@@ -8,11 +8,14 @@ import {
     EyeOutlined,
     CheckOutlined,
     CloseOutlined,
+    ClockCircleOutlined,
     FilePdfOutlined,
     LinkOutlined,
-    FileTextOutlined
+    FileTextOutlined,
+    UserOutlined
 } from '@ant-design/icons';
 import { BookOpen, Clock, Calendar, CheckCircle, Globe, Lock } from 'lucide-react';
+import { Earth20Filled, LockClosed20Filled } from '@fluentui/react-icons';
 import { useTableSearch } from '../../hooks/useTableSearch';
 import { useAuth } from '../../context/AuthContext';
 import { Spin } from 'antd';
@@ -24,17 +27,9 @@ const { useBreakpoint } = Grid;
 export default function ReviewManager() {
     const { user } = useAuth();
     const screens = useBreakpoint();
-
-    if (!user) {
-        return (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
-                <Spin size="large" />
-            </div>
-        );
-    }
-
     const { token } = theme.useToken();
     const primaryColor = token.colorPrimary;
+
     const { message, modal } = App.useApp();
 
     const [data, setData] = useState([]);
@@ -75,6 +70,7 @@ export default function ReviewManager() {
                         pdfName: thesis.pdf_original_name,
                         pdfUrl: thesis.pdf_path ? `/storage/${thesis.pdf_path}` : null,
                         author: thesis.author || (thesis.owner ? thesis.owner.name : 'Unknown'),
+                        authorAvatar: thesis.owner?.profile?.avatar ? (thesis.owner.profile.avatar.startsWith('http') || thesis.owner.profile.avatar.startsWith('data:image') ? thesis.owner.profile.avatar : `/storage/${thesis.owner.profile.avatar}`) : null,
                         raw: thesis
                     }));
                 setData(theses);
@@ -249,27 +245,31 @@ export default function ReviewManager() {
 
     const actionColor = reviewModal.action === 'accept' ? token.colorSuccess : token.colorError;
 
+    const isMobile = !screens.md;
+
     return (
         <div style={{ paddingBottom: '40px' }}>
-            <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-                <div>
-                    <Title level={2} style={{ margin: 0, fontWeight: 700 }}>Review Manager</Title>
-                    <Text type="secondary">Review and approve submitted theses</Text>
+            <div style={{ marginBottom: 20 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                    <div>
+                        <Title level={isMobile ? 3 : 2} style={{ margin: 0, fontWeight: 700 }}>Review Manager</Title>
+                        <Text type="secondary">Review and approve submitted theses</Text>
+                    </div>
+                    {!isMobile && (
+                        <Tooltip title="Refresh List">
+                            <Button icon={<ReloadOutlined />} size="large" style={{ borderRadius: '8px' }} onClick={() => { setGlobalSearchText(''); fetchTheses(); }} />
+                        </Tooltip>
+                    )}
                 </div>
-                <Space wrap>
-                    <Input
-                        placeholder="Search theses..."
-                        prefix={<SearchOutlined style={{ color: token.colorTextDescription }} />}
-                        style={{ width: 280, borderRadius: '8px', backgroundColor: token.colorBgContainer, border: `1px solid ${token.colorBorder}` }}
-                        allowClear
-                        value={globalSearchText}
-                        onChange={(e) => setGlobalSearchText(e.target.value)}
-                        size="large"
-                    />
-                    <Tooltip title="Refresh List">
-                        <Button icon={<ReloadOutlined />} size="large" style={{ borderRadius: '8px' }} onClick={() => { setGlobalSearchText(''); fetchTheses(); }} />
-                    </Tooltip>
-                </Space>
+                <Input
+                    placeholder="Search theses..."
+                    prefix={<SearchOutlined style={{ color: token.colorTextDescription }} />}
+                    style={{ width: '100%', borderRadius: '8px', backgroundColor: token.colorBgContainer, border: `1px solid ${token.colorBorder}` }}
+                    allowClear
+                    value={globalSearchText}
+                    onChange={(e) => setGlobalSearchText(e.target.value)}
+                    size="large"
+                />
             </div>
 
             {previewThesis && (
@@ -291,9 +291,12 @@ export default function ReviewManager() {
                             </div>
                             
                             <div style={{ background: token.colorFillQuaternary, padding: '16px 20px', borderRadius: 8 }}>
-                                <Descriptions column={{ xxl: 3, xl: 3, lg: 3, md: 2, sm: 1, xs: 1 }} size="small" colon={false} labelStyle={{ color: token.colorTextSecondary, paddingBottom: 4 }}>
+                                <Descriptions column={{ xxl: 3, xl: 3, lg: 3, md: 2, sm: 1, xs: 1 }} size="small" colon={false} styles={{ label: { color: token.colorTextSecondary, paddingBottom: 4 } }}>
                                     <Descriptions.Item label={<Text strong type="secondary" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Main Author</Text>}>
-                                        <Space size={8}><Avatar size={20} style={{ backgroundColor: primaryColor, fontSize: 11 }}>{previewThesis.author.charAt(0)}</Avatar><Text strong>{previewThesis.author}</Text></Space>
+                                        <Space size={8}>
+                                            <Avatar size={20} style={{ backgroundColor: primaryColor, fontSize: 12 }} src={previewThesis.authorAvatar} icon={<UserOutlined />} />
+                                            <Text strong>{previewThesis.author}</Text>
+                                        </Space>
                                     </Descriptions.Item>
                                     <Descriptions.Item label={<Text strong type="secondary" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Program</Text>}>
                                         <Space size={6}><BookOpen size={14} style={{ color: token.colorTextSecondary }} /><Text>{previewThesis.discipline || 'N/A'}</Text></Space>
@@ -334,35 +337,53 @@ export default function ReviewManager() {
                 style={{ borderRadius: '16px', boxShadow: '0 5px 20px rgba(0, 0, 0, 0.05)', overflow: 'hidden', background: token.colorBgContainer }}
                 styles={{ body: { padding: 0 } }}
             >
-                <Tabs 
-                    activeKey={activeTab} 
-                    onChange={setActiveTab} 
-                    style={{ padding: '16px 24px 0 24px' }}
+                <Tabs
+                    activeKey={activeTab}
+                    onChange={setActiveTab}
+                    style={{ padding: isMobile ? '12px 16px 0' : '16px 24px 0 24px' }}
+                    size={isMobile ? 'small' : 'middle'}
                     items={[
-                        { key: 'public', label: <Space><Globe size={15}/> Publicly Archive</Space> },
-                        { key: 'private', label: <Space><Lock size={15}/> Private Archive</Space> }
+                        { key: 'public', label: <Space><Earth20Filled style={{ fontSize: 16, color: activeTab === 'public' ? token.colorPrimary : undefined }} />{!isMobile && ' Publicly Archive'}</Space> },
+                        { key: 'private', label: <Space><LockClosed20Filled style={{ fontSize: 16, color: activeTab === 'private' ? token.colorPrimary : undefined }} />{!isMobile && ' Private Archive'}</Space> }
                     ]}
                 />
-                <Table
-                    columns={columns}
-                    dataSource={filteredData.filter(item => activeTab === 'public' ? !item.isConfidential : item.isConfidential)}
-                    loading={loading}
-                    scroll={{ x: 900 }}
-                    pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: ['10', '25', '50'], showTotal: (total) => <Text type="secondary">{total} theses</Text>, style: { padding: '16px 24px' } }}
-                    rowClassName={(record, index) => {
-                        let className = index % 2 === 0 ? 'table-row-light' : 'table-row-dark';
-                        if (previewThesis && previewThesis.key === record.key) {
-                            className += ' table-row-selected';
-                        }
-                        return className;
-                    }}
-                    onRow={(record) => ({
-                        onClick: () => {
-                            setPreviewThesis(record);
-                        },
-                        style: { cursor: 'pointer' }
-                    })}
-                />
+                {isMobile ? (
+                    // Mobile card list
+                    <div style={{ padding: '12px 16px' }}>
+                        {!loading && filteredData.filter(item => activeTab === 'public' ? !item.isConfidential : item.isConfidential).map(record => (
+                            <div
+                                key={record.key}
+                                style={{ background: token.colorFillAlter, borderRadius: 10, padding: '12px 14px', marginBottom: 10, border: `1px solid ${token.colorBorderSecondary}` }}
+                            >
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 6 }}>
+                                    <Text strong style={{ fontSize: 13, flex: 1, lineHeight: 1.4 }} ellipsis={{ tooltip: record.title }}>{record.title}</Text>
+                                    <Button type="primary" size="small" icon={<FileTextOutlined />} onClick={() => openDetailDrawer(record)} style={{ flexShrink: 0 }} />
+                                </div>
+                                <Text type="secondary" style={{ fontSize: 12 }}>{record.author} · {record.department || 'No dept'}</Text>
+                                <div style={{ marginTop: 6 }}>
+                                    <Tag color="orange" style={{ borderRadius: 20, fontSize: 11, border: 'none' }}>UNDER REVIEW</Tag>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <Table
+                        columns={columns}
+                        dataSource={filteredData.filter(item => activeTab === 'public' ? !item.isConfidential : item.isConfidential)}
+                        loading={loading}
+                        scroll={{ x: 900 }}
+                        pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: ['10', '25', '50'], showTotal: (total) => <Text type="secondary">{total} theses</Text>, style: { padding: '16px 24px' } }}
+                        rowClassName={(record, index) => {
+                            let className = index % 2 === 0 ? 'table-row-light' : 'table-row-dark';
+                            if (previewThesis && previewThesis.key === record.key) className += ' table-row-selected';
+                            return className;
+                        }}
+                        onRow={(record) => ({
+                            onClick: () => setPreviewThesis(record),
+                            style: { cursor: 'pointer' }
+                        })}
+                    />
+                )}
             </Card>
 
             <Modal
@@ -373,7 +394,7 @@ export default function ReviewManager() {
                 centered
                 width={500}
                 style={{ maxWidth: 'calc(100vw - 32px)' }}
-                destroyOnClose
+                destroyOnHidden
             >
                 <div style={{ padding: '24px 0' }}>
                     <div style={{ textAlign: 'center', marginBottom: 20 }}>
@@ -464,9 +485,12 @@ export default function ReviewManager() {
                     drawerForm.resetFields();
                 }}
                 open={isDetailOpen}
-                width={screens.md ? 720 : '100%'}
-                headerStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}`, padding: '16px 24px' }}
-                bodyStyle={{ padding: 0 }}
+                size="large"
+                styles={{
+                    wrapper: { width: screens.md ? 720 : '100%' },
+                    header: { borderBottom: `1px solid ${token.colorBorderSecondary}`, padding: '16px 24px' },
+                    body: { padding: 0 }
+                }}
                 extra={
                     <Space>
                         <Button 
@@ -510,7 +534,7 @@ export default function ReviewManager() {
                                             <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
                                             <Col xs={24} lg={12}>
                                                 <Card size="small" variant="borderless" style={{ background: token.colorFillAlter, borderRadius: 12, height: '100%' }}>
-                                                    <Descriptions title={<Space><FileTextOutlined style={{ fontSize: 16 }} /> <Text strong>Submission Details</Text></Space>} column={1} size="small" labelStyle={{ color: token.colorTextSecondary }}>
+                                                    <Descriptions title={<Space><FileTextOutlined style={{ fontSize: 16 }} /> <Text strong>Submission Details</Text></Space>} column={1} size="small" styles={{ label: { color: token.colorTextSecondary } }}>
                                                         <Descriptions.Item label="Reference ID"><Text code>{selectedThesis.key.split('-')[0].toUpperCase()}</Text></Descriptions.Item>
                                                         <Descriptions.Item label="Submission Date">
                                                             <Space size={4}>
@@ -522,13 +546,13 @@ export default function ReviewManager() {
                                                         <Descriptions.Item label="Visibility">
                                                             <Badge status={selectedThesis.isConfidential ? "warning" : "success"} text={selectedThesis.isConfidential ? "Confidential" : "Public"} />
                                                         </Descriptions.Item>
-                                                        <Descriptions.Item label="Degree Type"><Tag color="blue" bordered={false}>{selectedThesis.degreeType || 'N/A'}</Tag></Descriptions.Item>
+                                                        <Descriptions.Item label="Degree Type"><Tag color="blue" variant="filled">{selectedThesis.degreeType || 'N/A'}</Tag></Descriptions.Item>
                                                     </Descriptions>
                                                 </Card>
                                             </Col>
                                             <Col xs={24} lg={12}>
                                                 <Card size="small" variant="borderless" style={{ background: token.colorFillAlter, borderRadius: 12, height: '100%' }}>
-                                                    <Descriptions title={<Space><BookOpen size={16} /> <Text strong>Author & Affiliation</Text></Space>} column={1} size="small" labelStyle={{ color: token.colorTextSecondary }}>
+                                                    <Descriptions title={<Space><BookOpen size={16} /> <Text strong>Author & Affiliation</Text></Space>} column={1} size="small" styles={{ label: { color: token.colorTextSecondary } }}>
                                                         <Descriptions.Item label="Main Author"><Text strong>{selectedThesis.author}</Text></Descriptions.Item>
                                                         <Descriptions.Item label="Program">
                                                             <Text>{selectedThesis.discipline || 'N/A'}</Text>

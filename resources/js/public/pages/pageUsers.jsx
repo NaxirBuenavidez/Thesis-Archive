@@ -7,13 +7,13 @@ import {
     MoreOutlined,
     EditOutlined,
     DeleteOutlined,
-    EyeOutlined
+    EyeOutlined,
+    UserOutlined
 } from '@ant-design/icons';
 import { User, Mail, Shield, Calendar, UserPlus } from 'lucide-react';
 import { useTableSearch } from '../../hooks/useTableSearch';
 
 import { useAuth } from '../../context/AuthContext';
-import { Spin } from 'antd';
 
 const { Title, Text } = Typography;
 const { useBreakpoint } = Grid;
@@ -21,17 +21,9 @@ const { useBreakpoint } = Grid;
 export default function Users() {
     const { user } = useAuth();
     const screens = useBreakpoint();
-
-    if (!user) {
-        return (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
-                <Spin size="large" />
-            </div>
-        );
-    }
-
     const { token } = theme.useToken();
     const primaryColor = token.colorPrimary;
+
 
     const { message } = App.useApp();
     const [data, setData] = useState([]);
@@ -64,6 +56,7 @@ export default function Users() {
                     email: user.email,
                     role: user.role ? user.role.name : 'viewer', // Adjust based on Role model
                     createdAt: user.created_at,
+                    avatarUrl: user.profile?.avatar ? (user.profile.avatar.startsWith('http') || user.profile.avatar.startsWith('data:image') ? user.profile.avatar : `/storage/${user.profile.avatar}`) : null,
                 }));
                 setData(users);
             }
@@ -145,9 +138,9 @@ export default function Users() {
                             boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                         }}
                         size={40}
-                    >
-                        {text.charAt(0).toUpperCase()}
-                    </Avatar>
+                        src={record.avatarUrl}
+                        icon={<UserOutlined />}
+                    />
                     <Space orientation="vertical" size={0}>
                         <Text strong style={{ fontSize: '15px' }}>{text}</Text>
                         <Text type="secondary" style={{ fontSize: '13px' }}>{record.email}</Text>
@@ -215,76 +208,80 @@ export default function Users() {
         },
     ];
 
+    const isMobile = !screens.md;
+
     return (
         <div style={{ paddingBottom: '40px' }}>
-            <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-                <div>
-                    <Title level={2} style={{ margin: 0, fontWeight: 700 }}>Users</Title>
-                    <Text type="secondary">Manage system access and permissions</Text>
+            <div style={{ marginBottom: 20 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 12 }}>
+                    <div>
+                        <Title level={isMobile ? 3 : 2} style={{ margin: 0, fontWeight: 700 }}>Users</Title>
+                        <Text type="secondary">Manage system access and permissions</Text>
+                    </div>
+                    {!isMobile && (
+                        <Space>
+                            <Tooltip title="Refresh List">
+                                <Button icon={<ReloadOutlined />} size="large" style={{ borderRadius: '8px' }} onClick={() => { setGlobalSearchText(''); fetchUsers(); }} />
+                            </Tooltip>
+                            <Button type="primary" icon={<PlusOutlined />} size="large" style={{ borderRadius: '8px', padding: '0 24px', fontWeight: 600 }} onClick={() => setIsModalOpen(true)}>
+                                Register User
+                            </Button>
+                        </Space>
+                    )}
                 </div>
-                <Space wrap>
+                <div style={{ display: 'flex', gap: 8 }}>
                     <Input
                         placeholder="Search users..."
                         prefix={<SearchOutlined style={{ color: token.colorTextDescription }} />}
-                        style={{
-                            width: 280,
-                            borderRadius: '8px',
-                            backgroundColor: token.colorBgContainer,
-                            border: `1px solid ${token.colorBorder}`
-                        }}
+                        style={{ flex: 1, borderRadius: '8px' }}
                         allowClear
                         value={globalSearchText}
                         onChange={(e) => setGlobalSearchText(e.target.value)}
                         size="large"
                     />
-                    <Tooltip title="Refresh List">
-                        <Button
-                            icon={<ReloadOutlined />}
-                            size="large"
-                            style={{ borderRadius: '8px' }}
-                            onClick={() => {
-                                setGlobalSearchText('');
-                                fetchUsers();
-                            }}
-                        />
-                    </Tooltip>
-                    <Button
-                        type="primary"
-                        icon={<PlusOutlined />}
-                        size="large"
-                        style={{ borderRadius: '8px', padding: '0 24px', fontWeight: 600, boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}
-                        onClick={() => setIsModalOpen(true)}
-                    >
-                        Register User
-                    </Button>
-                </Space>
+                    {isMobile && (
+                        <Button type="primary" icon={<PlusOutlined />} size="large" style={{ borderRadius: '8px' }} onClick={() => setIsModalOpen(true)} />
+                    )}
+                </div>
             </div>
 
-            <Card
-                variant="borderless"
-                style={{
-                    borderRadius: '16px',
-                    boxShadow: '0 5px 20px rgba(0, 0, 0, 0.05)',
-                    overflow: 'hidden',
-                    background: token.colorBgContainer
-                }}
-                styles={{ body: { padding: 0 } }}
-            >
-                <Table
-                    columns={columns}
-                    dataSource={filteredData}
-                    loading={loading}
-                    scroll={{ x: 800 }}
-                    pagination={{
-                        defaultPageSize: 10,
-                        showSizeChanger: true,
-                        pageSizeOptions: ['10', '25', '50'],
-                        showTotal: (total) => <Text type="secondary">{total} users found</Text>,
-                        style: { padding: '16px 24px' }
-                    }}
-                    rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'}
-                />
-            </Card>
+            {isMobile ? (
+                // ── Mobile: Card List ──
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {!loading && filteredData.map(record => (
+                        <div key={record.key} style={{ background: token.colorBgContainer, borderRadius: 12, padding: '14px 16px', border: `1px solid ${token.colorBorderSecondary}`, display: 'flex', alignItems: 'center', gap: 12 }}>
+                            <Avatar size={44} src={record.avatarUrl} icon={<UserOutlined />} style={{ backgroundColor: primaryColor, flexShrink: 0 }} />
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                                <Text strong style={{ fontSize: 14, display: 'block' }} ellipsis>{record.username}</Text>
+                                <Text type="secondary" style={{ fontSize: 12 }} ellipsis>{record.email}</Text>
+                                <div style={{ marginTop: 4 }}>
+                                    <Tag color={record.role === 'admin' ? 'blue' : record.role === 'viewer' ? 'default' : 'green'} style={{ borderRadius: 20, fontSize: 11, border: 'none' }}>{record.role.toUpperCase()}</Tag>
+                                </div>
+                            </div>
+                            <Dropdown menu={{ items: [
+                                { key: 'view', icon: <EyeOutlined />, label: 'View Details' },
+                                { key: 'edit', icon: <EditOutlined />, label: 'Edit' },
+                                { type: 'divider' },
+                                { key: 'delete', icon: <DeleteOutlined />, label: 'Delete', danger: true },
+                            ]}} trigger={['click']}>
+                                <Button type="text" shape="circle" icon={<MoreOutlined />} />
+                            </Dropdown>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                // ── Desktop: Table ──
+                <Card variant="borderless" style={{ borderRadius: '16px', boxShadow: '0 5px 20px rgba(0,0,0,0.05)', overflow: 'hidden', background: token.colorBgContainer }} styles={{ body: { padding: 0 } }}>
+                    <Table
+                        columns={columns}
+                        dataSource={filteredData}
+                        loading={loading}
+                        scroll={{ x: 800 }}
+                        pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: ['10', '25', '50'], showTotal: (total) => <Text type="secondary">{total} users found</Text>, style: { padding: '16px 24px' } }}
+                        rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'}
+                    />
+                </Card>
+            )}
 
             <Modal
                 title={null}

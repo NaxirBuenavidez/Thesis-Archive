@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Layout, Menu, theme, Drawer, Button, Grid, Avatar, Typography, Space, ConfigProvider, Breadcrumb } from 'antd';
 import { useNavigate, useLocation, Link, useSearchParams } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext'; // Import useAuth
+import { useAuth } from '../../context/AuthContext';
+import { useSystemConfig } from '../../context/SystemConfigContext';
 import {
     MenuOutlined,
     DashboardOutlined,
@@ -37,6 +38,7 @@ export default function PublicLayout({ children }) {
     const isMobile = !screens.md;
 
     const {
+        token,
         token: { colorBgContainer, borderRadiusLG, colorPrimary, colorTextTertiary },
     } = theme.useToken();
 
@@ -89,10 +91,11 @@ export default function PublicLayout({ children }) {
 
 
 
-    // Blue Theme Palette
-    const sidebarBg = import.meta.env.VITE_COLOR_PRIMARY_DARK || '#1A2CA3'; // Use env theme
-    const appName = import.meta.env.VITE_APP_NAME || 'Thesis Archive';
-    const appDescription = import.meta.env.VITE_APP_DESCRIPTION || 'System Archive';
+    // Blue Theme Palette & Settings from DB Context
+    const { primary_color_dark, site_title, site_description, logo_path } = useSystemConfig();
+    const sidebarBg = primary_color_dark || '#1A2CA3';
+    const appName = site_title || 'Thesis Archive';
+    const appDescription = site_description || 'System Archive';
 
     // Generate initials from app name
     const getInitials = (name) => {
@@ -106,70 +109,53 @@ export default function PublicLayout({ children }) {
 
     const appInitials = getInitials(appName);
 
-    const mainMenuItems = [
-        {
-            key: 'dashboard',
-            icon: <DashboardOutlined style={{ fontSize: '20px' }} />,
-            label: <span style={{ fontWeight: 600, fontSize: '16px' }}>Dashboard</span>,
-        },
-        {
-            key: 'users',
-            icon: <UsergroupAddOutlined style={{ fontSize: '20px' }} />,
-            label: <span style={{ fontWeight: 600, fontSize: '16px' }}>Users</span>,
-        },
-        {
-            key: 'repository',
-            icon: <BookOutlined style={{ fontSize: '20px' }} />,
-            label: <span style={{ fontWeight: 600, fontSize: '16px' }}>Repository</span>,
-        },
-        {
-            key: 'thesis-management',
-            icon: <FileTextOutlined style={{ fontSize: '20px' }} />,
-            label: <span style={{ fontWeight: 600, fontSize: '16px' }}>Thesis Management</span>,
-        },
-        {
-            key: 'review-manager',
-            icon: <AuditOutlined style={{ fontSize: '20px' }} />,
-            label: <span style={{ fontWeight: 600, fontSize: '16px' }}>Review Manager</span>,
-        },
+    const { user, logout } = useAuth(); // Single useAuth call — destructure both user and logout
+    const isSpAdmin = user?.role?.slug === 'spadmin';
+
+    const desktopMainMenuItems = [
+        { key: 'dashboard', icon: <DashboardOutlined style={{ fontSize: '20px' }} />, label: <span style={{ fontWeight: 600, fontSize: '16px' }}>Dashboard</span> },
+        { key: 'users', icon: <UsergroupAddOutlined style={{ fontSize: '20px' }} />, label: <span style={{ fontWeight: 600, fontSize: '16px' }}>Users</span> },
+        { key: 'repository', icon: <BookOutlined style={{ fontSize: '20px' }} />, label: <span style={{ fontWeight: 600, fontSize: '16px' }}>Repository</span> },
+        { key: 'thesis-management', icon: <FileTextOutlined style={{ fontSize: '20px' }} />, label: <span style={{ fontWeight: 600, fontSize: '16px' }}>Thesis Management</span> },
+        { key: 'review-manager', icon: <AuditOutlined style={{ fontSize: '20px' }} />, label: <span style={{ fontWeight: 600, fontSize: '16px' }}>Review Manager</span> },
         {
             key: 'system-settings',
             icon: <SettingOutlined style={{ fontSize: '20px' }} />,
             label: <span style={{ fontWeight: 600, fontSize: '16px' }}>System Settings</span>,
             children: [
-                {
-                    key: 'permissions',
-                    label: 'Permission',
-                    icon: <SafetyCertificateOutlined />,
-                },
-                {
-                    key: 'activity-log',
-                    label: 'Activity Log',
-                    icon: <HistoryOutlined />,
-                },
-                {
-                    key: 'system-manager',
-                    label: 'System Manager',
-                    icon: <ToolOutlined />,
-                },
-                {
-                    key: 'reports',
-                    label: 'Reports',
-                    icon: <BarChartOutlined />,
-                }
+                ...(isSpAdmin ? [
+                    { key: 'permissions', label: 'Permission', icon: <SafetyCertificateOutlined /> },
+                    { key: 'activity-log', label: 'Activity Log', icon: <HistoryOutlined /> },
+                ] : []),
+                { key: 'system-manager', label: 'System Manager', icon: <ToolOutlined /> },
+                { key: 'reports', label: 'Reports', icon: <BarChartOutlined /> }
             ]
         },
     ];
+
+    const mobileMainMenuItems = [
+        { key: 'users', icon: <UsergroupAddOutlined style={{ fontSize: '20px' }} />, label: <span style={{ fontWeight: 600, fontSize: '16px' }}>Users</span> },
+        {
+            key: 'system-settings',
+            icon: <SettingOutlined style={{ fontSize: '20px' }} />,
+            label: <span style={{ fontWeight: 600, fontSize: '16px' }}>System Settings</span>,
+            children: [
+                ...(isSpAdmin ? [
+                    { key: 'permissions', label: 'Permission', icon: <SafetyCertificateOutlined /> },
+                    { key: 'activity-log', label: 'Activity Log', icon: <HistoryOutlined /> },
+                ] : []),
+                { key: 'system-manager', label: 'System Manager', icon: <ToolOutlined /> },
+                { key: 'reports', label: 'Reports', icon: <BarChartOutlined /> }
+            ]
+        },
+    ];
+
+    const mainMenuItems = isMobile ? mobileMainMenuItems : desktopMainMenuItems;
 
     const bottomMenuItems = [
         {
             type: 'divider',
             style: { margin: '24px 16px', borderColor: 'rgba(255,255,255,0.15)' },
-        },
-        {
-            key: 'notifications',
-            icon: <BellOutlined style={{ fontSize: '20px' }} />,
-            label: <span style={{ fontWeight: 600, fontSize: '16px' }}>Notifications</span>,
         },
         {
             key: 'signout',
@@ -178,8 +164,6 @@ export default function PublicLayout({ children }) {
             danger: true,
         },
     ];
-
-    const { user } = useAuth(); // Get user from context
 
     const ProfileSection = (
         <div style={{ padding: '32px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
@@ -203,8 +187,6 @@ export default function PublicLayout({ children }) {
             </Link>
         </div>
     );
-
-    const { logout } = useAuth(); // Get logout from context
 
     const handleLogout = () => {
         logout();
@@ -273,14 +255,14 @@ export default function PublicLayout({ children }) {
     );
 
     return (
-        <Layout style={{ height: '100vh', overflow: 'hidden' }}>
+        <Layout style={{ height: '100dvh', overflow: 'hidden' }}>
             {!isMobile && (
                 <Sider
                     collapsible
                     collapsed={collapsed}
                     onCollapse={(value) => setCollapsed(value)}
                     width={250}
-                    style={{ background: sidebarBg, height: '100vh', position: 'fixed', left: 0, top: 0, bottom: 0, zIndex: 100 }}
+                    style={{ background: sidebarBg, height: '100dvh', position: 'fixed', left: 0, top: 0, bottom: 0, zIndex: 100 }}
                     trigger={null}
                 >
                     {MenuComponent}
@@ -288,93 +270,231 @@ export default function PublicLayout({ children }) {
             )}
 
             <Drawer
-                title={appName}
-                placement="left"
+                title={isMobile ? null : appName}
+                placement={isMobile ? "bottom" : "left"}
+                closable={!isMobile}
                 onClose={() => setDrawerVisible(false)}
                 open={drawerVisible}
-                styles={{ body: { padding: 0, backgroundColor: sidebarBg }, header: { borderBottom: '1px solid #333' }, wrapper: { width: 250 } }}
+                styles={{ 
+                    body: { padding: 0, backgroundColor: sidebarBg }, 
+                    header: isMobile ? { display: 'none' } : { borderBottom: '1px solid #333' }, 
+                    wrapper: isMobile ? { height: 'auto' } : { width: 250 },
+                    content: isMobile ? { borderTopLeftRadius: 24, borderTopRightRadius: 24, backgroundColor: sidebarBg, paddingBottom: 'env(safe-area-inset-bottom)' } : undefined
+                }}
             >
+                {isMobile && (
+                    <div style={{ padding: '12px 0 0 0', display: 'flex', justifyContent: 'center' }}>
+                        <div style={{ width: 40, height: 4, backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: 4 }} />
+                    </div>
+                )}
                 {MenuComponent}
             </Drawer>
 
-            <Layout style={{ marginLeft: isMobile ? 0 : (collapsed ? 80 : 250), transition: 'margin-left 0.2s', height: '100vh', overflowY: 'auto' }}>
-                <Header style={{ padding: '0 16px', background: colorBgContainer, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 99, width: '100%' }}>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Layout style={{ marginLeft: isMobile ? 0 : (collapsed ? 80 : 250), transition: 'margin-left 0.2s', height: '100dvh', overflowY: 'auto', position: 'relative' }}>
+                {/* Global CMS Background Logo Implementation */}
+                {logo_path && (
+                    <div style={{
+                        position: 'fixed',
+                        top: 0, left: 0, right: 0, bottom: 0,
+                        backgroundImage: `url(${logo_path})`,
+                        backgroundSize: '50% auto',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat',
+                        opacity: 0.05,
+                        zIndex: 0,
+                        pointerEvents: 'none'
+                    }} />
+                )}
+
+                <Header style={{ padding: '0 12px', background: colorBgContainer, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 99, width: '100%', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+                    {/* Left: collapse button + notification bell (desktop) | notification bell (mobile) */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, zIndex: 1, flexShrink: 0, minWidth: isMobile ? 44 : 60 }}>
+                        {!isMobile && (
+                            <Button
+                                type="text"
+                                icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                                onClick={() => setCollapsed(!collapsed)}
+                                style={{ fontSize: '16px', width: 50, height: 50 }}
+                            />
+                        )}
                         <Button
                             type="text"
-                            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-                            onClick={() => {
-                                if (isMobile) {
-                                    setDrawerVisible(true);
-                                } else {
-                                    setCollapsed(!collapsed);
-                                }
-                            }}
+                            icon={<BellOutlined style={{ fontSize: 18 }} />}
                             style={{
-                                fontSize: '16px',
-                                width: 50,
-                                height: 50,
-                                marginRight: 16
+                                width: 38, height: 38,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                borderRadius: 8,
+                                color: token.colorTextSecondary,
                             }}
                         />
                     </div>
 
-                    {/* Centered Logo */}
-                    <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', display: 'flex', alignItems: 'center' }}>
-                        <div style={{
-                            width: 40,
-                            height: 40,
-                            backgroundColor: colorPrimary,
-                            borderRadius: 8,
-                            marginRight: 10,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: '#fff',
-                            fontWeight: 'bold',
-                            fontSize: 20
-                        }}>{appInitials}</div>
-                        <span style={{ fontSize: 20, fontWeight: 700, color: sidebarBg }}>{appName}</span>
+                    {/* Center: Dynamic CMS Header Branding */}
+                    <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden', padding: '0 8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
+                            {logo_path ? (
+                                <img src={logo_path} alt="System Logo" style={{ height: isMobile ? 32 : 40, width: 'auto', marginRight: 10, objectFit: 'contain', flexShrink: 0 }} />
+                            ) : (
+                                <div style={{
+                                    width: isMobile ? 32 : 40,
+                                    height: isMobile ? 32 : 40,
+                                    backgroundColor: colorPrimary,
+                                    borderRadius: 8,
+                                    marginRight: 8,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: '#fff',
+                                    fontWeight: 'bold',
+                                    fontSize: isMobile ? 16 : 20,
+                                    flexShrink: 0
+                                }}>{appInitials}</div>
+                            )}
+                            <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
+                                <Text strong style={{ fontSize: isMobile ? 13 : 18, color: sidebarBg, lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    {appName}
+                                </Text>
+                                {!isMobile && (
+                                    <Text type="secondary" style={{ fontSize: 12, lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                        {appDescription}
+                                    </Text>
+                                )}
+                            </div>
+                        </div>
                     </div>
 
-                    {/* Placeholder for right side header items (notifications etc) */}
-                    <div style={{ width: 64 }}></div>
+                    {/* Right: notification bell */}
+                    <div style={{ display: 'flex', alignItems: 'center', zIndex: 1, flexShrink: 0, minWidth: isMobile ? 44 : 60, justifyContent: 'flex-end' }}>
+                        <Button
+                            type="text"
+                            icon={<BellOutlined style={{ fontSize: 18 }} />}
+                            onClick={() => isMobile && setDrawerVisible(true)}
+                            style={{
+                                width: 38, height: 38,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                borderRadius: 10,
+                                color: token.colorTextSecondary,
+                            }}
+                        />
+                    </div>
                 </Header>
-                <Content style={{ margin: '0 16px', display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 64px)' }}>
-                    <Breadcrumb style={{ margin: '16px 0' }} items={breadcrumbItems} />
+                <Content style={{ margin: '0 16px', display: 'flex', flexDirection: 'column', minHeight: 'calc(100dvh - 64px)', position: 'relative', zIndex: 1, paddingBottom: isMobile ? 80 : 0 }}>
+                    <Breadcrumb style={{ margin: '16px 0', flexShrink: 0 }} items={breadcrumbItems} />
                     <div
                         style={{
                             padding: isMobile ? 12 : 24,
-                            minHeight: 360,
                             background: colorBgContainer,
                             borderRadius: borderRadiusLG,
-                            marginBottom: 24,
-                            flex: 1
+                            marginBottom: 16,
+                            flex: 1,
                         }}
                     >
-                        {children || "Select an item from the menu"}
+                        {children || 'Select an item from the menu'}
                     </div>
-                    <footer style={{ padding: isMobile ? '16px 12px' : '20px 24px', marginBottom: 16, background: colorBgContainer, borderRadius: borderRadiusLG, border: `1px solid ${colorTextTertiary}22`, flexShrink: 0 }}>
-                        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', gap: 12 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <footer style={{
+                        padding: isMobile ? '12px' : '16px 24px',
+                        marginBottom: isMobile ? 72 : 16,
+                        background: colorBgContainer,
+                        borderRadius: borderRadiusLG,
+                        border: `1px solid ${token.colorBorderSecondary}`,
+                        flexShrink: 0,
+                        position: 'relative',
+                        zIndex: 1,
+                    }}>
+                        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', gap: 8 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                 <a href="https://privacy.gov.ph/" target="_blank" rel="noopener noreferrer" style={{ flexShrink: 0 }}>
-                                    <img src="/images/npc-logo.png" alt="National Privacy Commission" style={{ height: 100, width: 'auto', display: 'block' }} />
+                                    <img src="/images/npc-logo.png" alt="National Privacy Commission" style={{ height: isMobile ? 40 : 56, width: 'auto', display: 'block' }} />
                                 </a>
-                                <div>
+                                <div style={{ minWidth: 0 }}>
                                     <a href="https://privacy.gov.ph/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-                                        <Text strong style={{ fontSize: 13, display: 'block', lineHeight: 1.3, color: colorPrimary }}>Data Privacy Act of 2012 (RA 10173)</Text>
+                                        <Text strong style={{ fontSize: 12, display: 'block', lineHeight: 1.4, color: colorPrimary }}>
+                                            {isMobile ? 'Data Privacy Act (RA 10173)' : 'Data Privacy Act of 2012 (RA 10173)'}
+                                        </Text>
                                     </a>
-                                    <Text type="secondary" style={{ fontSize: 11, lineHeight: 1.4, display: 'block', maxWidth: 600 }}>
-                                        This system complies with the Data Privacy Act of 2012 (Republic Act No. 10173) of the Philippines. All personal information collected, stored, and processed is handled in accordance with the <a href="https://privacy.gov.ph/" target="_blank" rel="noopener noreferrer" style={{ color: colorPrimary }}>National Privacy Commission</a> guidelines to ensure confidentiality, integrity, and security of data.
-                                    </Text>
+                                    {!isMobile && (
+                                        <Text type="secondary" style={{ fontSize: 11, lineHeight: 1.5, display: 'block' }}>
+                                            This system complies with RA 10173. Personal information is handled per{' '}
+                                            <a href="https://privacy.gov.ph/" target="_blank" rel="noopener noreferrer" style={{ color: colorPrimary }}>NPC</a> guidelines.
+                                        </Text>
+                                    )}
                                 </div>
                             </div>
-                            <div style={{ textAlign: isMobile ? 'left' : 'right', flexShrink: 0 }}>
-                                <Text type="secondary" style={{ fontSize: 11, display: 'block' }}>&copy; {new Date().getFullYear()} {appName}. All rights reserved.</Text>
-                            </div>
+                            <Text type="secondary" style={{ fontSize: 11, flexShrink: 0, whiteSpace: 'nowrap' }}>
+                                &copy; {new Date().getFullYear()} {isMobile ? appName.split(' ').slice(0, 2).join(' ') : appName}. All rights reserved.
+                            </Text>
                         </div>
                     </footer>
                 </Content>
+                
+                {/* Mobile Bottom Navigation Bar */}
+                {isMobile && (
+                    <div style={{
+                        position: 'fixed',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: 60,
+                        backgroundColor: colorBgContainer,
+                        borderTop: `1px solid ${token.colorBorderSecondary}`,
+                        display: 'flex',
+                        justifyContent: 'space-around',
+                        alignItems: 'stretch',
+                        zIndex: 1000,
+                        paddingBottom: 'env(safe-area-inset-bottom)',
+                        boxShadow: '0 -2px 12px rgba(0,0,0,0.07)'
+                    }}>
+                        {[
+                            { key: '/', icon: <DashboardOutlined />, label: 'Home' },
+                            { key: '/repository', icon: <BookOutlined />, label: 'Library' },
+                            { key: '/thesis-management', icon: <FileTextOutlined />, label: 'Manage' },
+                            { key: '/review-manager', icon: <AuditOutlined />, label: 'Review' },
+                            { key: 'more', icon: <MenuOutlined />, label: 'Menu', isAction: true }
+                        ].map(item => {
+                            const isActive = item.isAction ? drawerVisible : location.pathname === item.key;
+                            return (
+                                <div
+                                    key={item.key}
+                                    onClick={() => {
+                                        if (item.isAction) {
+                                            setDrawerVisible(true);
+                                        } else {
+                                            navigate(item.key);
+                                        }
+                                    }}
+                                    style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        flex: 1,
+                                        height: '100%',
+                                        color: isActive ? colorPrimary : token.colorTextSecondary,
+                                        cursor: 'pointer',
+                                        transition: 'color 0.18s',
+                                        position: 'relative',
+                                        paddingTop: 4,
+                                    }}
+                                >
+                                    {/* Active top indicator bar */}
+                                    {isActive && (
+                                        <div style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: '25%',
+                                            right: '25%',
+                                            height: 3,
+                                            backgroundColor: colorPrimary,
+                                            borderRadius: '0 0 3px 3px',
+                                        }} />
+                                    )}
+                                    <div style={{ fontSize: 20, marginBottom: 2, lineHeight: 1 }}>{item.icon}</div>
+                                    <span style={{ fontSize: 10, fontWeight: isActive ? 700 : 400, lineHeight: 1 }}>{item.label}</span>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
             </Layout>
         </Layout>
     );

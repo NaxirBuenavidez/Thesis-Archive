@@ -55,7 +55,7 @@ export default function PersonalInfoView({ user }) {
 
             <Descriptions.Item
                 label={<LabelWithIcon icon={<Info size={18} />} text="Bio" />}
-                span={2}
+                span={screens.lg ? 2 : 1}
             >
                 <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
                     {user.profile?.bio || 'N/A'}
@@ -64,7 +64,7 @@ export default function PersonalInfoView({ user }) {
 
             <Descriptions.Item
                 label={<LabelWithIcon icon={<GraduationCap size={18} />} text="Educational Attainment" />}
-                span={2}
+                span={screens.lg ? 2 : 1}
             >
                 {user.educational_backgrounds && user.educational_backgrounds.length > 0 ? (
                     <Descriptions

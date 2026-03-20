@@ -31,6 +31,8 @@ class Thesis extends Model
         'doi',
         'pdf_path',
         'pdf_original_name',
+        'docx_path',
+        'docx_original_name',
         'co_author',
         'panelists',
         'review_checklist',

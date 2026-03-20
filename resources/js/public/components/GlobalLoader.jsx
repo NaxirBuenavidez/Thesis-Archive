@@ -14,18 +14,18 @@ export default function GlobalLoader() {
     return (
         <div style={{
             position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgba(255, 255, 255, 0.7)',
+            inset: 0,
+            backgroundColor: 'rgba(255, 255, 255, 0.75)',
             display: 'flex',
+            flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            zIndex: 9999,
-            backdropFilter: 'blur(2px)'
+            zIndex: 99999,
+            backdropFilter: 'blur(3px)',
+            WebkitBackdropFilter: 'blur(3px)',
+            transition: 'opacity 0.2s',
         }}>
-            <ScaleLoader color={primaryColor} height={50} width={6} radius={4} margin={4} />
+            <ScaleLoader color={primaryColor} height={44} width={5} radius={4} margin={3} />
         </div>
     );
 }

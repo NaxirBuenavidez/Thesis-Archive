@@ -4,9 +4,14 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
 
-Route::post('/login', [AuthController::class, 'login']);
+// Throttle login to 5 attempts per minute per IP to prevent brute-force
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 Route::get('/auth/google/redirect', [AuthController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
+
+// Public settings endpoint - branding always accessible
+Route::get('/api/settings', [App\Http\Controllers\SettingController::class, 'index']);
+
 
 Route::middleware('auth:web')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -27,8 +32,15 @@ Route::middleware('auth:web')->group(function () {
     // Thesis Management Routes
     Route::apiResource('/api/theses', App\Http\Controllers\ThesisController::class);
     Route::patch('/api/theses/{thesis}/review', [App\Http\Controllers\ThesisController::class, 'review']);
+    Route::patch('/api/theses/{thesis}/publish', [App\Http\Controllers\ThesisController::class, 'publish']);
+    Route::patch('/api/theses/{thesis}/toggle-confidential', [App\Http\Controllers\ThesisController::class, 'toggleConfidential']);
+    Route::post('/api/theses/{thesis}/download', [App\Http\Controllers\ThesisController::class, 'download']);
+
+    // Dashboard Analytics
+    Route::get('/api/dashboard/analytics', [App\Http\Controllers\DashboardController::class, 'analytics']);
 
     // System Settings Routes
+    Route::post('/api/settings', [App\Http\Controllers\SettingController::class, 'update']);
     Route::apiResource('/api/departments', App\Http\Controllers\DepartmentController::class);
     Route::get('/api/senior-high-programs', [App\Http\Controllers\ProgramController::class, 'seniorHigh']);
     Route::apiResource('/api/programs', App\Http\Controllers\ProgramController::class);

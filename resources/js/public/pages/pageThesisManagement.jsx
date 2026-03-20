@@ -15,6 +15,7 @@ import {
     FileTextOutlined
 } from '@ant-design/icons';
 import { Calendar, BookOpen, Clock, Eye, Pencil, Trash2 } from 'lucide-react';
+import { Eye20Filled, Edit20Filled, Delete20Filled } from '@fluentui/react-icons';
 import { useTableSearch } from '../../hooks/useTableSearch';
 import { useAuth } from '../../context/AuthContext';
 import { Spin } from 'antd';
@@ -28,17 +29,9 @@ export default function ThesisManagement() {
     const { user } = useAuth();
     const screens = useBreakpoint();
     const navigate = useNavigate();
-
-    if (!user) {
-        return (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
-                <Spin size="large" />
-            </div>
-        );
-    }
-
     const { token } = theme.useToken();
     const primaryColor = token.colorPrimary;
+
     const { message, modal } = App.useApp();
 
     const [data, setData] = useState([]);
@@ -343,74 +336,94 @@ export default function ThesisManagement() {
         },
     ];
 
+    const isMobile = !screens.md;
+
     return (
         <div style={{ paddingBottom: '40px' }}>
-            <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-                <div>
-                    <Title level={2} style={{ margin: 0, fontWeight: 700 }}>Thesis Management</Title>
-                    <Text type="secondary">Manage repository of theses and research papers</Text>
+            <div style={{ marginBottom: 20 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
+                    <div>
+                        <Title level={isMobile ? 3 : 2} style={{ margin: 0, fontWeight: 700 }}>Thesis Management</Title>
+                        <Text type="secondary">Manage repository of theses and research papers</Text>
+                    </div>
+                    {!isMobile && (
+                        <Space>
+                            <Tooltip title="Refresh List">
+                                <Button icon={<ReloadOutlined />} size="large" style={{ borderRadius: '8px' }} onClick={() => { setGlobalSearchText(''); fetchTheses(); }} />
+                            </Tooltip>
+                            <Button type="primary" icon={<PlusOutlined />} size="large" style={{ borderRadius: '8px', padding: '0 24px', fontWeight: 600 }} onClick={openCreateModal}>
+                                Archive
+                            </Button>
+                        </Space>
+                    )}
                 </div>
-                <Space wrap>
+                <div style={{ display: 'flex', gap: 8 }}>
                     <Input
                         placeholder="Search theses..."
                         prefix={<SearchOutlined style={{ color: token.colorTextDescription }} />}
-                        style={{ width: 280, borderRadius: '8px', backgroundColor: token.colorBgContainer, border: `1px solid ${token.colorBorder}` }}
+                        style={{ flex: 1, borderRadius: '8px', backgroundColor: token.colorBgContainer, border: `1px solid ${token.colorBorder}` }}
                         allowClear
                         value={globalSearchText}
                         onChange={(e) => setGlobalSearchText(e.target.value)}
                         size="large"
                     />
-                    <Tooltip title="Refresh List">
-                        <Button icon={<ReloadOutlined />} size="large" style={{ borderRadius: '8px' }} onClick={() => { setGlobalSearchText(''); fetchTheses(); }} />
-                    </Tooltip>
-                    <Button
-                        type="primary"
-                        icon={<PlusOutlined />}
-                        size="large"
-                        style={{ borderRadius: '8px', padding: '0 24px', fontWeight: 600, boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}
-                        onClick={openCreateModal}
-                    >
-                        Archive
-                    </Button>
-                </Space>
+                    {isMobile && (
+                        <Button type="primary" icon={<PlusOutlined />} size="large" style={{ borderRadius: '8px' }} onClick={openCreateModal} />
+                    )}
+                </div>
             </div>
 
-            <Card
-                variant="borderless"
-                style={{ borderRadius: '16px', boxShadow: '0 5px 20px rgba(0, 0, 0, 0.05)', overflow: 'hidden', background: token.colorBgContainer }}
-                styles={{ body: { padding: 0 } }}
-            >
+            <Card variant="borderless" style={{ borderRadius: '16px', boxShadow: '0 5px 20px rgba(0,0,0,0.05)', overflow: 'hidden', background: token.colorBgContainer }} styles={{ body: { padding: 0 } }}>
                 <Tabs
                     activeKey={activeTab}
                     onChange={(key) => { setActiveTab(key); }}
-                    style={{ padding: '16px 24px 0 24px' }}
+                    style={{ padding: isMobile ? '12px 16px 0' : '16px 24px 0 24px' }}
+                    size={isMobile ? 'small' : 'middle'}
                     items={[
-                        { key: 'preview', label: <Space><Eye size={15} /> Document Preview</Space> },
-                        { key: 'modify', label: <Space><Pencil size={15} /> Modify Record</Space> },
-                        { key: 'remove', label: <Space><Trash2 size={15} /> Remove Record</Space> },
+                        { key: 'preview', label: <Space><Eye20Filled style={{ fontSize: 16, color: activeTab === 'preview' ? token.colorPrimary : undefined }} />{!isMobile && 'Document Preview'}</Space> },
+                        { key: 'modify', label: <Space><Edit20Filled style={{ fontSize: 16, color: activeTab === 'modify' ? token.colorPrimary : undefined }} />{!isMobile && 'Modify Record'}</Space> },
+                        { key: 'remove', label: <Space><Delete20Filled style={{ fontSize: 16, color: activeTab === 'remove' ? token.colorError : undefined }} />{!isMobile && 'Remove Record'}</Space> },
                     ]}
                 />
-                <Table
-                    columns={columns}
-                    dataSource={filteredData}
-                    loading={loading}
-                    scroll={{ x: 1000 }}
-                    pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: ['10', '25', '50'], showTotal: (total) => <Text type="secondary">{total} theses found</Text>, style: { padding: '16px 24px' } }}
-                    rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'}
-                    onRow={(record) => ({
-                        onClick: () => {
-                            if (activeTab === 'preview') {
-                                setPreviewThesis(record);
-                                setIsPreviewOpen(true);
-                            } else if (activeTab === 'modify') {
-                                openEditModal(record);
-                            } else if (activeTab === 'remove') {
-                                handleDelete(record.key);
-                            }
-                        },
-                        style: { cursor: 'pointer' }
-                    })}
-                />
+                {isMobile ? (
+                    // Mobile card list
+                    <div style={{ padding: '12px 16px' }}>
+                        {!loading && filteredData.map(record => (
+                            <div
+                                key={record.key}
+                                style={{ background: token.colorFillAlter, borderRadius: 10, padding: '12px 14px', marginBottom: 10, border: `1px solid ${token.colorBorderSecondary}`, cursor: 'pointer' }}
+                                onClick={() => {
+                                    if (activeTab === 'preview') { setPreviewThesis(record); setIsPreviewOpen(true); }
+                                    else if (activeTab === 'modify') openEditModal(record);
+                                    else if (activeTab === 'remove') handleDelete(record.key);
+                                }}
+                            >
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 6 }}>
+                                    <Text strong style={{ fontSize: 13, flex: 1, lineHeight: 1.4 }} ellipsis={{ tooltip: record.title }}>{record.title}</Text>
+                                    <Tag color={getStatusColor(record.status)} style={{ borderRadius: 20, margin: 0, fontSize: 11, border: 'none', flexShrink: 0 }}>{record.status.replace('_', ' ').toUpperCase()}</Tag>
+                                </div>
+                                <Text type="secondary" style={{ fontSize: 12 }}>{record.author} · {record.department || record.discipline || 'No dept'}</Text>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <Table
+                        columns={columns}
+                        dataSource={filteredData}
+                        loading={loading}
+                        scroll={{ x: 1000 }}
+                        pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: ['10', '25', '50'], showTotal: (total) => <Text type="secondary">{total} theses found</Text>, style: { padding: '16px 24px' } }}
+                        rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'}
+                        onRow={(record) => ({
+                            onClick: () => {
+                                if (activeTab === 'preview') { setPreviewThesis(record); setIsPreviewOpen(true); }
+                                else if (activeTab === 'modify') openEditModal(record);
+                                else if (activeTab === 'remove') handleDelete(record.key);
+                            },
+                            style: { cursor: 'pointer' }
+                        })}
+                    />
+                )}
             </Card>
 
             <Drawer
@@ -423,12 +436,15 @@ export default function ThesisManagement() {
                         </div>
                     </div>
                 }
-                placement="right"
+                placement={isMobile ? 'bottom' : 'right'}
                 onClose={() => { setIsPreviewOpen(false); setPreviewThesis(null); }}
                 open={isPreviewOpen}
-                width={screens.md ? 720 : '100%'}
-                headerStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}`, padding: '16px 24px' }}
-                bodyStyle={{ padding: 0 }}
+                size={isMobile ? 'default' : 'large'}
+                styles={{
+                    wrapper: isMobile ? { height: '90vh' } : undefined,
+                    header: { borderBottom: `1px solid ${token.colorBorderSecondary}`, padding: '16px 24px' },
+                    body: { padding: 0 }
+                }}
             >
                 {previewThesis ? (
                     <Tabs
@@ -444,7 +460,7 @@ export default function ThesisManagement() {
                                         <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
                                             <Col xs={24} lg={12}>
                                                 <Card size="small" variant="borderless" style={{ background: token.colorFillAlter, borderRadius: 12, height: '100%' }}>
-                                                    <Descriptions title={<Space><FileTextOutlined style={{ fontSize: 16 }} /> <Text strong>Submission Details</Text></Space>} column={1} size="small" labelStyle={{ color: token.colorTextSecondary }}>
+                                                    <Descriptions title={<Space><FileTextOutlined style={{ fontSize: 16 }} /> <Text strong>Submission Details</Text></Space>} column={1} size="small" styles={{ label: { color: token.colorTextSecondary } }}>
                                                         <Descriptions.Item label="Status">
                                                             <Tag color={getStatusColor(previewThesis.status)} style={{ borderRadius: 12 }}>{previewThesis.status.replace('_', ' ').toUpperCase()}</Tag>
                                                         </Descriptions.Item>
@@ -458,13 +474,13 @@ export default function ThesisManagement() {
                                                         <Descriptions.Item label="Visibility">
                                                             <Badge status={previewThesis.isConfidential ? "warning" : "success"} text={previewThesis.isConfidential ? "Confidential" : "Public"} />
                                                         </Descriptions.Item>
-                                                        <Descriptions.Item label="Degree Type"><Tag color="blue" bordered={false}>{previewThesis.degreeType || 'N/A'}</Tag></Descriptions.Item>
+                                                        <Descriptions.Item label="Degree Type"><Tag color="blue" variant="filled">{previewThesis.degreeType || 'N/A'}</Tag></Descriptions.Item>
                                                     </Descriptions>
                                                 </Card>
                                             </Col>
                                             <Col xs={24} lg={12}>
                                                 <Card size="small" variant="borderless" style={{ background: token.colorFillAlter, borderRadius: 12, height: '100%' }}>
-                                                    <Descriptions title={<Space><BookOpen size={16} /> <Text strong>Author & Affiliation</Text></Space>} column={1} size="small" labelStyle={{ color: token.colorTextSecondary }}>
+                                                    <Descriptions title={<Space><BookOpen size={16} /> <Text strong>Author & Affiliation</Text></Space>} column={1} size="small" styles={{ label: { color: token.colorTextSecondary } }}>
                                                         <Descriptions.Item label="Main Author"><Text strong>{previewThesis.author}</Text></Descriptions.Item>
                                                         <Descriptions.Item label="Program"><Text>{previewThesis.discipline || 'N/A'}</Text></Descriptions.Item>
                                                         <Descriptions.Item label="Department"><Text type="secondary">{previewThesis.department || 'N/A'}</Text></Descriptions.Item>
@@ -578,9 +594,11 @@ export default function ThesisManagement() {
                 onCancel={() => setIsModalOpen(false)}
                 footer={null}
                 centered
-                width={800}
-                style={{ maxWidth: 'calc(100vw - 32px)' }}
-                destroyOnClose
+                width={isMobile ? '100%' : 800}
+                style={{ maxWidth: 'calc(100vw - 32px)', top: isMobile ? 0 : undefined, margin: isMobile ? 0 : undefined, padding: isMobile ? 0 : undefined }}
+                styles={{ body: { maxHeight: isMobile ? '90vh' : undefined, overflowY: isMobile ? 'auto' : undefined }}
+                }
+                destroyOnHidden
             >
                 <div style={{ padding: '24px 0' }}>
 

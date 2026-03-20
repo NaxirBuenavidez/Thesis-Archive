@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Row, Col, Card, Typography, Button, theme, Spin, Grid } from 'antd';
+import { Row, Col, Card, Typography, Button, theme, Grid } from 'antd';
 import { Shield, Edit } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext'; // Updated path
 import ProfileHeader from './viewProfileHeader';
@@ -20,13 +20,6 @@ export default function Profile() {
     const { token } = theme.useToken();
     const { colorPrimary, borderRadiusLG } = token;
 
-    if (!user) {
-        return (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
-                <Spin size="large" />
-            </div>
-        );
-    }
 
 
 

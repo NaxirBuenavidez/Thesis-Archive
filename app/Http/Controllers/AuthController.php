@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
@@ -16,16 +17,25 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'email'    => ['required', 'email'],
             'password' => ['required'],
         ]);
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
+            // ── Single-session enforcement ──────────────────────────────────
+            // Generate a new unique token, write it to the DB, and store it
+            // in the current session. EnsureSingleSession middleware will
+            // compare these on every request and kick out any older session.
+            $token = Str::uuid()->toString();
+            Auth::user()->update(['session_token' => $token]);
+            $request->session()->put('session_token', $token);
+            // ────────────────────────────────────────────────────────────────
+
             return response()->json([
                 'message' => 'Login successful',
-                'user' => Auth::user(),
+                'user'    => Auth::user()->load('role', 'profile'),
             ]);
         }
 
