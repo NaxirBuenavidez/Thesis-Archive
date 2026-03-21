@@ -3,7 +3,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
+        "build": "vite build && mkdir -p dist && echo '<?php require __DIR__ . \"/../api/index.php\";' > dist/index.php",
         "dev": "vite"
     },
     "devDependencies": {
