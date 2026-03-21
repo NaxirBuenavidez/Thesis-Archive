@@ -259,7 +259,7 @@ export default function Login() {
 
     // Redirect already-authenticated users away from login
     useEffect(() => {
-        if (!authLoading && user) {
+        if (!authLoading && user && user.role?.slug !== 'anonymous') {
             navigate('/', { replace: true });
         }
     }, [user, authLoading, navigate]);
