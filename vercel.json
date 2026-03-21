@@ -30,7 +30,7 @@
         },
         {
             "source": "/(.*)",
-            "destination": "/api/index.php"
+            "destination": "/api/index.php?__path_override=$1"
         }
     ]
 }
