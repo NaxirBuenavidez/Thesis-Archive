@@ -4,7 +4,7 @@ import { getUserArg, logoutArg } from '../private/api/auth';
 
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({ children, initialUser = undefined }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 

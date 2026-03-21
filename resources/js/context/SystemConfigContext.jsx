@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const SystemConfigContext = createContext();
 
-export function SystemConfigProvider({ children }) {
+export function SystemConfigProvider({ children, initialData = null }) {
     const [settings, setSettings] = useState({
         primary_color: import.meta.env.VITE_COLOR_PRIMARY || '#2845D6',
         primary_color_dark: import.meta.env.VITE_COLOR_PRIMARY_DARK || '#1A2CA3',

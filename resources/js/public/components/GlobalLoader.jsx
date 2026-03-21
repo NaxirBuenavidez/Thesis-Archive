@@ -29,8 +29,15 @@ export default function GlobalLoader() {
         const handleStop = () => {
             countRef.current = Math.max(0, countRef.current - 1);
             if (countRef.current === 0) {
-                setVisible(false);
-                timerRef.current = setTimeout(() => setIsLoading(false), 300);
+                // CLEAR the start timer if it hasn't fired yet!
+                if (timerRef.current) clearTimeout(timerRef.current);
+                
+                if (visible) {
+                    setVisible(false);
+                    timerRef.current = setTimeout(() => setIsLoading(false), 120); // Faster fade out
+                } else {
+                    setIsLoading(false); // Never showed, so reset immediately
+                }
             }
         };
 
@@ -88,8 +95,8 @@ export default function GlobalLoader() {
                     background: rgba(255,255,255,0.72);
                     backdrop-filter: blur(6px);
                     -webkit-backdrop-filter: blur(6px);
-                    transition: opacity 0.28s ease;
-                    animation: gl-fadein 0.18s ease;
+                    transition: opacity 0.18s ease;
+                    animation: gl-fadein 0.12s ease;
                 }
                 .gl-ring {
                     position: relative;
