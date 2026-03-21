@@ -34,12 +34,21 @@ export default function GlobalLoader() {
             }
         };
 
+        // Safety reset for mobile: if we back/resume, we clear the loader
+        const handleReset = () => {
+            countRef.current = 0;
+            setVisible(false);
+            setIsLoading(false);
+        };
+
         window.addEventListener('loading-start', handleStart);
         window.addEventListener('loading-stop', handleStop);
+        window.addEventListener('pageshow', handleReset); // Clear on browser back/history resume
 
         return () => {
             window.removeEventListener('loading-start', handleStart);
             window.removeEventListener('loading-stop', handleStop);
+            window.removeEventListener('pageshow', handleReset);
             clearTimeout(timerRef.current);
         };
     }, []);

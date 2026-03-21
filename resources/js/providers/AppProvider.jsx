@@ -47,12 +47,18 @@ export function AppProvider({ children }) {
 
     React.useEffect(() => {
         const boot = async () => {
+            // Safety timeout: don't hang for more than 10 seconds
+            const timeout = setTimeout(() => {
+                if (booting) setBooting(false);
+            }, 10000);
+
             try {
                 const { data } = await window.axios.get('/api/boot');
                 setBootData(data);
             } catch (error) {
                 console.error('Boot failed', error);
             } finally {
+                clearTimeout(timeout);
                 setBooting(false);
             }
         };

@@ -20,7 +20,9 @@ if (token) {
 // Dispatch loading events so GlobalLoader shows/hides on network activity
 window.axios.interceptors.request.use(
     config => {
-        window.dispatchEvent(new Event('loading-start'));
+        if (!config.silent) {
+            window.dispatchEvent(new Event('loading-start'));
+        }
         return config;
     },
     error => {
@@ -31,7 +33,9 @@ window.axios.interceptors.request.use(
 
 window.axios.interceptors.response.use(
     response => {
-        window.dispatchEvent(new Event('loading-stop'));
+        if (!response.config.silent) {
+            window.dispatchEvent(new Event('loading-stop'));
+        }
         return response;
     },
     error => {
