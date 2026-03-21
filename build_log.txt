@@ -1,0 +1,49 @@
+﻿
+> build
+> vite build
+
+[36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32mΓ£ô[39m 5659 modules transformed.
+node.exe : [31mΓ£ù[39m Build failed in 24.08s
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([31mΓ£ù[39m Build failed in 24.08s:String) [ 
+   ], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[31merror during build:
+[31mresources/js/public/pages/pageThesisManagement.jsx (17:26): "Clock" is not exported by 
+"node_modules/@ant-design/icons/es/index.js", imported by 
+"resources/js/public/pages/pageThesisManagement.jsx".[31m
+file: [36mC:/Users/nazzb/Downloads/PROJECTS/Thesis-Archive/resources/js/public/pages/pageTh
+esisManagement.jsx:17:26[31m
+[33m
+15: import drawerThesisPreview from './Management/components/drawerThesisPreview';
+16: import '../../../css/thesis-management.scss';
+17: import { FilePdfOutlined, Clock } from '@ant-design/icons';
+                              ^
+18: import { Calendar } from 'lucide-react';
+19: import { Tag, Avatar } from 'antd';
+[31m
+    at getRollupError (file:///C:/Users/nazzb/Downloads/PROJECTS/Thesis-Archive/node_modules
+/rollup/dist/es/shared/parseAst.js:402:41)
+    at error (file:///C:/Users/nazzb/Downloads/PROJECTS/Thesis-Archive/node_modules/rollup/d
+ist/es/shared/parseAst.js:398:42)
+    at Module.error (file:///C:/Users/nazzb/Downloads/PROJECTS/Thesis-Archive/node_modules/r
+ollup/dist/es/shared/node-entry.js:17040:16)
+    at Module.traceVariable (file:///C:/Users/nazzb/Downloads/PROJECTS/Thesis-Archive/node_m
+odules/rollup/dist/es/shared/node-entry.js:17452:29)
+    at ModuleScope.findVariable (file:///C:/Users/nazzb/Downloads/PROJECTS/Thesis-Archive/no
+de_modules/rollup/dist/es/shared/node-entry.js:15070:39)
+    at FunctionScope.findVariable (file:///C:/Users/nazzb/Downloads/PROJECTS/Thesis-Archive/
+node_modules/rollup/dist/es/shared/node-entry.js:5673:38)
+    at FunctionBodyScope.findVariable (file:///C:/Users/nazzb/Downloads/PROJECTS/Thesis-Arch
+ive/node_modules/rollup/dist/es/shared/node-entry.js:5673:38)
+    at ReturnValueScope.findVariable (file:///C:/Users/nazzb/Downloads/PROJECTS/Thesis-Archi
+ve/node_modules/rollup/dist/es/shared/node-entry.js:5673:38)
+    at FunctionBodyScope.findVariable (file:///C:/Users/nazzb/Downloads/PROJECTS/Thesis-Arch
+ive/node_modules/rollup/dist/es/shared/node-entry.js:5673:38)
+    at ReturnValueScope.findVariable (file:///C:/Users/nazzb/Downloads/PROJECTS/Thesis-Archi
+ve/node_modules/rollup/dist/es/shared/node-entry.js:5673:38)[39m

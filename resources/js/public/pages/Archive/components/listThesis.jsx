@@ -1,5 +1,6 @@
 import React from 'react';
-import { Typography, TagOutlined, UserOutlined, CalendarOutlined, BookOutlined } from '@ant-design/icons';
+import { Typography } from 'antd';
+import { TagOutlined, UserOutlined, CalendarOutlined, BookOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;

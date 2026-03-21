@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table, Tag, Space, Button, Typography, Avatar } from 'antd';
-import { FilePdfOutlined, EditOutlined, DeleteOutlined, EyeOutlined, Clock } from '@ant-design/icons';
+import { FilePdfOutlined, EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
 import { Calendar } from 'lucide-react';
 
 const { Text } = Typography;

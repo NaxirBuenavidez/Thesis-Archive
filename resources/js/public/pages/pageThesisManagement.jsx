@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Typography, Space, Button, Card, Input, Tooltip, Grid, theme, Tabs, App, Form } from 'antd';
+import { Typography, Space, Button, Card, Input, Tooltip, Grid, theme, Tabs, App, Form, ConfigProvider, Table } from 'antd';
 import { PlusOutlined, SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Eye20Filled, Edit20Filled, Delete20Filled } from '@fluentui/react-icons';
 import { useTableSearch } from '../../hooks/useTableSearch';
 import { useAuth } from '../../context/AuthContext';
+import { useSystemConfig } from '../../context/SystemConfigContext';
 import dayjs from 'dayjs';
 import thesesApi from '../../api/thesesApi';
 import systemApi from '../../api/systemApi';
@@ -14,8 +15,8 @@ import tableThesis from './Management/components/tableThesis';
 import modalThesisForm from './Management/components/modalThesisForm';
 import drawerThesisPreview from './Management/components/drawerThesisPreview';
 import '../../../css/thesis-management.scss';
-import { FilePdfOutlined, Clock } from '@ant-design/icons';
-import { Calendar } from 'lucide-react';
+import { FilePdfOutlined } from '@ant-design/icons';
+import { Calendar, Clock } from 'lucide-react';
 import { Tag, Avatar } from 'antd';
 
 const { Title, Text } = Typography;
@@ -24,7 +25,8 @@ const { useBreakpoint } = Grid;
 export default function ThesisManagement() {
     const { user } = useAuth();
     const screens = useBreakpoint();
-    const { token, departments: bootDepts, programs: bootProgs } = useSystemConfig();
+    const { token } = theme.useToken();
+    const { departments: bootDepts, programs: bootProgs } = useSystemConfig();
     const primaryColor = token.colorPrimary;
     const { message, modal } = App.useApp();
 

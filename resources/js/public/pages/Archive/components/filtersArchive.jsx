@@ -1,5 +1,6 @@
 import React from 'react';
-import { Typography, Space, Tag, Divider, BookOutlined } from 'antd';
+import { Typography, Space, Tag, Divider } from 'antd';
+import { BookOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Row, Col, Card, Descriptions, Space, Tag, Typography, Badge, Divider } from 'antd';
-import { FileTextOutlined, Clock } from '@ant-design/icons';
+import { FileTextOutlined } from '@ant-design/icons';
 import { BookOpen, Calendar } from 'lucide-react';
 
 const { Title, Text } = Typography;
