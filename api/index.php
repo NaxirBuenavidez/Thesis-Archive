@@ -11,9 +11,11 @@ putenv('APP_ROUTES_CACHE=/tmp/routes.php');
 putenv('APP_SERVICES_CACHE=/tmp/services.php');
 putenv('VIEW_COMPILED_PATH=/tmp/storage/framework/views');
 
-// Use database sessions natively across serverless functions instead of dropping payload
+// Force the session and cache to database to prevent Vercel dashboard misconfigurations (like CACHE_STORE=cookie)
 putenv('SESSION_DRIVER=database');
 $_ENV['SESSION_DRIVER'] = 'database';
+putenv('CACHE_STORE=database');
+$_ENV['CACHE_STORE'] = 'database';
 
 // Dynamically whitelist Vercel's active domain for Sanctum CSRF stateful cookie validation!
 $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
