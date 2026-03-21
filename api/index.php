@@ -20,6 +20,10 @@ $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
 putenv('SANCTUM_STATEFUL_DOMAINS=' . $host);
 $_ENV['SANCTUM_STATEFUL_DOMAINS'] = $host;
 
+// Force the session cookie domain to precisely match so the browser doesn't natively reject the token
+putenv('SESSION_DOMAIN=' . $host);
+$_ENV['SESSION_DOMAIN'] = $host;
+
 $_ENV['APP_CONFIG_CACHE'] = '/tmp/config.php';
 $_ENV['APP_EVENTS_CACHE'] = '/tmp/events.php';
 $_ENV['APP_PACKAGES_CACHE'] = '/tmp/packages.php';
