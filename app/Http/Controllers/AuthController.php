@@ -34,6 +34,17 @@ class AuthController extends Controller
         }
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            $user = Auth::user()->load('role');
+            
+            // Restricted Login: Only admin, client, and spadmin can enter the system
+            $allowedRoles = ['admin', 'client', 'spadmin'];
+            if (!in_array($user->role->slug, $allowedRoles)) {
+                Auth::logout();
+                throw ValidationException::withMessages([
+                    'email' => ['Your account does not have permission to access this system.'],
+                ]);
+            }
+
             RateLimiter::clear($throttleKey);
 
             $request->session()->regenerate();

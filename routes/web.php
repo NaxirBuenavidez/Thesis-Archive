@@ -46,6 +46,18 @@ Route::get('/debug-env', function () {
     ]);
 });
 
+Route::get('/debug-migrate', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        return response()->json([
+            'status' => 'MIGRATION SUCCESS',
+            'output' => \Illuminate\Support\Facades\Artisan::output()
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['status' => 'FAILED', 'error' => $e->getMessage()]);
+    }
+});
+
 
 Route::middleware('auth:web')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
