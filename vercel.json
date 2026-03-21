@@ -6,7 +6,10 @@
     "builds": [
         {
             "src": "api/index.php",
-            "use": "vercel-php@0.6.2"
+            "use": "vercel-php@0.6.2",
+            "config": {
+                "includeFiles": ["public/**"]
+            }
         }
     ],
     "routes": [
