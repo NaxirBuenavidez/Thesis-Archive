@@ -13,6 +13,8 @@ apiClient.interceptors.response.use((response) => {
 
 export const loginArg = async (credentials) => {
     await apiClient.get('/sanctum/csrf-cookie', { headers: { 'Accept': 'application/json' } });
+    
+    // Credentials already contains email, password, and now captcha_token from the form
     return apiClient.post('/login', credentials, { headers: { 'Accept': 'application/json' }, useLoader: true });
 };
 

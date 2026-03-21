@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Checkbox, App, Typography } from 'antd';
+import ReCAPTCHA from "react-google-recaptcha";
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSystemConfig } from '../../context/SystemConfigContext';
@@ -14,45 +15,16 @@ const { Title, Text } = Typography;
 const STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-@keyframes loginOrb1 {
-  0%,100% { transform: translate(0,0) scale(1); }
-  33%      { transform: translate(60px,-40px) scale(1.15); }
-  66%      { transform: translate(-30px,50px) scale(0.9); }
-}
-@keyframes loginOrb2 {
-  0%,100% { transform: translate(0,0) scale(1); }
-  33%      { transform: translate(-50px,60px) scale(1.1); }
-  66%      { transform: translate(40px,-30px) scale(0.95); }
-}
-@keyframes loginOrb3 {
-  0%,100% { transform: translate(0,0) scale(1); }
-  50%      { transform: translate(30px,40px) scale(1.2); }
-}
 @keyframes loginCardIn {
-  from { opacity: 0; transform: translateY(32px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-@keyframes loginLogoSpin {
-  0%   { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-@keyframes loginLogoPulse {
-  0%,100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.3); }
-  50%      { box-shadow: 0 0 0 14px rgba(255,255,255,0); }
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes loginShimmer {
   0%   { background-position: -200% center; }
   100% { background-position: 200% center; }
 }
-@keyframes loginBadgePulse {
-  0%,100% { opacity: 0.7; }
-  50%      { opacity: 1; }
-}
-@keyframes loginGridMove {
-  from { background-position: 0 0; }
-  to   { background-position: 64px 64px; }
-}
 
+// Static but rich gradient for performance
 .login-root {
   min-height: 100vh;
   display: flex;
@@ -62,28 +34,7 @@ const STYLES = `
   font-family: 'Inter', sans-serif;
   position: relative;
   overflow: hidden;
-}
-
-/* Animated background grid */
-.login-root::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-  background-size: 64px 64px;
-  animation: loginGridMove 8s linear infinite;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.login-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  pointer-events: none;
-  z-index: 0;
+  background: radial-gradient(circle at 20% 20%, #1a2ca3 0%, #0a1045 40%, #000000 100%);
 }
 
 .login-card {
@@ -216,8 +167,14 @@ const STYLES = `
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  animation: loginLogoPulse 2.5s ease-in-out infinite;
   box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.login-captcha {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  min-height: 65px;
 }
 
 .login-logo-img {
@@ -273,6 +230,7 @@ export default function Login() {
     const { message } = App.useApp();
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+    const recaptchaRef = React.useRef();
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const { checkAuth, user, loading: authLoading } = useAuth();
@@ -317,10 +275,16 @@ export default function Login() {
 
     const onFinish = async (values) => {
         if (submitted) return;
-        setLoading(true);
-        setSubmitted(true);
+        const token = recaptchaRef.current.getValue();
+        if (!token) {
+            message.error('Please complete the security verification');
+            setLoading(false);
+            setSubmitted(false);
+            return;
+        }
+
         try {
-            await loginArg(values);
+            await loginArg({ ...values, captcha_token: token });
             message.success('Login successful');
             await checkAuth();
             navigate('/');
@@ -339,6 +303,7 @@ export default function Login() {
             setSubmitted(false);
         } finally {
             setLoading(false);
+            if (!submitted) recaptchaRef.current.reset();
         }
     };
 
@@ -355,36 +320,7 @@ export default function Login() {
     return (
         <div
             className="login-root"
-            style={{ background: `linear-gradient(135deg, ${primaryDark} 0%, #0a1045 50%, #0d0d2b 100%)` }}
         >
-            {/* Animated orbs */}
-            <div
-                className="login-orb"
-                style={{
-                    width: 500, height: 500,
-                    top: '-15%', right: '-10%',
-                    background: `radial-gradient(circle, ${primaryColor}88 0%, transparent 70%)`,
-                    animation: 'loginOrb1 14s ease-in-out infinite',
-                }}
-            />
-            <div
-                className="login-orb"
-                style={{
-                    width: 400, height: 400,
-                    bottom: '-10%', left: '-8%',
-                    background: `radial-gradient(circle, ${primaryDark}99 0%, transparent 70%)`,
-                    animation: 'loginOrb2 18s ease-in-out infinite',
-                }}
-            />
-            <div
-                className="login-orb"
-                style={{
-                    width: 250, height: 250,
-                    top: '55%', right: '20%',
-                    background: 'radial-gradient(circle, rgba(246,128,72,0.35) 0%, transparent 70%)',
-                    animation: 'loginOrb3 10s ease-in-out infinite',
-                }}
-            />
 
             <div className="login-card">
                 {/* ── Logo + Branding ── */}
@@ -469,7 +405,8 @@ export default function Login() {
                                 </svg>
                             }
                             placeholder="Email Address"
-                            autoComplete="username"
+                            autoComplete="email"
+                            inputMode="email"
                         />
                     </Form.Item>
 
@@ -500,6 +437,18 @@ export default function Login() {
                             >
                                 Forgot password?
                             </a>
+                        </div>
+                    </Form.Item>
+
+                    {/* CAPTCHA Widget */}
+                    <Form.Item name="captcha_token" style={{ marginBottom: 20 }}>
+                        <div className="login-captcha">
+                            <ReCAPTCHA
+                                ref={recaptchaRef}
+                                sitekey={import.meta.env.VITE_CAPTCHA_SITE_KEY}
+                                theme="dark"
+                                onChange={(val) => form.setFieldsValue({ captcha_token: val })}
+                            />
                         </div>
                     </Form.Item>
 

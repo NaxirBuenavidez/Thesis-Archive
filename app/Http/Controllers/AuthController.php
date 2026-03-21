@@ -9,6 +9,7 @@ use Illuminate\Validation\ValidationException;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
@@ -18,9 +19,24 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email'    => ['required', 'email'],
-            'password' => ['required'],
+            'email'         => ['required', 'email'],
+            'password'      => ['required'],
+            'captcha_token' => ['required', 'string'],
         ]);
+
+        // ── Verify reCAPTCHA token ──────────────────────────────────────
+        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret'   => env('RECAPTCHA_SECRET_KEY'),
+            'response' => $request->input('captcha_token'),
+            'remoteip' => $request->ip(),
+        ]);
+
+        if (!$response->json('success')) {
+            throw ValidationException::withMessages([
+                'captcha_token' => ['Security verification failed. Please try again.'],
+            ]);
+        }
+        // ────────────────────────────────────────────────────────────────
 
         $throttleKey = Str::transliterate(Str::lower($request->input('email')).'|'.$request->ip());
 
