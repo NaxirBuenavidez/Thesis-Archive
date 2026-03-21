@@ -8,7 +8,13 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const checkAuth = async () => {
+    const checkAuth = async (initialUser = undefined) => {
+        if (initialUser !== undefined) {
+            setUser(initialUser);
+            setLoading(false);
+            return;
+        }
+
         try {
             // We catch the error here, so the 401 is expected if not logged in.
             const response = await getUserArg().catch(() => null);

@@ -12,7 +12,20 @@ export function SystemConfigProvider({ children }) {
     });
     const [loading, setLoading] = useState(true);
 
-    const fetchSettings = async () => {
+    const fetchSettings = async (initialData = null) => {
+        if (initialData) {
+            setSettings(prev => ({
+                ...prev,
+                primary_color: initialData.primary_color || prev.primary_color,
+                primary_color_dark: initialData.primary_color_dark || prev.primary_color_dark,
+                site_title: initialData.site_title || prev.site_title,
+                site_description: initialData.site_description || prev.site_description,
+                logo_path: initialData.logo_path || prev.logo_path
+            }));
+            setLoading(false);
+            return;
+        }
+
         try {
             const response = await window.axios.get('/api/settings');
             const data = response.data;

@@ -16,7 +16,7 @@ Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallbac
 
 // Consolidated Boot API — returns branding + user in 1 request to slash load times on Vercel
 Route::get('/api/boot', function (Illuminate\Http\Request $request) {
-    $settings = \App\Models\Setting::all()->pluck('value', 'key');
+    $settings = \App\Models\Setting::all()->pluck('value', 'key')->toArray();
     
     // Handle logo URL logic identical to SettingController
     if (isset($settings['logo_path']) && !empty($settings['logo_path'])) {

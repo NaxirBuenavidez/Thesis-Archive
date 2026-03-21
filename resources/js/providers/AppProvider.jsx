@@ -42,9 +42,32 @@ function ThemedApp({ children }) {
 }
 
 export function AppProvider({ children }) {
+    const [bootData, setBootData] = React.useState(null);
+    const [booting, setBooting] = React.useState(true);
+
+    React.useEffect(() => {
+        const boot = async () => {
+            try {
+                const { data } = await window.axios.get('/api/boot');
+                setBootData(data);
+            } catch (error) {
+                console.error('Boot failed', error);
+            } finally {
+                setBooting(false);
+            }
+        };
+        boot();
+    }, []);
+
+    // We still render the providers, but we pass the bootData for hydration.
+    // The SystemConfigProvider will use the settings, and AuthProvider will use the user.
     return (
-        <SystemConfigProvider>
-            <ThemedApp>{children}</ThemedApp>
+        <SystemConfigProvider initialData={bootData?.settings}>
+            <ThemedApp>
+                <AuthProvider initialUser={bootData?.user}>
+                    {children}
+                </AuthProvider>
+            </ThemedApp>
         </SystemConfigProvider>
     );
 }
