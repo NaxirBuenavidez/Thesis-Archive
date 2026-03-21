@@ -82,16 +82,17 @@ class ProfileController extends Controller
 
         if ($request->hasFile('avatar')) {
             $file = $request->file('avatar');
-            $base64 = base64_encode(file_get_contents($file->path()));
-            $mimeType = $file->getMimeType();
-            $base64Image = 'data:' . $mimeType . ';base64,' . $base64;
 
-            // Delete old avatar from storage if it exists (legacy support)
+            // Delete old avatar from local storage if it was stored locally (legacy)
             if ($profile->avatar && !str_starts_with($profile->avatar, 'http') && !str_starts_with($profile->avatar, 'data:image')) {
                 Storage::disk('public')->delete($profile->avatar);
             }
 
-            $profile->update(['avatar' => $base64Image]);
+            // Upload the new image to Cloudflare R2 (S3 disk)
+            $path = $file->store('avatars', 's3');
+            
+            // Save the raw public URL to the database
+            $profile->update(['avatar' => Storage::disk('s3')->url($path)]);
         }
 
         return response()->json([

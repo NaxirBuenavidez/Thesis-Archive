@@ -75,7 +75,7 @@ class ThesisController extends Controller
 
         if ($request->hasFile('pdf_file')) {
             $file = $request->file('pdf_file');
-            $path = $file->store('theses/pdfs', 'public');
+            $path = $file->store('theses/pdfs', 's3');
             $validated['pdf_path'] = $path;
             $validated['pdf_original_name'] = $file->getClientOriginalName();
         }
@@ -126,10 +126,10 @@ class ThesisController extends Controller
 
         if ($request->hasFile('pdf_file')) {
             if ($thesis->pdf_path) {
-                Storage::disk('public')->delete($thesis->pdf_path);
+                Storage::disk('s3')->delete($thesis->pdf_path);
             }
             $file = $request->file('pdf_file');
-            $path = $file->store('theses/pdfs', 'public');
+            $path = $file->store('theses/pdfs', 's3');
             $validated['pdf_path'] = $path;
             $validated['pdf_original_name'] = $file->getClientOriginalName();
         }
@@ -210,7 +210,7 @@ class ThesisController extends Controller
     public function destroy(Thesis $thesis)
     {
         if ($thesis->pdf_path) {
-            Storage::disk('public')->delete($thesis->pdf_path);
+            Storage::disk('s3')->delete($thesis->pdf_path);
         }
         $thesis->delete();
         return response()->json(['message' => 'Thesis deleted successfully']);
@@ -239,14 +239,14 @@ class ThesisController extends Controller
             if (!$thesis->pdf_path) {
                 return response()->json(['message' => 'PDF document not found for this thesis.'], 404);
             }
-            return Storage::disk('public')->download($thesis->pdf_path, $thesis->pdf_original_name ?? 'document.pdf');
+            return Storage::disk('s3')->download($thesis->pdf_path, $thesis->pdf_original_name ?? 'document.pdf');
         }
 
         if ($request->format === 'docx') {
             if (!$thesis->docx_path) {
                 return response()->json(['message' => 'DOCX document not found for this thesis. It may have only been uploaded as a PDF.'], 404);
             }
-            return Storage::disk('public')->download($thesis->docx_path, $thesis->docx_original_name ?? 'document.docx');
+            return Storage::disk('s3')->download($thesis->docx_path, $thesis->docx_original_name ?? 'document.docx');
         }
 
         return response()->json(['message' => 'Invalid format requested.'], 400);

@@ -18,6 +18,10 @@ $_ENV['APP_ROUTES_CACHE'] = '/tmp/routes.php';
 $_ENV['APP_SERVICES_CACHE'] = '/tmp/services.php';
 $_ENV['VIEW_COMPILED_PATH'] = '/tmp/storage/framework/views';
 
+// Trick Laravel into knowing Vercel's Load Balancer is using HTTPS
+$_SERVER['HTTPS'] = 'on';
+putenv('HTTPS=on');
+
 try {
     require __DIR__.'/../vendor/autoload.php';
 
