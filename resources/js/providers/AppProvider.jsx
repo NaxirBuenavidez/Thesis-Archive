@@ -61,7 +61,9 @@ export function AppProvider({ children }) {
             }, 10000);
 
             try {
-                const { data } = await window.axios.get('/api/boot');
+                const { data } = await window.axios.get('/api/boot', { 
+                    silent: window.location.pathname === '/archive' 
+                });
                 setBootData(data);
             } catch (error) {
                 console.error('Boot failed', error);

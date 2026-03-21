@@ -122,7 +122,7 @@ export default function PublicArchive() {
 
                 <div style={{ padding: '0 5% 60px', maxWidth: 1400, margin: '0 auto' }}>
                     {selectedCategory === 'All' ? (
-                        <Spin spinning={loading}>
+                        <div style={{ minHeight: 400, position: 'relative', opacity: loading ? 0.6 : 1, transition: 'opacity 0.3s ease' }}>
                             {filteredTheses.length === 0 && !loading ? (
                                 <Empty description="No public records match your search criteria." style={{ margin: '60px 0' }} />
                             ) : (
@@ -139,7 +139,7 @@ export default function PublicArchive() {
                                     </div>
                                 </>
                             )}
-                        </Spin>
+                        </div>
                     ) : (
                         <ThesisListComp selectedCategory={selectedCategory} filteredTheses={filteredTheses} onSelect={setViewThesis} primaryColor={primaryColor} />
                     )}
