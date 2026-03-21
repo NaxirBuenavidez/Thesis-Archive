@@ -15,6 +15,24 @@ Route::get('/api/settings', [App\Http\Controllers\SettingController::class, 'ind
 // Public Thesis Archive Repository
 Route::get('/api/public/theses', [App\Http\Controllers\ThesisController::class, 'publicIndex']);
 
+// 🔴 EMERGENCY VERCEL DEBUG ROUTES
+Route::get('/debug-db', function () {
+    try {
+        \Illuminate\Support\Facades\DB::connection()->getPdo();
+        return response()->json(['status' => 'CONNECTED SUCCESSFULLY']);
+    } catch (\Exception $e) {
+        return response()->json(['status' => 'FAILED', 'error' => $e->getMessage()]);
+    }
+});
+
+Route::get('/debug-env', function () {
+    return response()->json([
+        'APP_KEY' => env('APP_KEY') ? 'EXISTS' : 'CRITICAL: MISSING',
+        'DB_HOST' => env('DB_HOST') ? env('DB_HOST') : 'CRITICAL: MISSING',
+        'AWS_URL' => env('AWS_URL') ? 'EXISTS' : 'MISSING',
+    ]);
+});
+
 
 Route::middleware('auth:web')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
