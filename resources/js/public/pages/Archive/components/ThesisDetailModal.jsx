@@ -31,7 +31,9 @@ const ThesisDetailModal = ({ thesis, onClose }) => {
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
                     <Tag color="blue">{thesis.department || 'Category Unspecified'}</Tag>
                     {thesis.degree_type && <Tag color="cyan">{thesis.degree_type}</Tag>}
-                    <Tag color="green">Published Study ID: {thesis.id}</Tag>
+                    <Tag color="green" style={{ whiteSpace: 'normal', height: 'auto', display: 'inline-flex', alignItems: 'center', maxWidth: '100%' }}>
+                        Published Study ID: <span style={{ wordBreak: 'break-all' }}>{thesis.id}</span>
+                    </Tag>
                 </div>
                 
                 <Title level={3} style={{ marginTop: 0, marginBottom: 24, lineHeight: 1.3, fontSize: 'clamp(1.2rem, 4vw, 1.75rem)' }}>{thesis.title}</Title>

@@ -40,7 +40,9 @@ const modalThesis = ({ thesis, onClose }) => {
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 20 }}>
                     <Tag color="blue" style={{ margin: 0 }}>{thesis.department || 'Category Unspecified'}</Tag>
                     {thesis.degree_type && <Tag color="cyan" style={{ margin: 0 }}>{thesis.degree_type}</Tag>}
-                    <Tag color="green" style={{ margin: 0 }}>ID: {thesis.id}</Tag>
+                    <Tag color="green" style={{ margin: 0, whiteSpace: 'normal', height: 'auto', display: 'inline-flex', alignItems: 'center', maxWidth: '100%' }}>
+                        ID: <span style={{ wordBreak: 'break-all' }}>{thesis.id}</span>
+                    </Tag>
                 </div>
                 
                 <Title level={3} style={{ 
