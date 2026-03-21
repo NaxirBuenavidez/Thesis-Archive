@@ -3,16 +3,14 @@ import laravel from 'laravel-vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 
+import { cloudflare } from "@cloudflare/vite-plugin";
+
 export default defineConfig({
-    plugins: [
-        laravel({
-            input: ['resources/css/app.css', 'resources/js/app.jsx'],
-            refresh: true,
-            detectTls: 'thesis-archive.test',
-        }),
-        tailwindcss(),
-        react(),
-    ],
+    plugins: [laravel({
+        input: ['resources/css/app.css', 'resources/js/app.jsx'],
+        refresh: true,
+        detectTls: 'thesis-archive.test',
+    }), tailwindcss(), react(), cloudflare()],
     server: {
         host: 'thesis-archive.test',
         hmr: {
