@@ -26,6 +26,15 @@ $_ENV['VIEW_COMPILED_PATH'] = '/tmp/storage/framework/views';
 $_SERVER['HTTPS'] = 'on';
 putenv('HTTPS=on');
 
+// 🚨 VERCEL NATIVE ROUTING FIX
+// Vercel serverless functions mutate REQUEST_URI to the destination script (api/index.php).
+// We map it back via the query string tracking parameter to un-break Laravel routing!
+if (isset($_GET['__path_override'])) {
+    $override = '/' . ltrim($_GET['__path_override'], '/');
+    $_SERVER['REQUEST_URI'] = $override;
+    $_SERVER['PATH_INFO'] = $override;
+}
+
 try {
     require __DIR__.'/../vendor/autoload.php';
 
