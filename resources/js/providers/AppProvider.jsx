@@ -46,6 +46,13 @@ export function AppProvider({ children }) {
     const [booting, setBooting] = React.useState(true);
 
     React.useEffect(() => {
+        // If boot data was injected into the Blade template, consume it immediately to skip the network round-trip.
+        if (window.__boot_data) {
+            setBootData(window.__boot_data);
+            setBooting(false);
+            return;
+        }
+
         const boot = async () => {
             // Safety timeout: don't hang for more than 10 seconds
             const timeout = setTimeout(() => {

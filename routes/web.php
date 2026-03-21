@@ -122,6 +122,31 @@ Route::middleware('auth:web')->group(function () {
 });
 
 
-Route::get('/{any}', function () {
-    return view('welcome');
+Route::get('/{any}', function (Illuminate\Http\Request $request) {
+    // 1. Fetch Branding/Settings (Cached via internal logic or DB)
+    $settings = \App\Models\Setting::all()->pluck('value', 'key')->toArray();
+    
+    // Handle logo URL logic identical to SettingController
+    if (isset($settings['logo_path']) && !empty($settings['logo_path'])) {
+        $val = (string) $settings['logo_path'];
+        if (!str_starts_with($val, 'http') && !str_starts_with($val, 'data:image')) {
+            if (env('FILESYSTEM_DISK') === 's3') {
+                try {
+                    $settings['logo_path'] = \Illuminate\Support\Facades\Storage::disk('s3')->temporaryUrl($val, now()->addMinutes(120));
+                } catch (\Exception $e) {
+                    $settings['logo_path'] = url('storage/' . $val);
+                }
+            } else {
+                $settings['logo_path'] = url('storage/' . $val);
+            }
+        }
+    }
+
+    // 2. Wrap everything in a boot object
+    $bootData = [
+        'settings' => $settings,
+        'user'     => $request->user()?->load('profile', 'role')
+    ];
+
+    return view('welcome', compact('bootData'));
 })->where('any', '.*');
