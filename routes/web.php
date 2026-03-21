@@ -14,6 +14,32 @@ Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,
 Route::get('/auth/google/redirect', [AuthController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
+// Consolidated Boot API — returns branding + user in 1 request to slash load times on Vercel
+Route::get('/api/boot', function (Illuminate\Http\Request $request) {
+    $settings = \App\Models\Setting::all()->pluck('value', 'key');
+    
+    // Handle logo URL logic identical to SettingController
+    if (isset($settings['logo_path']) && !empty($settings['logo_path'])) {
+        $val = (string) $settings['logo_path'];
+        if (!str_starts_with($val, 'http') && !str_starts_with($val, 'data:image')) {
+            if (env('FILESYSTEM_DISK') === 's3') {
+                try {
+                    $settings['logo_path'] = \Illuminate\Support\Facades\Storage::disk('s3')->temporaryUrl($val, now()->addMinutes(120));
+                } catch (\Exception $e) {
+                    $settings['logo_path'] = url('storage/' . $val);
+                }
+            } else {
+                $settings['logo_path'] = url('storage/' . $val);
+            }
+        }
+    }
+
+    return response()->json([
+        'settings' => $settings,
+        'user'     => $request->user()?->load('profile', 'role')
+    ]);
+});
+
 // Public settings endpoint - branding always accessible
 Route::get('/api/settings', [App\Http\Controllers\SettingController::class, 'index']);
 
