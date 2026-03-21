@@ -38,7 +38,7 @@ class AuthController extends Controller
             
             // Restricted Login: Only admin, client, and spadmin can enter the system
             $allowedRoles = ['admin', 'client', 'spadmin'];
-            if (!in_array($user->role->slug, $allowedRoles)) {
+            if (!$user->role || !in_array($user->role->slug, $allowedRoles)) {
                 Auth::logout();
                 throw ValidationException::withMessages([
                     'email' => ['Your account does not have permission to access this system.'],
