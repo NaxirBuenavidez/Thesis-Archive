@@ -245,7 +245,8 @@ export default function Login() {
 
     // Obfuscate / secure login URL visually
     useEffect(() => {
-        if (!searchParams.has('_gl')) {
+        const gl = searchParams.get('_gl');
+        if (!gl) {
             const newParams = new URLSearchParams(searchParams);
             const r = (len) => Array.from({length: len}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.charAt(Math.floor(Math.random() * 62))).join('');
             

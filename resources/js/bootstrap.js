@@ -57,7 +57,10 @@ window.axios.interceptors.response.use(
 
         if (error.response && (error.response.status === 401)) {
             const publicPaths = ['/login', '/archive'];
-            if (!publicPaths.includes(window.location.pathname)) {
+            const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+            const isPublic = publicPaths.some(p => p === currentPath || (currentPath === '' && p === '/'));
+            
+            if (!isPublic && currentPath !== '/login' && currentPath !== '/archive') {
                 window.location.href = '/login';
             }
         }

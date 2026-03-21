@@ -33,7 +33,10 @@ const ProtectedRoute = ({ children }) => {
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
     );
-    if (!user || user.role?.slug === 'anonymous') return <Navigate to="/login" replace />;
+    if (!user || user.role?.slug === 'anonymous') {
+        if (window.location.pathname === '/login') return children;
+        return <Navigate to="/login" replace />;
+    }
     return children;
 };
 
@@ -43,6 +46,7 @@ const AlreadyAuthedRoute = ({ children }) => {
     if (loading) return null;
     // Only redirect if a real user exists (not 'anonymous' guest)
     if (user && user.role?.slug !== 'anonymous') {
+        if (window.location.pathname === '/' || window.location.pathname === '') return children;
         return <Navigate to="/" replace />;
     }
     return children;
@@ -122,7 +126,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "*",
-                element: <Navigate to="/" replace />,
+                element: window.location.pathname === '/' ? null : <Navigate to="/" replace />,
             }
         ]
     }
