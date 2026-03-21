@@ -88,8 +88,8 @@ const STYLES = `
 .login-card {
   position: relative;
   z-index: 2;
-  width: 100%;
-  max-width: 460px;
+  width: 92%;
+  max-width: 440px;
   background: rgba(255,255,255,0.09);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
@@ -98,7 +98,7 @@ const STYLES = `
   box-shadow:
     0 8px 32px rgba(0,0,0,0.4),
     0 1px 0 rgba(255,255,255,0.12) inset;
-  padding: 44px 40px 36px;
+  padding: clamp(32px, 8vw, 44px) clamp(20px, 6vw, 40px) clamp(28px, 6vw, 36px);
   animation: loginCardIn 0.6s cubic-bezier(.22,1,.36,1) both;
 }
 
@@ -226,24 +226,34 @@ const STYLES = `
   padding: 6px;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 576px) {
   .login-root {
-    padding: 16px;
+    padding: 12px;
   }
   .login-card {
-    padding: 32px 24px 28px;
     border-radius: 20px;
+    margin-bottom: 20px;
+    width: 95%;
   }
   .login-logo-wrap {
-    width: 60px;
-    height: 60px;
-    margin-bottom: 16px;
+    width: clamp(54px, 15vw, 68px);
+    height: clamp(54px, 15vw, 68px);
+    margin-bottom: clamp(12px, 4vw, 18px);
+    border-radius: 16px;
   }
-  .login-btn {
-    height: 46px !important;
+  .login-btn, .login-google-btn {
+    height: 48px !important;
   }
   .login-divider {
-    margin: 16px 0;
+    margin: clamp(12px, 4vw, 20px) 0;
+  }
+}
+
+@media (max-height: 700px) and (orientation: portrait) {
+  .login-root {
+    align-items: flex-start;
+    padding-top: 32px;
+    overflow-y: auto;
   }
 }
 `;
@@ -423,7 +433,12 @@ export default function Login() {
                         background: `linear-gradient(90deg, ${primaryColor}, rgba(246,128,72,0.8))`,
                     }} />
 
-                    <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 14, display: 'block', marginTop: 12 }}>
+                    <Text style={{ 
+                        color: 'rgba(255,255,255,0.7)', 
+                        fontSize: 'clamp(12px, 3.5vw, 14px)', 
+                        display: 'block', 
+                        marginTop: 'clamp(8px, 3vw, 12px)' 
+                    }}>
                         Welcome back — sign in to continue
                     </Text>
                 </div>
@@ -501,7 +516,11 @@ export default function Login() {
                     {/* Google Sign-in */}
                     <div className="login-divider">
                         <div className="login-divider-line" />
-                        <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, whiteSpace: 'nowrap' }}>
+                        <Text style={{ 
+                            color: 'rgba(255,255,255,0.4)', 
+                            fontSize: 'clamp(10px, 3vw, 12px)', 
+                            whiteSpace: 'nowrap' 
+                        }}>
                             OR CONTINUE WITH
                         </Text>
                         <div className="login-divider-line" />
@@ -535,13 +554,20 @@ export default function Login() {
                     </Text>
                 </div>
 
-                <div style={{ textAlign: 'center', marginTop: 14 }}>
-                    <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12 }}>
+                <div style={{ textAlign: 'center', marginTop: 'clamp(10px, 4vw, 16px)' }}>
+                    <Text style={{ 
+                        color: 'rgba(255,255,255,0.4)', 
+                        fontSize: 'clamp(11px, 3.2vw, 12px)' 
+                    }}>
                         Don't have an account?{' '}
                     </Text>
                     <a
                         href="#"
-                        style={{ color: 'rgba(255,255,255,0.75)', fontSize: 12, fontWeight: 600 }}
+                        style={{ 
+                            color: 'rgba(255,255,255,0.75)', 
+                            fontSize: 'clamp(11px, 3.2vw, 12px)', 
+                            fontWeight: 600 
+                        }}
                         onClick={e => e.preventDefault()}
                     >
                         Contact Administrator
