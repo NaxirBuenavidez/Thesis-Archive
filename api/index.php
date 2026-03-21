@@ -11,6 +11,10 @@ putenv('APP_ROUTES_CACHE=/tmp/routes.php');
 putenv('APP_SERVICES_CACHE=/tmp/services.php');
 putenv('VIEW_COMPILED_PATH=/tmp/storage/framework/views');
 
+// Force stateless cookie sessions to prevent Vercel from wiping auth/CSRF
+putenv('SESSION_DRIVER=cookie');
+$_ENV['SESSION_DRIVER'] = 'cookie';
+
 $_ENV['APP_CONFIG_CACHE'] = '/tmp/config.php';
 $_ENV['APP_EVENTS_CACHE'] = '/tmp/events.php';
 $_ENV['APP_PACKAGES_CACHE'] = '/tmp/packages.php';
