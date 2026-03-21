@@ -100,27 +100,27 @@ export default function GlobalLoader() {
                 }
                 .gl-ring {
                     position: relative;
-                    width: 88px;
-                    height: 88px;
+                    width: 140px;
+                    height: 140px;
                 }
                 .gl-ring::before {
                     content: '';
                     position: absolute;
                     inset: 0;
                     border-radius: 50%;
-                    border: 3.5px solid rgba(0,0,0,0.07);
+                    border: 5px solid rgba(0,0,0,0.07);
                 }
                 .gl-arc {
                     position: absolute;
                     inset: 0;
                     border-radius: 50%;
-                    border: 3.5px solid transparent;
+                    border: 5px solid transparent;
                     border-top-color: var(--gl-color);
                     border-right-color: var(--gl-color);
                     animation: gl-spin 0.9s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite;
                 }
                 .gl-arc2 {
-                    inset: 8px;
+                    inset: 12px;
                     border-top-color: transparent;
                     border-right-color: transparent;
                     border-bottom-color: var(--gl-color);
@@ -137,10 +137,10 @@ export default function GlobalLoader() {
                     animation: gl-pulse 1.8s ease-in-out infinite;
                 }
                 .gl-logo img {
-                    width: 40px;
-                    height: 40px;
+                    width: 64px;
+                    height: 64px;
                     object-fit: contain;
-                    border-radius: 6px;
+                    border-radius: 8px;
                 }
                 .gl-fallback {
                     width: 40px;
