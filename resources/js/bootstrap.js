@@ -5,6 +5,7 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 window.axios.defaults.headers.common['Accept'] = 'application/json';
 window.axios.defaults.withCredentials = true;      // Send cookies (session + XSRF) cross-port in dev
 window.axios.defaults.withXSRFToken   = true;      // Auto-attach XSRF-TOKEN cookie as X-XSRF-TOKEN header
+window.axios.defaults.timeout = 30000;             // 30s global timeout to prevent indefinite XHR loading
 
 /**
  * reliable CSRF token implementation
@@ -49,6 +50,11 @@ window.axios.interceptors.response.use(
             return axios.get('/sanctum/csrf-cookie').then(() => {
                 return axios(originalRequest);
             });
+        }
+
+        if (error.code === 'ECONNABORTED' && error.message.includes('timeout')) {
+            console.error('Network Request Timeout: The server took too long to respond.');
+            // Optional: Dispatch a global timeout notification if needed
         }
 
         if (error.response && (error.response.status === 401)) {

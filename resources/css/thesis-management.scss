@@ -1,0 +1,41 @@
+/* Thesis Management Styles */
+
+.table-row-light {
+    background-color: #fff;
+}
+
+.table-row-dark {
+    background-color: #fafafa;
+}
+
+.management-card {
+    border-radius: 16px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    overflow: hidden;
+    
+    .ant-card-body {
+        padding: 0;
+    }
+}
+
+.status-tag {
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    border: none;
+}
+
+.mobile-thesis-item {
+    background: #f5f5f5; /* token.colorFillAlter fallback */
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    border: 1px solid #f0f0f0; /* token.colorBorderSecondary fallback */
+    cursor: pointer;
+    
+    &:hover {
+        border-color: #2845D6;
+    }
+}

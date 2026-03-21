@@ -1,0 +1,50 @@
+/* Public Archive Layout Styles */
+
+.hero-search-box {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border-radius: 8px;
+}
+.hero-search-box:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3) !important;
+}
+
+.public-thesis-card {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.public-thesis-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 36px rgba(0,0,0,0.08) !important;
+}
+
+.floating-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(40px);
+    animation: floatOrb 20s infinite ease-in-out alternate;
+    pointer-events: none;
+}
+
+@keyframes floatOrb {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-30px, 40px) scale(1.1); }
+}
+
+.dspace-title-hover:hover {
+    text-decoration: underline;
+}
+
+.desktop-nav { display: flex; }
+.mobile-nav-btn { display: none !important; }
+
+@media (max-width: 800px) {
+    .desktop-nav { display: none !important; }
+    .mobile-nav-btn { display: flex !important; }
+}
+
+.archive-tile-bg {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+}
