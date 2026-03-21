@@ -246,7 +246,6 @@ export default function Users() {
                     <Table
                         columns={columns}
                         dataSource={filteredData}
-                        loading={loading}
                         scroll={{ x: 800 }}
                         pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: ['10', '25', '50'], showTotal: (total) => <Text type="secondary">{total} users found</Text>, style: { padding: '16px 24px' } }}
                         rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'}

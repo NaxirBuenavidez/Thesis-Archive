@@ -87,7 +87,7 @@ export default function Repository() {
                         panelists: thesis.panelists,
                         hasPdf: !!thesis.pdf_path,
                         pdfName: thesis.pdf_original_name,
-                        pdfUrl: thesis.pdf_path ? `/storage/${thesis.pdf_path}` : null,
+                        pdfUrl: thesis.pdf_url || (thesis.pdf_path ? `/storage/${thesis.pdf_path}` : null),
                         author: thesis.author || (thesis.owner ? thesis.owner.name : 'Unknown'),
                         authorAvatar: thesis.owner?.profile?.avatar ? (thesis.owner.profile.avatar.startsWith('http') || thesis.owner.profile.avatar.startsWith('data:image') ? thesis.owner.profile.avatar : `/storage/${thesis.owner.profile.avatar}`) : null,
                         archived_by: thesis.archived_by,

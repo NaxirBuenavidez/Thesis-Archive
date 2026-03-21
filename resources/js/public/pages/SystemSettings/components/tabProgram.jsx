@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Space, Modal, Form, Input, Select, message, Popconfirm, Typography, Tooltip, Tag, Dropdown } from 'antd';
+import { Table, Button, Space, Modal, Form, Input, Select, Popconfirm, Typography, Tooltip, Tag, Dropdown, App } from 'antd';
 import { PlusOutlined, DeleteOutlined, ReloadOutlined, SearchOutlined, MoreOutlined, EditOutlined } from '@ant-design/icons';
 
 const { Text } = Typography;
 const { Option } = Select;
 
 export default function tabProgram({ apiEndpoint = '/api/programs', isSeniorHigh = false }) {
+    const { message } = App.useApp();
     const [data, setData] = useState([]);
     const [departments, setDepartments] = useState([]);
     const [loading, setLoading] = useState(false);

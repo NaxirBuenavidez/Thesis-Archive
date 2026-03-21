@@ -22,16 +22,9 @@ class DatabaseSeeder extends Seeder
 
         $roles = \App\Models\Role::all();
 
-        // Create SpAdmin
-        User::factory()->create([
-            'name' => 'SpAdmin User',
-            'email' => 'spadmin@example.com',
-            'role_id' => $roles->where('slug', 'spadmin')->first()->id,
-        ])->profile()->save(\App\Models\Profile::factory()->make());
-
         // Create Admin
         User::factory()->create([
-            'name' => 'Admin',
+            'name' => 'System Administrator',
             'email' => 'admin@admin.com',
             'password' => \Illuminate\Support\Facades\Hash::make('Admin123!'),
             'role_id' => $roles->where('slug', 'admin')->first()->id,
@@ -39,14 +32,10 @@ class DatabaseSeeder extends Seeder
 
         // Create Client
         User::factory()->create([
-            'name' => 'Client User',
+            'name' => 'Regular User',
             'email' => 'client@example.com',
+            'password' => \Illuminate\Support\Facades\Hash::make('Client123!'),
             'role_id' => $roles->where('slug', 'client')->first()->id,
         ])->profile()->save(\App\Models\Profile::factory()->make());
-
-        // Create some random users
-        User::factory(10)->create()->each(function ($user) {
-            $user->profile()->save(\App\Models\Profile::factory()->make());
-        });
     }
 }

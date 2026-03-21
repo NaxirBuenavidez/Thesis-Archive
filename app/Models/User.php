@@ -49,6 +49,16 @@ class User extends Authenticatable
         ];
     }
 
+    protected static function booted()
+    {
+        static::saved(function ($model) {
+            \Illuminate\Support\Facades\Cache::forget('dashboard_analytics');
+        });
+        static::deleted(function ($model) {
+            \Illuminate\Support\Facades\Cache::forget('dashboard_analytics');
+        });
+    }
+
     public function role()
     {
         return $this->belongsTo(Role::class);

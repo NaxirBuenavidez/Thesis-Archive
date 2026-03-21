@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { List, Typography, Button, Space, theme, Popconfirm, message } from 'antd';
+import { List, Typography, Button, Space, theme, Popconfirm, App } from 'antd';
 import { Edit, Trash2, GraduationCap } from 'lucide-react';
 import { deleteEducation } from '../../../private/api/profile';
 
 const { Text, Title } = Typography;
 
 export default function EducationalBackgroundView({ education, onEdit, refreshData }) {
+    const { message } = App.useApp();
     const { token } = theme.useToken();
     const { colorPrimary } = token;
 

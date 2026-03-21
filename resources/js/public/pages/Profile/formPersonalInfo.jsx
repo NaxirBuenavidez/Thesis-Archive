@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, DatePicker, Row, Col, Space, Button, Divider, message, Select, Card } from 'antd';
+import { Form, Input, DatePicker, Row, Col, Space, Button, Divider, Select, Card, App } from 'antd';
 import { SaveOutlined, PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { updateProfile } from '../../../private/api/profile';
@@ -8,6 +8,7 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 export default function PersonalInfoForm({ user, checkAuth, onCancel, onSuccess }) {
+    const { message } = App.useApp();
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
 

@@ -49,6 +49,21 @@ class Thesis extends Model
         'review_checklist' => 'array',
     ];
 
+    protected $appends = [
+        'pdf_url',
+        'docx_url',
+    ];
+
+    protected static function booted()
+    {
+        static::saved(function ($model) {
+            \Illuminate\Support\Facades\Cache::forget('dashboard_analytics');
+        });
+        static::deleted(function ($model) {
+            \Illuminate\Support\Facades\Cache::forget('dashboard_analytics');
+        });
+    }
+
     public function owner()
     {
         return $this->belongsTo(User::class, 'owner_id');
@@ -57,5 +72,25 @@ class Thesis extends Model
     public function primarySupervisor()
     {
         return $this->belongsTo(User::class, 'primary_supervisor_id');
+    }
+
+    public function getPdfUrlAttribute()
+    {
+        if (!$this->pdf_path) return null;
+        if (env('FILESYSTEM_DISK') === 's3') {
+            return \Illuminate\Support\Facades\Storage::disk('s3')->temporaryUrl($this->pdf_path, now()->addMinutes(60), [
+                'ResponseContentType' => 'application/pdf',
+                'ResponseContentDisposition' => 'inline; filename="' . ($this->pdf_original_name ?? 'document.pdf') . '"',
+            ]);
+        }
+        return url('storage/' . $this->pdf_path);
+    }
+
+    public function getDocxUrlAttribute()
+    {
+        return $this->docx_path ? \Illuminate\Support\Facades\Storage::disk('s3')->temporaryUrl($this->docx_path, now()->addMinutes(60), [
+            'ResponseContentType' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'ResponseContentDisposition' => 'attachment; filename="' . ($this->docx_original_name ?? 'document.docx') . '"',
+        ]) : null;
     }
 }

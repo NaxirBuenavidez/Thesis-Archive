@@ -18,7 +18,6 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 
 
 
-import { LoadingProvider } from './context/LoadingContext';
 import GlobalLoader from './public/components/GlobalLoader';
 
 const ProtectedRoute = ({ children }) => {
@@ -58,12 +57,12 @@ const RoleRoute = ({ children, allowedRoles }) => {
 const router = createBrowserRouter([
     {
         element: (
-            <LoadingProvider>
+            <>
                 <GlobalLoader />
                 <AuthProvider>
                     <Outlet />
                 </AuthProvider>
-            </LoadingProvider>
+            </>
         ),
         children: [
             {

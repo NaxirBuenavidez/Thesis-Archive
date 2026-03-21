@@ -3,7 +3,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build && mkdir -p dist && echo '<?php require __DIR__ . \"/../api/index.php\";' > dist/index.php",
+        "build": "vite build && node -e \"const fs=require('fs'); if(!fs.existsSync('dist')) fs.mkdirSync('dist'); fs.writeFileSync('dist/index.php', '<?php require __DIR__ . \\\"/../api/index.php\\\";');\"",
         "dev": "vite"
     },
     "devDependencies": {

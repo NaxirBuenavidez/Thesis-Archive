@@ -11,6 +11,18 @@ class SettingController extends Controller
     public function index()
     {
         $settings = Setting::all()->pluck('value', 'key');
+        
+        if (isset($settings['logo_path'])) {
+            $val = $settings['logo_path'];
+            if (!str_starts_with($val, 'http') && !str_starts_with($val, 'data:image')) {
+                if (env('FILESYSTEM_DISK') === 's3') {
+                    $settings['logo_path'] = \Illuminate\Support\Facades\Storage::disk('s3')->temporaryUrl($val, now()->addMinutes(120));
+                } else {
+                    $settings['logo_path'] = url('storage/' . $val);
+                }
+            }
+        }
+        
         return response()->json($settings);
     }
 
@@ -29,11 +41,11 @@ class SettingController extends Controller
         // Handle logo upload if present
         if ($request->hasFile('logo')) {
             $request->validate(['logo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:5120']);
-            $path = $request->file('logo')->store('system', 'public');
+            $path = $request->file('logo')->store('system', 's3');
             
             Setting::updateOrCreate(
                 ['key' => 'logo_path'],
-                ['value' => '/storage/' . $path]
+                ['value' => $path]
             );
         }
 

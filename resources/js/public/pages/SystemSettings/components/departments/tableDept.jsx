@@ -66,7 +66,6 @@ export default function tableDept({ data, loading, onEdit, onDelete }) {
             columns={columns}
             dataSource={data}
             rowKey="id"
-            loading={loading}
             pagination={{ pageSize: 10 }}
             scroll={{ x: 600 }}
         />

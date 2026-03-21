@@ -10,7 +10,9 @@ import axios from 'axios';
 // OR we use a global event bus that the LoadingContext listens to.
 // Let's iterate: modifying bootstrap.js to dispatch events is cleaner for "every process".
 
-export const loginArg = (credentials) => {
+export const loginArg = async (credentials) => {
+    // Seed the CSRF cookie before posting so Laravel doesn't return 419
+    await axios.get('/sanctum/csrf-cookie');
     return axios.post('/login', credentials);
 };
 

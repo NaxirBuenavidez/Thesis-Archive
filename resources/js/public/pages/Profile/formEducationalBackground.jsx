@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Form, Input, Button, DatePicker, Select, Space, Row, Col, message } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Form, Input, Button, DatePicker, Select, Space, Row, Col, App } from 'antd';
 import { Save } from 'lucide-react';
 import dayjs from 'dayjs';
 import { addEducation, updateEducation } from '../../../private/api/profile';
@@ -8,6 +8,7 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 export default function EducationalBackgroundForm({ initialValues, onCancel, onSuccess }) {
+    const { message } = App.useApp();
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
 

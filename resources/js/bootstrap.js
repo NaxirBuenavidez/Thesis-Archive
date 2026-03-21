@@ -16,7 +16,7 @@ if (token) {
     console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
-// Add a request interceptor
+// Dispatch loading events so GlobalLoader shows/hides on network activity
 window.axios.interceptors.request.use(
     config => {
         window.dispatchEvent(new Event('loading-start'));
@@ -28,7 +28,6 @@ window.axios.interceptors.request.use(
     }
 );
 
-// Add a response interceptor
 window.axios.interceptors.response.use(
     response => {
         window.dispatchEvent(new Event('loading-stop'));
@@ -37,7 +36,6 @@ window.axios.interceptors.response.use(
     error => {
         window.dispatchEvent(new Event('loading-stop'));
         if (error.response && (error.response.status === 401 || error.response.status === 419)) {
-            // Unauthenticated interceptor: Don't redirect if on login or designated public pages
             const publicPaths = ['/login', '/archive'];
             if (!publicPaths.includes(window.location.pathname)) {
                 window.location.href = '/login';
@@ -46,3 +44,4 @@ window.axios.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+

@@ -18,7 +18,6 @@ import { Calendar, BookOpen, Clock, Eye, Pencil, Trash2 } from 'lucide-react';
 import { Eye20Filled, Edit20Filled, Delete20Filled } from '@fluentui/react-icons';
 import { useTableSearch } from '../../hooks/useTableSearch';
 import { useAuth } from '../../context/AuthContext';
-import { Spin } from 'antd';
 import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
@@ -410,7 +409,6 @@ export default function ThesisManagement() {
                     <Table
                         columns={columns}
                         dataSource={filteredData}
-                        loading={loading}
                         scroll={{ x: 1000 }}
                         pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: ['10', '25', '50'], showTotal: (total) => <Text type="secondary">{total} theses found</Text>, style: { padding: '16px 24px' } }}
                         rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'}
@@ -570,7 +568,7 @@ export default function ThesisManagement() {
                                                     <Button
                                                         icon={<LinkOutlined />}
                                                         size="small"
-                                                        href={`/storage/${previewThesis.raw.pdf_path}`}
+                                                        href={previewThesis.raw?.pdf_url || `/storage/${previewThesis.raw.pdf_path}`}
                                                         target="_blank"
                                                         type="text"
                                                         style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid #ddd' }}
@@ -579,7 +577,7 @@ export default function ThesisManagement() {
                                                     </Button>
                                                 </div>
                                                 <iframe
-                                                    src={`/storage/${previewThesis.raw.pdf_path}`}
+                                                    src={previewThesis.raw?.pdf_url || `/storage/${previewThesis.raw.pdf_path}`}
                                                     width="100%"
                                                     height="100%"
                                                     style={{ border: 'none' }}
@@ -610,7 +608,7 @@ export default function ThesisManagement() {
                 centered
                 width={isMobile ? '100%' : 800}
                 style={{ maxWidth: 'calc(100vw - 32px)', top: isMobile ? 0 : undefined, margin: isMobile ? 0 : undefined, padding: isMobile ? 0 : undefined }}
-                styles={{ body: { maxHeight: isMobile ? '90vh' : undefined, overflowY: isMobile ? 'auto' : undefined }}
+                styles={{ body: { maxHeight: isMobile ? '90vh' : undefined, overflowY: isMobile ? 'auto' : undefined } }
                 }
                 destroyOnHidden
             >
@@ -700,7 +698,7 @@ export default function ThesisManagement() {
                                 </Form.Item>
                             </Col>
                         </Row>
-                        
+
                         <Row gutter={16}>
                             <Col xs={24} md={12}>
                                 <Form.Item name="submission_date" label="Submission Date">

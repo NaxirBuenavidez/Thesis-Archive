@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Upload, message, Card, Typography, Space, Row, Col, ColorPicker } from 'antd';
+import { Form, Input, Button, Upload, Card, Typography, Space, Row, Col, ColorPicker, App } from 'antd';
 import { UploadOutlined, BuildOutlined, BgColorsOutlined } from '@ant-design/icons';
 import { useSystemConfig } from '../../../../context/SystemConfigContext';
 
 const { Title, Text } = Typography;
 
 export default function TabBranding() {
+    const { message } = App.useApp();
     const { refreshSettings, loading, site_title, site_description, primary_color, primary_color_dark, logo_path } = useSystemConfig();
     const [form] = Form.useForm();
     const [fileList, setFileList] = useState([]);

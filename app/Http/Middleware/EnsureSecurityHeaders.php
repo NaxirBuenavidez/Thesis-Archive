@@ -39,19 +39,10 @@ class EnsureSecurityHeaders
         $fontSrc   = "'self' https://fonts.gstatic.com https://fonts.bunny.net data:";
         $connectSrc = "'self' ws: wss:";
 
-        if ($isDev && $viteHost) {
-            $scriptSrc  .= " {$viteHost}";
-            $styleSrc   .= " {$viteHost}";
-            $connectSrc .= " {$viteHost}";
-        } elseif ($isDev) {
-            // Fallback: allow any localhost/127 port in dev so Vite always works
-            $scriptSrc  .= " http://localhost:* https://localhost:* http://127.0.0.1:*";
-            $styleSrc   .= " http://localhost:* https://localhost:* http://127.0.0.1:*";
-            $connectSrc .= " http://localhost:* https://localhost:* ws://localhost:* wss://localhost:* http://127.0.0.1:*";
-            // Also allow the current host on any port (covers thesis-archive.test:5173 etc.)
-            $scriptSrc  .= " https:";
-            $styleSrc   .= " https:";
-        }
+        $host = request()->getHost();
+        $scriptSrc  .= " http://localhost:* https://localhost:* http://127.0.0.1:* http://{$host}:* https://{$host}:*";
+        $styleSrc   .= " http://localhost:* https://localhost:* http://127.0.0.1:* http://{$host}:* https://{$host}:*";
+        $connectSrc .= " http://localhost:* https://localhost:* ws://localhost:* wss://localhost:* http://127.0.0.1:* ws://{$host}:* wss://{$host}:*";
 
         $csp = implode('; ', [
             "default-src 'self'",
@@ -60,6 +51,7 @@ class EnsureSecurityHeaders
             "font-src {$fontSrc}",
             "img-src 'self' data: blob: https: http:",   // Allow logo uploads + Google avatars
             "connect-src {$connectSrc}",
+            "frame-src 'self' data: blob: https: http:",
             "frame-ancestors 'self'",
             "base-uri 'self'",
             "form-action 'self'",

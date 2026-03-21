@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Avatar, Upload, Button, Typography, Tag, Divider, Spin, message, theme, Grid } from 'antd';
+import { Card, Avatar, Upload, Button, Typography, Tag, Divider, Spin, theme, Grid, App } from 'antd';
 import { User, Camera } from 'lucide-react';
 import dayjs from 'dayjs';
 import { uploadAvatar } from '../../../private/api/profile';
@@ -7,6 +7,7 @@ import { uploadAvatar } from '../../../private/api/profile';
 const { Title, Text } = Typography;
 
 export default function ProfileHeader({ user, checkAuth }) {
+    const { message } = App.useApp();
     const [avatarLoading, setAvatarLoading] = useState(false);
     const { token } = theme.useToken();
     const { colorPrimary, borderRadiusLG } = token;
@@ -41,7 +42,7 @@ export default function ProfileHeader({ user, checkAuth }) {
             <div style={{ position: 'relative', display: 'inline-block', marginBottom: 24 }}>
                 <Avatar
                     size={!screens.lg ? 120 : 160}
-                    src={user.profile?.avatar ? (user.profile.avatar.startsWith('http') || user.profile.avatar.startsWith('data:image') ? user.profile.avatar : `/storage/${user.profile.avatar}`) : null}
+                    src={user?.profile?.avatar || null}
                     icon={<User size={!screens.lg ? 48 : 64} />}
                     style={{
                         border: `4px solid ${colorPrimary}`,

@@ -69,7 +69,7 @@ export default function ReviewManager() {
                         panelists: thesis.panelists,
                         hasPdf: !!thesis.pdf_path,
                         pdfName: thesis.pdf_original_name,
-                        pdfUrl: thesis.pdf_path ? `/storage/${thesis.pdf_path}` : null,
+                        pdfUrl: thesis.pdf_url || (thesis.pdf_path ? `/storage/${thesis.pdf_path}` : null),
                         author: thesis.author || (thesis.owner ? thesis.owner.name : 'Unknown'),
                         authorAvatar: thesis.owner?.profile?.avatar ? (thesis.owner.profile.avatar.startsWith('http') || thesis.owner.profile.avatar.startsWith('data:image') ? thesis.owner.profile.avatar : `/storage/${thesis.owner.profile.avatar}`) : null,
                         raw: thesis
@@ -371,7 +371,6 @@ export default function ReviewManager() {
                     <Table
                         columns={columns}
                         dataSource={filteredData.filter(item => activeTab === 'public' ? !item.isConfidential : item.isConfidential)}
-                        loading={loading}
                         scroll={{ x: 900 }}
                         pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: ['10', '25', '50'], showTotal: (total) => <Text type="secondary">{total} theses</Text>, style: { padding: '16px 24px' } }}
                         rowClassName={(record, index) => {

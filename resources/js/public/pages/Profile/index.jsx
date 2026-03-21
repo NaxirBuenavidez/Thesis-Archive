@@ -1,31 +1,49 @@
-import React, { useState } from 'react';
-import { Row, Col, Card, Typography, Button, theme, Grid } from 'antd';
-import { Shield, Edit } from 'lucide-react';
-import { useAuth } from '../../../context/AuthContext'; // Updated path
+import React, { useState, useEffect, useCallback } from 'react';
+import { Row, Col, Card, Typography, Button, theme, Grid, App } from 'antd';
+import { Modal } from 'antd';
+import { Shield, Edit, Plus, GraduationCap } from 'lucide-react';
+import { useAuth } from '../../../context/AuthContext';
 import ProfileHeader from './viewProfileHeader';
 import PersonalInfoView from './viewPersonalInfo';
 import PersonalInfoForm from './formPersonalInfo';
 import AccountSettingsModal from './modalAccountSettings';
-import { Modal } from 'antd'; // Import Modal
+import EducationalBackgroundView from './viewEducationalBackground';
+import EducationalBackgroundForm from './formEducationalBackground';
+import { getEducation } from '../../../private/api/profile';
 
 const { Title, Text } = Typography;
 
 export default function Profile() {
     const { user, checkAuth } = useAuth();
+    const { message } = App.useApp();
     const [isEditing, setIsEditing] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [education, setEducation] = useState([]);
+    const [editingEdu, setEditingEdu] = useState(null);
+    const [showEduForm, setShowEduForm] = useState(false);
 
     const screens = Grid.useBreakpoint();
-
     const { token } = theme.useToken();
     const { colorPrimary, borderRadiusLG } = token;
 
+    const fetchEducation = useCallback(async () => {
+        try {
+            const res = await getEducation();
+            setEducation(res.data);
+        } catch (err) {
+            // silently fail – user may have no entries yet
+        }
+    }, []);
 
+    useEffect(() => {
+        fetchEducation();
+    }, [fetchEducation]);
 
-
-
-
-
+    const handleEduSuccess = () => {
+        setShowEduForm(false);
+        setEditingEdu(null);
+        fetchEducation();
+    };
 
     return (
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
@@ -56,6 +74,7 @@ export default function Profile() {
                 </Col>
 
                 <Col xs={24} md={24} lg={18}>
+                    {/* Personal Info Card */}
                     <Card
                         title={<span style={{ fontSize: 18 }}>Personal Information</span>}
                         extra={
@@ -70,12 +89,8 @@ export default function Profile() {
                                 </Button>
                             )
                         }
-
                         variant="borderless"
-                        style={{
-                            borderRadius: borderRadiusLG,
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
-                        }}
+                        style={{ borderRadius: borderRadiusLG, boxShadow: '0 4px 12px rgba(0,0,0,0.05)', marginBottom: 24 }}
                     >
                         {isEditing ? (
                             <PersonalInfoForm
@@ -88,10 +103,46 @@ export default function Profile() {
                             <PersonalInfoView user={user} />
                         )}
                     </Card>
+
+                    {/* Educational Background Card */}
+                    <Card
+                        title={
+                            <span style={{ fontSize: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <GraduationCap size={18} />
+                                Educational Background
+                            </span>
+                        }
+                        extra={
+                            !showEduForm && (
+                                <Button
+                                    type="text"
+                                    icon={<Plus size={16} />}
+                                    onClick={() => { setEditingEdu(null); setShowEduForm(true); }}
+                                    style={{ color: colorPrimary }}
+                                >
+                                    {!screens.xs && 'Add Record'}
+                                </Button>
+                            )
+                        }
+                        variant="borderless"
+                        style={{ borderRadius: borderRadiusLG, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
+                    >
+                        {showEduForm ? (
+                            <EducationalBackgroundForm
+                                initialValues={editingEdu}
+                                onCancel={() => { setShowEduForm(false); setEditingEdu(null); }}
+                                onSuccess={handleEduSuccess}
+                            />
+                        ) : (
+                            <EducationalBackgroundView
+                                education={education}
+                                onEdit={(item) => { setEditingEdu(item); setShowEduForm(true); }}
+                                refreshData={fetchEducation}
+                            />
+                        )}
+                    </Card>
                 </Col>
             </Row>
-
-
 
             <AccountSettingsModal
                 open={isModalOpen}
@@ -99,8 +150,6 @@ export default function Profile() {
                 user={user}
                 checkAuth={checkAuth}
             />
-
-
         </div>
     );
 }

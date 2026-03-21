@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Button, Typography, Row, Col, Divider, message, theme } from 'antd';
+import { Modal, Form, Input, Button, Typography, Row, Col, Divider, theme, App } from 'antd';
 import { Lock, User } from 'lucide-react';
 import { updateAccount, verifyPassword } from '../../../private/api/profile';
 
 const { Title, Text } = Typography;
 
 export default function AccountSettingsModal({ open, onCancel, user, checkAuth }) {
+    const { message } = App.useApp();
     const [accountForm] = Form.useForm();
     const [accountLoading, setAccountLoading] = useState(false);
 

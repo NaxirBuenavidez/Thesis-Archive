@@ -91,8 +91,8 @@ class ProfileController extends Controller
             // Upload the new image to Cloudflare R2 (S3 disk)
             $path = $file->store('avatars', 's3');
             
-            // Save the raw public URL to the database
-            $profile->update(['avatar' => Storage::disk('s3')->url($path)]);
+            // Save the raw path to the database
+            $profile->update(['avatar' => $path]);
         }
 
         return response()->json([
