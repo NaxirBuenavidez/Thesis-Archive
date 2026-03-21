@@ -41,7 +41,10 @@ const ProtectedRoute = ({ children }) => {
 const AlreadyAuthedRoute = ({ children }) => {
     const { user, loading } = useAuth();
     if (loading) return null;
-    if (user) return <Navigate to="/" replace />;
+    // Only redirect if a real user exists (not 'anonymous' guest)
+    if (user && user.role?.slug !== 'anonymous') {
+        return <Navigate to="/" replace />;
+    }
     return children;
 };
 
