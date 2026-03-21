@@ -9,8 +9,8 @@ use App\Http\Controllers\AuthController;
 Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show'])
     ->middleware('web');
 
-// Throttle login to 5 attempts per minute per IP to prevent brute-force
-Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+// Throttle login to 3 attempts per minute per IP to prevent brute-force
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:3,1');
 Route::get('/auth/google/redirect', [AuthController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
