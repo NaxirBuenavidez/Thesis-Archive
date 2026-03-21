@@ -8,6 +8,8 @@ import { useAuth } from '../../context/AuthContext';
 import dayjs from 'dayjs';
 import thesesApi from '../../api/thesesApi';
 import systemApi from '../../api/systemApi';
+import { handleFormErrors } from '../../utils/formUtils';
+import { CustomNotification, Feedback } from '../components/UI/SystemNotifications';
 import tableThesis from './Management/components/tableThesis';
 import modalThesisForm from './Management/components/modalThesisForm';
 import drawerThesisPreview from './Management/components/drawerThesisPreview';
@@ -73,7 +75,7 @@ export default function ThesisManagement() {
             setPrograms(bootProgs || []);
         } catch (error) {
             console.error("Failed to fetch initial data", error);
-            message.error("Failed to load systems resources");
+            Feedback.error("Failed to load systems resources");
         } finally {
             setLoading(false);
         }
@@ -92,10 +94,10 @@ export default function ThesisManagement() {
             onOk: async () => {
                 try {
                     await thesesApi.bulkDelete(selectedRowKeys);
-                    message.success(`${selectedRowKeys.length} theses deleted successfully`);
+                    Feedback.success(`${selectedRowKeys.length} theses deleted successfully`);
                     fetchInitialData();
                 } catch (error) {
-                    message.error('Failed to perform bulk deletion');
+                    Feedback.error('Failed to perform bulk deletion');
                 }
             }
         });
@@ -137,10 +139,10 @@ export default function ThesisManagement() {
             onOk: async () => {
                 try {
                     await thesesApi.delete(id);
-                    message.success('Thesis deleted successfully');
+                    Feedback.success('Thesis deleted successfully');
                     fetchInitialData();
                 } catch (error) {
-                    message.error('Failed to delete thesis');
+                    Feedback.error('Failed to delete thesis');
                 }
             }
         });
@@ -181,7 +183,9 @@ export default function ThesisManagement() {
             setIsModalOpen(false);
             fetchInitialData();
         } catch (error) {
-            message.error(error.response?.data?.message || 'Failed to save thesis');
+            if (!handleFormErrors(error, form)) {
+                message.error(error.response?.data?.message || 'Failed to save thesis');
+            }
         } finally {
             setSubmitLoading(false);
         }

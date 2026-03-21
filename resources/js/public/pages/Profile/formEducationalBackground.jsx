@@ -3,6 +3,7 @@ import { Form, Input, Button, DatePicker, Select, Space, Row, Col, App } from 'a
 import { Save } from 'lucide-react';
 import dayjs from 'dayjs';
 import { addEducation, updateEducation } from '../../../private/api/profile';
+import { handleFormErrors } from '../../../utils/formUtils';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -42,8 +43,9 @@ export default function EducationalBackgroundForm({ initialValues, onCancel, onS
             }
             onSuccess();
         } catch (error) {
-            console.error(error);
-            message.error('Failed to save education');
+            if (!handleFormErrors(error, form)) {
+                message.error('Failed to save education');
+            }
         } finally {
             setLoading(false);
         }

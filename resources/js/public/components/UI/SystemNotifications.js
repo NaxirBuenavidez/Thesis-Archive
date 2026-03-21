@@ -2,8 +2,8 @@ import { notification } from 'antd';
 
 // Configure global notification settings
 notification.config({
-    placement: 'topLeft',
-    top: 20,
+    placement: 'topRight',
+    top: 50,
     duration: 3,
 });
 
@@ -13,10 +13,10 @@ notification.config({
  */
 
 export const Feedback = {
-    success: (msg, desc = '') => notification.success({ message: msg, description: desc, placement: 'topLeft' }),
-    error: (msg, desc = '') => notification.error({ message: msg, description: desc, placement: 'topLeft' }),
-    info: (msg, desc = '') => notification.info({ message: msg, description: desc, placement: 'topLeft' }),
-    warning: (msg, desc = '') => notification.warning({ message: msg, description: desc, placement: 'topLeft' }),
+    success: (msg, desc = '') => notification.success({ message: msg, description: desc }),
+    error: (msg, desc = '') => notification.error({ message: msg, description: desc }),
+    info: (msg, desc = '') => notification.info({ message: msg, description: desc }),
+    warning: (msg, desc = '') => notification.warning({ message: msg, description: desc }),
 };
 
 export const CustomAlert = { ...Feedback };

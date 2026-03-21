@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, Button, Typography, Row, Col, Divider, theme, App } from 'antd';
 import { Lock, User } from 'lucide-react';
 import { updateAccount, verifyPassword } from '../../../private/api/profile';
+import { handleFormErrors } from '../../../utils/formUtils';
 
 const { Title, Text } = Typography;
 
@@ -53,17 +54,7 @@ export default function AccountSettingsModal({ open, onCancel, user, checkAuth }
             checkAuth();
             onCancel(); // Close modal on success
         } catch (error) {
-            console.error(error);
-            if (error.response && error.response.data && error.response.data.errors) {
-                const errors = error.response.data.errors;
-                Object.keys(errors).forEach(key => {
-                    accountForm.setFields([{
-                        name: key,
-                        errors: errors[key],
-                    }]);
-                });
-                message.error('Failed to update account settings');
-            } else {
+            if (!handleFormErrors(error, accountForm)) {
                 message.error('Failed to update account settings');
             }
         } finally {

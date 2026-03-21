@@ -22,7 +22,7 @@ export default function GlobalLoader() {
                 clearTimeout(timerRef.current);
                 setIsLoading(true);
                 // 350ms delay before showing to avoid flicker on fast (Redis) responses
-                timerRef.current = setTimeout(() => setVisible(true), 350);
+                timerRef.current = setTimeout(() => setVisible(true), 50);
             }
         };
 
@@ -31,7 +31,7 @@ export default function GlobalLoader() {
             if (countRef.current === 0) {
                 // CLEAR the start timer if it hasn't fired yet!
                 if (timerRef.current) clearTimeout(timerRef.current);
-                
+
                 if (visible) {
                     setVisible(false);
                     timerRef.current = setTimeout(() => setIsLoading(false), 120); // Faster fade out
@@ -165,7 +165,13 @@ export default function GlobalLoader() {
                     <div className="gl-arc" />
                     <div className="gl-arc gl-arc2" />
                     <div className="gl-logo">
-                        <img src="/images/ptas-logo.png" alt="PTAS Logo" />
+                        {logo_path ? (
+                            <img src={logo_path} alt="System Logo" />
+                        ) : (
+                            <div className="gl-fallback" style={{ background: color }}>
+                                {(site_title || 'PTAS').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

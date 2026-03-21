@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSystemConfig } from '../../context/SystemConfigContext';
 import { loginArg } from '../../private/api/auth';
+import { handleFormErrors } from '../../utils/formUtils';
 
 const { Title, Text } = Typography;
 
@@ -324,15 +325,16 @@ export default function Login() {
             await checkAuth();
             navigate('/');
         } catch (error) {
-            console.error(error);
-            if (error.response?.status === 429) {
-                message.error('Too many login attempts. Please wait a minute before trying again.');
-            } else if (error.response?.data?.message) {
-                message.error(error.response.data.message);
-            } else if (error.response?.data?.errors?.email) {
-                message.error('Invalid email or password. Please try again.');
-            } else {
-                message.error('Login failed. Please check your credentials and try again.');
+            if (!handleFormErrors(error, form)) {
+                if (error.response?.status === 429) {
+                    message.error('Too many login attempts. Please wait a minute before trying again.');
+                } else if (error.response?.data?.message) {
+                    message.error(error.response.data.message);
+                } else if (error.response?.data?.errors?.email) {
+                    message.error('Invalid email or password. Please try again.');
+                } else {
+                    message.error('Login failed. Please check your credentials and try again.');
+                }
             }
             setSubmitted(false);
         } finally {
@@ -448,8 +450,7 @@ export default function Login() {
 
                 {/* ── Form ── */}
                 <Form
-                    name="login_form"
-                    initialValues={{ remember: true }}
+                    form={form}
                     onFinish={onFinish}
                     layout="vertical"
                     size="large"

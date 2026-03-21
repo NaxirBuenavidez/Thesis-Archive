@@ -77,11 +77,44 @@ export function AppProvider({ children }) {
     }, []);
 
     if (booting) {
+        const logo = window.__boot_data?.settings?.logo_path || null;
+        const primaryColor = window.__boot_data?.settings?.primary_color || '#2845D6';
+        
         return (
-            <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#f0f2f5' }}>
-                <div style={{ textAlign: 'center' }}>
-                    <div style={{ width: 40, height: 40, border: '3px solid rgba(0,0,0,0.1)', borderTopColor: '#2845D6', borderRadius: '50%', animation: 'gl-spin 0.8s linear infinite', margin: '0 auto 16px' }} />
-                    <div style={{ color: '#8c8c8c', fontSize: 14 }}>Initializing System...</div>
+            <div style={{ 
+                height: '100vh', 
+                display: 'flex', 
+                flexDirection: 'column',
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                background: '#f8f9fc',
+                fontFamily: "'Inter', sans-serif"
+            }}>
+                <style>{`
+                    @keyframes boot-spin { to { transform: rotate(360deg); } }
+                    @keyframes boot-pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.95); opacity: 0.8; } }
+                `}</style>
+                <div style={{ position: 'relative', width: 100, height: 100, marginBottom: 24 }}>
+                    <div style={{ 
+                        position: 'absolute', inset: 0, borderRadius: '50%', 
+                        border: '3px solid rgba(0,0,0,0.05)', borderTopColor: primaryColor,
+                        animation: 'boot-spin 0.8s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite' 
+                    }} />
+                    <div style={{ 
+                        position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        animation: 'boot-pulse 2s ease-in-out infinite'
+                    }}>
+                        {logo ? (
+                            <img src={logo} alt="Logo" style={{ width: 48, height: 48, objectFit: 'contain' }} />
+                        ) : (
+                            <div style={{ width: 40, height: 40, borderRadius: 8, background: primaryColor, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 18 }}>
+                                TA
+                            </div>
+                        )}
+                    </div>
+                </div>
+                <div style={{ color: '#595959', fontSize: 14, fontWeight: 600, letterSpacing: '0.5px' }}>
+                    INITIALIZING SYSTEM
                 </div>
             </div>
         );

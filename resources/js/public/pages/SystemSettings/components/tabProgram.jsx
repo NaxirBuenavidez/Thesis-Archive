@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Space, Modal, Form, Input, Select, Popconfirm, Typography, Tooltip, Tag, Dropdown, App } from 'antd';
 import { PlusOutlined, DeleteOutlined, ReloadOutlined, SearchOutlined, MoreOutlined, EditOutlined } from '@ant-design/icons';
+import { handleFormErrors } from '../../../../utils/formUtils';
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -68,10 +69,8 @@ export default function tabProgram({ apiEndpoint = '/api/programs', isSeniorHigh
             setEditingId(null);
             fetchPrograms();
         } catch (error) {
-            if (error.response && error.response.data && error.response.data.message) {
-                message.error(error.response.data.message);
-            } else {
-                message.error('Failed to save program');
+            if (!handleFormErrors(error, form)) {
+                message.error(error.response?.data?.message || 'Failed to save program');
             }
         } finally {
             setSubmitLoading(false);

@@ -12,7 +12,8 @@ import {
 } from '@ant-design/icons';
 import { User, Mail, Shield, Calendar, UserPlus } from 'lucide-react';
 import { useTableSearch } from '../../hooks/useTableSearch';
-
+import { handleFormErrors } from '../../utils/formUtils';
+import { Feedback } from '../components/UI/SystemNotifications';
 import { useAuth } from '../../context/AuthContext';
 
 const { Title, Text } = Typography;
@@ -67,7 +68,7 @@ export default function Users() {
             }
         } catch (error) {
             console.error("Failed to fetch users", error);
-            message.error("Failed to load users");
+            Feedback.error("Failed to load users");
         } finally {
             setLoading(false);
         }
@@ -82,16 +83,13 @@ export default function Users() {
         setSubmitLoading(true);
         try {
             await window.axios.post('/api/users', values);
-            message.success('User created successfully');
+            Feedback.success('User created successfully');
             setIsModalOpen(false);
             form.resetFields();
             fetchUsers();
         } catch (error) {
-            console.error(error);
-            if (error.response && error.response.data && error.response.data.message) {
-                message.error(error.response.data.message);
-            } else {
-                message.error('Failed to create user');
+            if (!handleFormErrors(error, form)) {
+                Feedback.error(error.response?.data?.message || 'Failed to create user');
             }
         } finally {
             setSubmitLoading(false);

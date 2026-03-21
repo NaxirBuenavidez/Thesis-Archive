@@ -3,6 +3,7 @@ import { Form, Input, DatePicker, Row, Col, Space, Button, Divider, Select, Card
 import { SaveOutlined, PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { updateProfile } from '../../../private/api/profile';
+import { handleFormErrors } from '../../../utils/formUtils';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -44,8 +45,9 @@ export default function PersonalInfoForm({ user, checkAuth, onCancel, onSuccess 
             await checkAuth(); // Refresh user data
             if (onSuccess) onSuccess();
         } catch (error) {
-            console.error(error);
-            message.error('Failed to update profile');
+            if (!handleFormErrors(error, form)) {
+                message.error('Failed to update profile');
+            }
         } finally {
             setLoading(false);
         }
