@@ -40,7 +40,18 @@ window.axios.interceptors.response.use(
     },
     error => {
         window.dispatchEvent(new Event('loading-stop'));
-        if (error.response && (error.response.status === 401 || error.response.status === 419)) {
+
+        const originalRequest = error.config;
+
+        // Handle CSRF Token Mismatch (419) with a single retry
+        if (error.response && error.response.status === 419 && !originalRequest._retry) {
+            originalRequest._retry = true;
+            return axios.get('/sanctum/csrf-cookie').then(() => {
+                return axios(originalRequest);
+            });
+        }
+
+        if (error.response && (error.response.status === 401)) {
             const publicPaths = ['/login', '/archive'];
             if (!publicPaths.includes(window.location.pathname)) {
                 window.location.href = '/login';
