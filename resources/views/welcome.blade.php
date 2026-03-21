@@ -8,6 +8,7 @@
         <title>{{ config('app.name', 'Thesis Archive') }}</title>
 
         <!-- Fonts -->
+        <link rel="icon" type="image/jpeg" href="/images/pecit-logo.jpg" />
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 

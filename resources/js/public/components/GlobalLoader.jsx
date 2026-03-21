@@ -151,7 +151,7 @@ export default function GlobalLoader() {
                     <div className="gl-arc gl-arc2" />
                     <div className="gl-logo">
                         {logo_path ? (
-                            <img src={logo_path} alt="System Logo" />
+                        <img src="/images/pecit-logo.jpg" alt="System Logo" />
                         ) : (
                             <div
                                 className="gl-fallback"
