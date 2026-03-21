@@ -17,6 +17,7 @@
     "dependencies": {
         "@ant-design/icons": "^6.1.0",
         "@fluentui/react-icons": "^2.0.321",
+        "@vercel/speed-insights": "^2.0.0",
         "@vitejs/plugin-react": "^5.1.2",
         "antd": "^6.2.2",
         "lucide-react": "^0.563.0",

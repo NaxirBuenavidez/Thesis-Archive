@@ -6,6 +6,7 @@ import { AppProvider } from './providers/AppProvider';
 
 import { RouterProvider } from 'react-router-dom';
 import router from './router';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 function App() {
     // For now, let's just render PublicApp. 
@@ -21,6 +22,7 @@ function App() {
             ) : (
                 <RouterProvider router={router} />
             )}
+            <SpeedInsights />
         </AppProvider>
     );
 }
