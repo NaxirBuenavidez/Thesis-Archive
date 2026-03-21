@@ -17,6 +17,16 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
+            if ($request->has('__v_debug')) {
+                return response()->json([
+                    'error' => $e->getMessage(),
+                    'file'  => $e->getFile() . ':' . $e->getLine(),
+                    'trace' => explode("\n", $e->getTraceAsString())
+                ], 500);
+            }
+        });
+
         $exceptions->shouldRenderJsonWhen(function (\Illuminate\Http\Request $request, \Throwable $e) {
             return $request->is('api/*');
         });
