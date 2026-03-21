@@ -19,6 +19,31 @@ class ThesisController extends Controller
         return response()->json($theses);
     }
 
+    public function publicIndex(Request $request)
+    {
+        // Enforce strict public visibility: published only, not confidential
+        $theses = Thesis::with(['owner.profile', 'primarySupervisor'])
+            ->where('status', 'published')
+            ->where('is_confidential', false)
+            ->latest()
+            ->get()
+            ->map(function ($thesis) {
+                // Manually strip highly sensitive document paths and admin metadata globally
+                $thesis->makeHidden([
+                    'pdf_path', 
+                    'pdf_original_name', 
+                    'docx_path', 
+                    'docx_original_name', 
+                    'archived_by', 
+                    'recommended_by', 
+                    'review_checklist'
+                ]);
+                return $thesis;
+            });
+
+        return response()->json($theses);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -38,7 +63,7 @@ class ThesisController extends Controller
             'is_confidential' => 'boolean',
             'primary_supervisor_id' => 'nullable|exists:users,id',
             'pdf_file' => 'nullable|file|mimes:pdf|max:51200',
-            'doi' => 'nullable|string|max:255',
+            'doi' => 'nullable|string|max:255|unique:theses,doi',
             'co_author' => 'nullable|string|max:255',
             'panelists' => 'nullable|string|max:255',
             'review_checklist' => 'nullable|array',
@@ -91,7 +116,7 @@ class ThesisController extends Controller
             'is_confidential' => 'boolean',
             'primary_supervisor_id' => 'nullable|exists:users,id',
             'pdf_file' => 'nullable|file|mimes:pdf|max:51200',
-            'doi' => 'nullable|string|max:255',
+            'doi' => 'nullable|string|max:255|unique:theses,doi,' . $thesis->id,
             'co_author' => 'nullable|string|max:255',
             'panelists' => 'nullable|string|max:255',
             'review_checklist' => 'nullable|array',

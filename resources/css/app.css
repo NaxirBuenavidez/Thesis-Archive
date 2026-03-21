@@ -23,3 +23,17 @@
 .table-row-dark {
     background-color: #fafafa;
 }
+
+/* Position Antd message popups beside breadcrumb level on desktop */
+@media (min-width: 768px) {
+    .ant-message {
+        top: 80px !important;
+        right: 24px !important;
+        left: auto !important;
+        transform: none !important;
+        text-align: right !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-end !important;
+    }
+}

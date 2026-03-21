@@ -12,6 +12,9 @@ Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallbac
 // Public settings endpoint - branding always accessible
 Route::get('/api/settings', [App\Http\Controllers\SettingController::class, 'index']);
 
+// Public Thesis Archive Repository
+Route::get('/api/public/theses', [App\Http\Controllers\ThesisController::class, 'publicIndex']);
+
 
 Route::middleware('auth:web')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -44,6 +47,11 @@ Route::middleware('auth:web')->group(function () {
     Route::apiResource('/api/departments', App\Http\Controllers\DepartmentController::class);
     Route::get('/api/senior-high-programs', [App\Http\Controllers\ProgramController::class, 'seniorHigh']);
     Route::apiResource('/api/programs', App\Http\Controllers\ProgramController::class);
+
+    // Notification Routes
+    Route::get('/api/notifications', [App\Http\Controllers\NotificationController::class, 'index']);
+    Route::post('/api/notifications/mark-read', [App\Http\Controllers\NotificationController::class, 'markRead']);
+    Route::post('/api/notifications/{id}/mark-read', [App\Http\Controllers\NotificationController::class, 'markOne']);
 });
 
 

@@ -13,6 +13,7 @@ import ActivityLog from './public/pages/SystemSettings/pageActivityLog';
 import SystemManager from './public/pages/SystemSettings/pageSystemManager';
 import Reports from './public/pages/SystemSettings/pageReports';
 import Login from './public/pages/pageLogin';
+import PublicArchive from './public/pages/pagePublicArchive';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
             {
                 path: "/login",
                 element: <AlreadyAuthedRoute><Login /></AlreadyAuthedRoute>,
+            },
+            {
+                path: "/archive",
+                element: <PublicArchive />,
             },
             {
                 path: "/",

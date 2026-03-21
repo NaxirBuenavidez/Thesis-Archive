@@ -19,6 +19,7 @@ import { Earth20Filled, LockClosed20Filled } from '@fluentui/react-icons';
 import { useTableSearch } from '../../hooks/useTableSearch';
 import { useAuth } from '../../context/AuthContext';
 import { Spin } from 'antd';
+import SignaturePad from '../components/UI/SignaturePad';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -104,7 +105,7 @@ export default function ReviewManager() {
             await window.axios.patch(`/api/theses/${selectedThesis.key}/review`, {
                 status: 'accepted',
                 remarks: null,
-                review_checklist: values.review_checklist,
+                review_checklist: values.review_checklist ? [...values.review_checklist, `e_signature:${values.e_signature}`] : [`e_signature:${values.e_signature}`],
                 recommended_by: values.recommended_by,
                 archived_by: values.archived_by,
             });
@@ -130,7 +131,7 @@ export default function ReviewManager() {
                 status: newStatus,
                 remarks: values.remarks || null,
                 ...(action === 'accept' && {
-                    review_checklist: values.review_checklist,
+                    review_checklist: values.review_checklist ? [...values.review_checklist, `e_signature:${values.e_signature}`] : [`e_signature:${values.e_signature}`],
                     recommended_by: values.recommended_by,
                     archived_by: values.archived_by,
                 })
@@ -427,6 +428,14 @@ export default function ReviewManager() {
                                     </Checkbox.Group>
                                 </Form.Item>
 
+                                <Form.Item
+                                    name="e_signature"
+                                    label="E-Signature Authorization"
+                                    rules={[{ required: true, message: 'Please provide an e-signature to proceed.' }]}
+                                >
+                                    <SignaturePad />
+                                </Form.Item>
+
                                 <Row gutter={16}>
                                     <Col xs={24} md={12}>
                                         <Form.Item name="recommended_by" label="Recommended By" rules={[{ required: true, message: 'Please specify the recommender.' }]}>
@@ -468,12 +477,12 @@ export default function ReviewManager() {
 
             <Drawer
                 title={
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingRight: 40 }}>
-                        <Space>
-                            <FilePdfOutlined style={{ color: '#ff4d4f', fontSize: 20 }} />
-                            <div>
-                                <Text strong style={{ fontSize: 16, display: 'block', lineHeight: 1.2 }}>Thesis Examination</Text>
-                                <Text type="secondary" style={{ fontSize: 12, fontWeight: 400 }}>Reviewing research quality and compliance</Text>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingRight: isMobile ? 12 : 40 }}>
+                        <Space align="start">
+                            <FilePdfOutlined style={{ color: '#ff4d4f', fontSize: 20, marginTop: 4 }} />
+                            <div style={{ flex: 1 }}>
+                                <Text strong style={{ fontSize: 16, display: 'block', lineHeight: 1.2, wordBreak: 'break-word', whiteSpace: 'normal' }}>Thesis Examination</Text>
+                                <Text type="secondary" style={{ fontSize: 12, fontWeight: 400, wordBreak: 'break-word', whiteSpace: 'normal', display: 'block', marginTop: 2 }}>Reviewing research quality and compliance</Text>
                             </div>
                         </Space>
                     </div>
@@ -492,31 +501,64 @@ export default function ReviewManager() {
                     body: { padding: 0 }
                 }}
                 extra={
-                    <Space>
-                        <Button 
-                            type="primary" 
-                            danger
-                            onClick={() => {
-                                setIsDetailOpen(false);
-                                openReviewModal(selectedThesis, 'reject');
-                            }}
-                            icon={<CloseOutlined />}
-                            style={{ borderRadius: 6 }}
-                        >
-                            Reject
-                        </Button>
-                        <Button 
-                            type="primary" 
-                            onClick={() => {
-                                drawerForm.submit();
-                            }}
-                            loading={submitLoading}
-                            icon={<CheckOutlined />}
-                            style={{ borderRadius: 6 }}
-                        >
-                            Accept
-                        </Button>
-                    </Space>
+                    !isMobile && (
+                        <Space>
+                            <Button 
+                                type="primary" 
+                                danger
+                                onClick={() => {
+                                    setIsDetailOpen(false);
+                                    openReviewModal(selectedThesis, 'reject');
+                                }}
+                                icon={<CloseOutlined />}
+                                style={{ borderRadius: 6 }}
+                            >
+                                Reject
+                            </Button>
+                            <Button 
+                                type="primary" 
+                                onClick={() => {
+                                    drawerForm.submit();
+                                }}
+                                loading={submitLoading}
+                                icon={<CheckOutlined />}
+                                style={{ borderRadius: 6 }}
+                            >
+                                Accept
+                            </Button>
+                        </Space>
+                    )
+                }
+                footer={
+                    isMobile && (
+                        <div style={{ display: 'flex', gap: 12, padding: '4px 0' }}>
+                            <Button 
+                                type="primary" 
+                                danger
+                                onClick={() => {
+                                    setIsDetailOpen(false);
+                                    openReviewModal(selectedThesis, 'reject');
+                                }}
+                                icon={<CloseOutlined />}
+                                style={{ flex: 1, borderRadius: 6 }}
+                                size="large"
+                            >
+                                Reject
+                            </Button>
+                            <Button 
+                                type="primary" 
+                                onClick={() => {
+                                    drawerForm.submit();
+                                }}
+                                loading={submitLoading}
+                                icon={<CheckOutlined />}
+                                style={{ flex: 1, borderRadius: 6 }}
+                                size="large"
+                            >
+                                Accept
+                            </Button>
+                        </div>
+                    )
                 }
             >
                 {selectedThesis ? (
@@ -534,7 +576,7 @@ export default function ReviewManager() {
                                             <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
                                             <Col xs={24} lg={12}>
                                                 <Card size="small" variant="borderless" style={{ background: token.colorFillAlter, borderRadius: 12, height: '100%' }}>
-                                                    <Descriptions title={<Space><FileTextOutlined style={{ fontSize: 16 }} /> <Text strong>Submission Details</Text></Space>} column={1} size="small" styles={{ label: { color: token.colorTextSecondary } }}>
+                                                    <Descriptions title={<Space><FileTextOutlined style={{ fontSize: 16 }} /> <Text strong>Submission Details</Text></Space>} column={1} size="small" styles={{ label: { color: token.colorTextSecondary } }} layout={isMobile ? 'vertical' : 'horizontal'}>
                                                         <Descriptions.Item label="Reference ID"><Text code>{selectedThesis.key.split('-')[0].toUpperCase()}</Text></Descriptions.Item>
                                                         <Descriptions.Item label="Submission Date">
                                                             <Space size={4}>
@@ -552,7 +594,7 @@ export default function ReviewManager() {
                                             </Col>
                                             <Col xs={24} lg={12}>
                                                 <Card size="small" variant="borderless" style={{ background: token.colorFillAlter, borderRadius: 12, height: '100%' }}>
-                                                    <Descriptions title={<Space><BookOpen size={16} /> <Text strong>Author & Affiliation</Text></Space>} column={1} size="small" styles={{ label: { color: token.colorTextSecondary } }}>
+                                                    <Descriptions title={<Space><BookOpen size={16} /> <Text strong>Author & Affiliation</Text></Space>} column={1} size="small" styles={{ label: { color: token.colorTextSecondary } }} layout={isMobile ? 'vertical' : 'horizontal'}>
                                                         <Descriptions.Item label="Main Author"><Text strong>{selectedThesis.author}</Text></Descriptions.Item>
                                                         <Descriptions.Item label="Program">
                                                             <Text>{selectedThesis.discipline || 'N/A'}</Text>
@@ -604,13 +646,24 @@ export default function ReviewManager() {
                                                 <Form.Item 
                                                     name="review_checklist" 
                                                     rules={[{ type: 'array', len: 3, message: 'Please complete all checklist requirements before accepting.' }]}
-                                                    style={{ marginBottom: 0 }}
+                                                    style={{ marginBottom: 16 }}
                                                 >
                                                     <Checkbox.Group style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                                         <Checkbox value="formatting">Formatting and structure verified</Checkbox>
                                                         <Checkbox value="plagiarism">Plagiarism / Originality checked and verified</Checkbox>
                                                         <Checkbox value="references">References and Citations reviewed</Checkbox>
                                                     </Checkbox.Group>
+                                                </Form.Item>
+
+                                                <Divider style={{ margin: '16px 0' }} />
+
+                                                <Text type="secondary" strong style={{ display: 'block', marginBottom: 8 }}>E-Signature Authorization</Text>
+                                                <Form.Item
+                                                    name="e_signature"
+                                                    rules={[{ required: true, message: 'Please provide an e-signature to proceed.' }]}
+                                                    style={{ marginBottom: 0 }}
+                                                >
+                                                    <SignaturePad />
                                                 </Form.Item>
                                             </div>
 

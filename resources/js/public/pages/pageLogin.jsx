@@ -242,7 +242,7 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const { checkAuth, user, loading: authLoading } = useAuth();
     const { site_title, site_description, logo_path, primary_color, primary_color_dark } = useSystemConfig();
 
@@ -252,6 +252,20 @@ export default function Login() {
     const appDesc       = site_description || 'PHILIPPINE ELECTRONICS & COMMUNICATION INSTITUTE OF TECHNOLOGY';
 
     injectStyles();
+
+    // Obfuscate / secure login URL visually
+    useEffect(() => {
+        if (!searchParams.has('_gl')) {
+            const newParams = new URLSearchParams(searchParams);
+            const r = (len) => Array.from({length: len}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.charAt(Math.floor(Math.random() * 62))).join('');
+            
+            // Format closely mimics the user's secure token pattern
+            const token = `1*${r(6)}*_gcl_au*${btoa(Date.now().toString() + r(10)).replace(/=/g, '')}.*_ga*${r(32)}*_ga_${r(8).toUpperCase()}*${btoa(r(60)).replace(/=/g, '')}`;
+            
+            newParams.set('_gl', token);
+            setSearchParams(newParams, { replace: true });
+        }
+    }, [searchParams, setSearchParams]);
 
     // Redirect already-authenticated users away from login
     useEffect(() => {

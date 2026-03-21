@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Table, Tag, Space, Button, Card, Input, Tooltip, Avatar, Grid, Dropdown, ConfigProvider, theme, Modal, Form, Select, message, App, Divider, Row, Col } from 'antd';
+import { Typography, Table, Tag, Space, Button, Card, Input, Tooltip, Avatar, Grid, Dropdown, ConfigProvider, theme, Modal, Form, Select, App, Divider, Row, Col } from 'antd';
 import {
     PlusOutlined,
     SearchOutlined,
@@ -48,9 +48,10 @@ export default function Users() {
         setLoading(true);
         try {
             const response = await window.axios.get('/api/users');
-            if (response.data && response.data.data) {
-                // Map API data to table format
-                const users = response.data.data.map(user => ({
+            if (response.data) {
+                // Map API data to table format. Handle both paginated and direct array responses
+                const usersList = response.data.data || (Array.isArray(response.data) ? response.data : []);
+                const users = usersList.map(user => ({
                     key: user.id,
                     username: user.name,
                     email: user.email,
@@ -102,28 +103,6 @@ export default function Users() {
 
     const columns = [
         {
-            title: '',
-            key: 'actions',
-            render: (_, record) => (
-                <Dropdown
-                    menu={{
-                        items: [
-                            { key: 'view', icon: <EyeOutlined />, label: 'View Details' },
-                            { key: 'edit', icon: <EditOutlined />, label: 'Edit' },
-                            { type: 'divider' },
-                            { key: 'delete', icon: <DeleteOutlined />, label: 'Delete', danger: true },
-                        ]
-                    }}
-                    trigger={['click']}
-                >
-                    <Button type="text" shape="circle" icon={<MoreOutlined />} />
-                </Dropdown>
-            ),
-            width: 60,
-            align: 'center',
-            fixed: screens.xs ? false : 'left',
-        },
-        {
             title: 'User',
             dataIndex: 'username',
             key: 'username',
@@ -158,7 +137,7 @@ export default function Users() {
                 { text: 'Editor', value: 'editor' },
                 { text: 'Viewer', value: 'viewer' },
             ],
-            onFilter: (value, record) => record.role.indexOf(value) === 0,
+            onFilter: (value, record) => record.role.toLowerCase() === value.toLowerCase(),
             render: (role) => {
                 let color = role === 'admin' ? 'blue' : 'green';
                 let icon = <Shield size={14} style={{ marginRight: 4, verticalAlign: 'middle' }} />;
@@ -258,14 +237,6 @@ export default function Users() {
                                     <Tag color={record.role === 'admin' ? 'blue' : record.role === 'viewer' ? 'default' : 'green'} style={{ borderRadius: 20, fontSize: 11, border: 'none' }}>{record.role.toUpperCase()}</Tag>
                                 </div>
                             </div>
-                            <Dropdown menu={{ items: [
-                                { key: 'view', icon: <EyeOutlined />, label: 'View Details' },
-                                { key: 'edit', icon: <EditOutlined />, label: 'Edit' },
-                                { type: 'divider' },
-                                { key: 'delete', icon: <DeleteOutlined />, label: 'Delete', danger: true },
-                            ]}} trigger={['click']}>
-                                <Button type="text" shape="circle" icon={<MoreOutlined />} />
-                            </Dropdown>
                         </div>
                     ))}
                 </div>

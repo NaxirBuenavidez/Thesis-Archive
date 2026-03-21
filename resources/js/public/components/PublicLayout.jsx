@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Menu, theme, Drawer, Button, Grid, Avatar, Typography, Space, ConfigProvider, Breadcrumb } from 'antd';
+import { Layout, Menu, theme, Drawer, Button, Grid, Avatar, Typography, Space, ConfigProvider, Breadcrumb, Modal } from 'antd';
 import { useNavigate, useLocation, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSystemConfig } from '../../context/SystemConfigContext';
@@ -22,6 +22,7 @@ import {
     BarChartOutlined,
     HomeOutlined
 } from '@ant-design/icons';
+import NotificationBell from './NotificationBell';
 
 const { Header, Sider, Content } = Layout;
 const { useBreakpoint } = Grid;
@@ -189,7 +190,17 @@ export default function PublicLayout({ children }) {
     );
 
     const handleLogout = () => {
-        logout();
+        Modal.confirm({
+            title: 'Sign Out',
+            content: 'Are you sure you want to log out of your account?',
+            okText: 'Yes, Sign Out',
+            cancelText: 'Cancel',
+            okType: 'danger',
+            centered: true,
+            onOk: async () => {
+                await logout();
+            }
+        });
     };
 
     const MenuComponent = (
@@ -307,7 +318,7 @@ export default function PublicLayout({ children }) {
                 )}
 
                 <Header style={{ padding: '0 12px', background: colorBgContainer, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 99, width: '100%', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-                    {/* Left: collapse button + notification bell (desktop) | notification bell (mobile) */}
+                    {/* Left: collapse button (desktop) */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 4, zIndex: 1, flexShrink: 0, minWidth: isMobile ? 44 : 60 }}>
                         {!isMobile && (
                             <Button
@@ -317,16 +328,6 @@ export default function PublicLayout({ children }) {
                                 style={{ fontSize: '16px', width: 50, height: 50 }}
                             />
                         )}
-                        <Button
-                            type="text"
-                            icon={<BellOutlined style={{ fontSize: 18 }} />}
-                            style={{
-                                width: 38, height: 38,
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                borderRadius: 8,
-                                color: token.colorTextSecondary,
-                            }}
-                        />
                     </div>
 
                     {/* Center: Dynamic CMS Header Branding */}
@@ -365,17 +366,7 @@ export default function PublicLayout({ children }) {
 
                     {/* Right: notification bell */}
                     <div style={{ display: 'flex', alignItems: 'center', zIndex: 1, flexShrink: 0, minWidth: isMobile ? 44 : 60, justifyContent: 'flex-end' }}>
-                        <Button
-                            type="text"
-                            icon={<BellOutlined style={{ fontSize: 18 }} />}
-                            onClick={() => isMobile && setDrawerVisible(true)}
-                            style={{
-                                width: 38, height: 38,
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                borderRadius: 10,
-                                color: token.colorTextSecondary,
-                            }}
-                        />
+                        <NotificationBell isMobile={isMobile} onClickMobile={() => setDrawerVisible(true)} />
                     </div>
                 </Header>
                 <Content style={{ margin: '0 16px', display: 'flex', flexDirection: 'column', minHeight: 'calc(100dvh - 64px)', position: 'relative', zIndex: 1, paddingBottom: isMobile ? 80 : 0 }}>

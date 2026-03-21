@@ -10,14 +10,15 @@ class NotificationController extends Controller
 {
     public function index(Request $request)
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        $notifications = Notification::forUser($user->id)
+        $notifications = Notification::forUser($user)
             ->orderByDesc('created_at')
             ->take(50)
             ->get();
 
-        $unreadCount = Notification::forUser($user->id)->unread()->count();
+        $unreadCount = Notification::forUser($user)->unread()->count();
 
         return response()->json([
             'notifications' => $notifications,
@@ -27,9 +28,10 @@ class NotificationController extends Controller
 
     public function markRead(Request $request)
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        Notification::forUser($user->id)
+        Notification::forUser($user)
             ->unread()
             ->update(['read_at' => now()]);
 
@@ -38,9 +40,10 @@ class NotificationController extends Controller
 
     public function markOne(Request $request, $id)
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        Notification::forUser($user->id)
+        Notification::forUser($user)
             ->where('id', $id)
             ->whereNull('read_at')
             ->update(['read_at' => now()]);

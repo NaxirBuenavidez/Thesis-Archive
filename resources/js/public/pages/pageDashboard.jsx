@@ -73,7 +73,6 @@ function StatCard({ title, value, icon, accentColor, subtext, large = false }) {
                     borderRadius: 16,
                     border: 'none',
                     background: `linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%)`,
-                    boxShadow: `0 8px 24px ${accentColor}44`,
                     overflow: 'hidden',
                     cursor: 'default',
                     transition: 'transform 0.2s, box-shadow 0.2s',

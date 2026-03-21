@@ -460,7 +460,7 @@ export default function ThesisManagement() {
                                         <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
                                             <Col xs={24} lg={12}>
                                                 <Card size="small" variant="borderless" style={{ background: token.colorFillAlter, borderRadius: 12, height: '100%' }}>
-                                                    <Descriptions title={<Space><FileTextOutlined style={{ fontSize: 16 }} /> <Text strong>Submission Details</Text></Space>} column={1} size="small" styles={{ label: { color: token.colorTextSecondary } }}>
+                                                    <Descriptions layout={isMobile ? "vertical" : "horizontal"} title={<Space><FileTextOutlined style={{ fontSize: 16 }} /> <Text strong>Submission Details</Text></Space>} column={1} size="small" styles={{ label: { color: token.colorTextSecondary } }}>
                                                         <Descriptions.Item label="Status">
                                                             <Tag color={getStatusColor(previewThesis.status)} style={{ borderRadius: 12 }}>{previewThesis.status.replace('_', ' ').toUpperCase()}</Tag>
                                                         </Descriptions.Item>
@@ -480,7 +480,7 @@ export default function ThesisManagement() {
                                             </Col>
                                             <Col xs={24} lg={12}>
                                                 <Card size="small" variant="borderless" style={{ background: token.colorFillAlter, borderRadius: 12, height: '100%' }}>
-                                                    <Descriptions title={<Space><BookOpen size={16} /> <Text strong>Author & Affiliation</Text></Space>} column={1} size="small" styles={{ label: { color: token.colorTextSecondary } }}>
+                                                    <Descriptions layout={isMobile ? "vertical" : "horizontal"} title={<Space><BookOpen size={16} /> <Text strong>Author & Affiliation</Text></Space>} column={1} size="small" styles={{ label: { color: token.colorTextSecondary } }}>
                                                         <Descriptions.Item label="Main Author"><Text strong>{previewThesis.author}</Text></Descriptions.Item>
                                                         <Descriptions.Item label="Program"><Text>{previewThesis.discipline || 'N/A'}</Text></Descriptions.Item>
                                                         <Descriptions.Item label="Department"><Text type="secondary">{previewThesis.department || 'N/A'}</Text></Descriptions.Item>
@@ -493,11 +493,11 @@ export default function ThesisManagement() {
 
                                         <div style={{ marginBottom: 24 }}>
                                             <Title level={5} style={{ marginBottom: 12 }}>Research Title</Title>
-                                            <Text strong style={{ fontSize: 18, color: primaryColor, display: 'block', lineHeight: 1.4 }}>
+                                            <Text strong style={{ fontSize: isMobile ? 16 : 18, color: primaryColor, display: 'block', lineHeight: 1.4, wordBreak: 'break-word' }}>
                                                 {previewThesis.title}
                                             </Text>
                                             {previewThesis.subtitle && (
-                                                <Text type="secondary" style={{ fontSize: 14, display: 'block', marginTop: 4 }}>{previewThesis.subtitle}</Text>
+                                                <Text type="secondary" style={{ fontSize: isMobile ? 13 : 14, display: 'block', marginTop: 4, wordBreak: 'break-word' }}>{previewThesis.subtitle}</Text>
                                             )}
                                         </div>
 
@@ -505,8 +505,8 @@ export default function ThesisManagement() {
 
                                         <div style={{ marginBottom: 24 }}>
                                             <Title level={5} style={{ marginBottom: 12 }}>Abstract</Title>
-                                            <div style={{ padding: 16, background: token.colorFillQuaternary, border: `1px solid ${token.colorBorderSecondary}`, borderRadius: 8, minHeight: 100 }}>
-                                                <Text type="secondary" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
+                                            <div style={{ padding: isMobile ? 12 : 16, background: token.colorFillQuaternary, border: `1px solid ${token.colorBorderSecondary}`, borderRadius: 8, minHeight: 100 }}>
+                                                <Text type="secondary" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6, fontSize: isMobile ? 13 : 14, wordBreak: 'break-word' }}>
                                                     {previewThesis.abstract || 'No abstract provided for this thesis.'}
                                                 </Text>
                                             </div>
@@ -541,6 +541,20 @@ export default function ThesisManagement() {
                                                     </div>
                                                 </Col>
                                             </Row>
+
+                                            {(() => {
+                                                const sigEntry = previewThesis?.raw?.review_checklist?.find(item => typeof item === 'string' && item.startsWith('e_signature:'));
+                                                const sigImage = sigEntry ? sigEntry.replace('e_signature:', '') : null;
+                                                if (!sigImage) return null;
+                                                return (
+                                                    <div style={{ marginTop: 24 }}>
+                                                        <Title level={5} style={{ marginBottom: 12 }}>Authorization Signature</Title>
+                                                        <div style={{ background: '#fff', padding: 16, border: `1px solid ${token.colorBorderSecondary}`, borderRadius: 8, display: 'inline-block' }}>
+                                                            <img src={sigImage} alt="E-Signature" style={{ maxHeight: 100, display: 'block' }} />
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })()}
                                         </div>
                                     </div>
                                 )

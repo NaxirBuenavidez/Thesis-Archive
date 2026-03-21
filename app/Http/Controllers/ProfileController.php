@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
 {
@@ -108,7 +109,7 @@ class ProfileController extends Controller
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
             // Always require current password for any sensitive change
             'current_password' => ['required', 'current_password'],
-            'password' => ['nullable', 'confirmed', 'min:8'],
+            'password' => ['nullable', 'confirmed', Password::min(8)->letters()->mixedCase()->numbers()->symbols()],
         ]);
 
         $user->email = $validated['email'];

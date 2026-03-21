@@ -37,9 +37,9 @@ window.axios.interceptors.response.use(
     error => {
         window.dispatchEvent(new Event('loading-stop'));
         if (error.response && (error.response.status === 401 || error.response.status === 419)) {
-            // If the user is unauthenticated or session expired, redirect to login
-            // But verify we are not already on the login page to avoid loops
-            if (window.location.pathname !== '/login') {
+            // Unauthenticated interceptor: Don't redirect if on login or designated public pages
+            const publicPaths = ['/login', '/archive'];
+            if (!publicPaths.includes(window.location.pathname)) {
                 window.location.href = '/login';
             }
         }
