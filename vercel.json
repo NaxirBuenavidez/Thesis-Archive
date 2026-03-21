@@ -1,8 +1,6 @@
 {
     "version": 2,
     "framework": null,
-    "buildCommand": "npm run build",
-    "outputDirectory": "public",
     "builds": [
         {
             "src": "api/index.php",
@@ -10,9 +8,21 @@
             "config": {
                 "includeFiles": ["public/**"]
             }
+        },
+        {
+            "src": "public/**",
+            "use": "@vercel/static"
         }
     ],
     "routes": [
+        {
+            "src": "/build/(.*)",
+            "dest": "/public/build/$1"
+        },
+        {
+            "src": "/favicon.ico",
+            "dest": "/public/favicon.ico"
+        },
         {
             "src": "/(.*)",
             "dest": "/api/index.php"
