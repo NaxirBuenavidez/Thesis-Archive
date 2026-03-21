@@ -59,9 +59,7 @@ const router = createBrowserRouter([
         element: (
             <>
                 <GlobalLoader />
-                <AuthProvider>
-                    <Outlet />
-                </AuthProvider>
+                <Outlet />
             </>
         ),
         children: [

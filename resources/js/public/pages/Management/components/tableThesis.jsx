@@ -5,7 +5,7 @@ import { Calendar } from 'lucide-react';
 
 const { Text } = Typography;
 
-const tableThesis = ({ 
+const tableThesis = React.memo(({ 
     columns, 
     dataSource, 
     loading, 
@@ -42,6 +42,6 @@ const tableThesis = ({
             })}
         />
     );
-};
+});
 
 export default tableThesis;

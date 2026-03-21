@@ -3,6 +3,7 @@ import { ConfigProvider, App as AntApp } from 'antd';
 import 'antd/dist/reset.css';
 import '../public/components/UI/SystemNotifications';
 import { SystemConfigProvider, useSystemConfig } from '../context/SystemConfigContext';
+import { AuthProvider } from '../context/AuthContext';
 
 function ThemedApp({ children }) {
     const { primary_color, primary_color_dark } = useSystemConfig();

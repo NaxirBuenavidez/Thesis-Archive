@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 
 const { Title, Text, Paragraph } = Typography;
 
-const cardThesis = ({ item, primaryColor, primaryDark, onClick }) => {
+const cardThesis = React.memo(({ item, primaryColor, primaryDark, onClick }) => {
     return (
         <Card 
             hoverable
@@ -58,6 +58,6 @@ const cardThesis = ({ item, primaryColor, primaryDark, onClick }) => {
             </div>
         </Card>
     );
-};
+});
 
 export default cardThesis;

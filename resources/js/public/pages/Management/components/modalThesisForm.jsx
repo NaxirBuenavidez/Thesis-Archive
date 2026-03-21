@@ -5,7 +5,7 @@ import { FileTextOutlined, InboxOutlined, FilePdfOutlined } from '@ant-design/ic
 const { TextArea } = Input;
 const { Text } = Typography;
 
-const modalThesisForm = ({ 
+const modalThesisForm = React.memo(({ 
     open, 
     onCancel, 
     onFinish, 
@@ -185,6 +185,6 @@ const modalThesisForm = ({
             </div>
         </Modal>
     );
-};
+});
 
 export default modalThesisForm;

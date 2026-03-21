@@ -98,12 +98,30 @@ export default function NotificationBell({ isMobile, onClickMobile }) {
             }
         };
 
-        // Initial fetch
-        fetchNotifications(true).then(() => {
+        // Initial fetch logic: skip if already in bootData
+        if (window.__boot_data && window.__boot_data.notifications) {
+            const data = window.__boot_data.notifications;
+            const visibleNotifications = data.filter(n => {
+                if (!clearedAt) return true;
+                return new Date(n.created_at).getTime() > new Date(clearedAt).getTime();
+            });
+            setNotifications(visibleNotifications);
+            setUnreadCount(visibleNotifications.filter(n => !n.read_at).length);
+            const newLatest = data.length > 0 ? data[0].id : null;
+            if (newLatest) setLatestId(newLatest);
+            
+            // Start the loop after the standard delay
             if (isSubscribed) {
                 timeoutRef.current = setTimeout(loop, 60000);
             }
-        });
+        } else {
+            // Initial fetch
+            fetchNotifications(true).then(() => {
+                if (isSubscribed) {
+                    timeoutRef.current = setTimeout(loop, 60000);
+                }
+            });
+        }
 
         // Focus listener for real-time feel
         const handleFocus = () => {

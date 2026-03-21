@@ -17,15 +17,15 @@ class SettingController extends Controller
             if (!str_starts_with($val, 'http') && !str_starts_with($val, 'data:image') && !str_starts_with($val, '/')) {
                 if (env('FILESYSTEM_DISK') === 's3') {
                     try {
-                        $settings['logo_path'] = \Illuminate\Support\Facades\Storage::disk('s3')->temporaryUrl($val, now()->addMinutes(120));
+                        $settings->put('logo_path', \Illuminate\Support\Facades\Storage::disk('s3')->temporaryUrl($val, now()->addMinutes(120)));
                     } catch (\Exception $e) {
-                        $settings['logo_path'] = url('storage/' . $val);
+                        $settings->put('logo_path', url('storage/' . $val));
                     }
                 } else {
-                    $settings['logo_path'] = url('storage/' . $val);
+                    $settings->put('logo_path', url('storage/' . $val));
                 }
             } elseif (str_starts_with($val, '/')) {
-                $settings['logo_path'] = url($val);
+                $settings->put('logo_path', url($val));
             }
         }
         

@@ -6,7 +6,7 @@ import tabThesisFiles from './tabThesisFiles';
 
 const { Text } = Typography;
 
-const drawerThesisPreview = ({ 
+const drawerThesisPreview = React.memo(({ 
     open, 
     onClose, 
     thesis, 
@@ -60,6 +60,6 @@ const drawerThesisPreview = ({
             ) : null}
         </Drawer>
     );
-};
+});
 
 export default drawerThesisPreview;

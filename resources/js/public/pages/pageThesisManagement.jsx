@@ -112,7 +112,7 @@ export default function ThesisManagement() {
         setIsModalOpen(true);
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = React.useCallback((id) => {
         modal.confirm({
             title: 'Delete Thesis',
             content: 'Are you sure you want to delete this thesis record? This action cannot be undone.',
@@ -128,7 +128,7 @@ export default function ThesisManagement() {
                 }
             }
         });
-    };
+    }, [modal, message, fetchInitialData]);
 
     const handleSubmit = async (values) => {
         setSubmitLoading(true);
@@ -167,19 +167,18 @@ export default function ThesisManagement() {
         } catch (error) {
             message.error(error.response?.data?.message || 'Failed to save thesis');
         } finally {
-            setSubmitLoading(true); // Wait, this should be false
             setSubmitLoading(false);
         }
     };
 
     const { getColumnSearchProps, filteredData, setGlobalSearchText, globalSearchText } = useTableSearch(data);
 
-    const getStatusColor = (status) => {
+    const getStatusColor = React.useCallback((status) => {
         const colors = { published: 'green', accepted: 'cyan', under_review: 'orange', submitted: 'blue', rejected: 'red', draft: 'default' };
         return colors[status] || 'default';
-    };
+    }, []);
 
-    const columns = [
+    const columns = React.useMemo(() => [
         {
             title: 'Action',
             key: 'actions',
@@ -229,7 +228,7 @@ export default function ThesisManagement() {
                 </Space>
             ),
         }
-    ];
+    ], [activeTab, openEditModal, handleDelete, getColumnSearchProps, primaryColor, screens.xs, getStatusColor, token.colorTextSecondary]);
 
     const isMobile = !screens.md;
 

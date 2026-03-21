@@ -5,7 +5,7 @@ import { HomeOutlined, MailOutlined, PhoneOutlined } from '@ant-design/icons';
 const { Footer } = Layout;
 const { Title, Text, Paragraph } = Typography;
 
-const footerArchive = ({ logoPath, primaryColor, primaryDark, appName }) => {
+const footerArchive = React.memo(({ logoPath, primaryColor, primaryDark, appName }) => {
     return (
         <Footer style={{ background: '#efefef', color: '#333', padding: '60px 5% 40px', borderTop: `4px solid ${primaryDark}`, position: 'relative', zIndex: 1 }}>
             <Row gutter={[48, 32]}>
@@ -96,6 +96,6 @@ const footerArchive = ({ logoPath, primaryColor, primaryDark, appName }) => {
             </Row>
         </Footer>
     );
-};
+});
 
 export default footerArchive;

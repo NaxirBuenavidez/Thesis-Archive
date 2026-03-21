@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 const { Header } = Layout;
 const { Title: AntTitle } = Typography;
 
-const navbarArchive = ({ 
+const navbarArchive = React.memo(({ 
     logoPath, 
     siteTitle, 
     appName, 
@@ -65,6 +65,6 @@ const navbarArchive = ({
             />
         </Header>
     );
-};
+});
 
 export default navbarArchive;

@@ -36,10 +36,28 @@ Route::get('/api/boot', function (Illuminate\Http\Request $request) {
         }
     }
 
-    return response()->json([
+    $bootData = [
         'settings' => $settings,
-        'user'     => $request->user()?->load('profile', 'role')
-    ]);
+        'user'     => null,
+        'notifications' => [],
+        'analytics' => null,
+    ];
+
+    if ($user = $request->user()) {
+        $bootData['user'] = $user->load('profile', 'role');
+        
+        $bootData['notifications'] = \App\Models\Notification::forUser($user)
+            ->orderByDesc('created_at')
+            ->take(50)
+            ->get();
+            
+        // For admin dashboard, optionally pre-load analytics
+        if ($user->role && in_array($user->role->slug, ['spadmin', 'program_head'])) {
+           $bootData['analytics'] = \Illuminate\Support\Facades\Cache::get('dashboard_analytics');
+        }
+    }
+
+    return response()->json($bootData);
 });
 
 // Public settings endpoint - branding always accessible
@@ -149,8 +167,22 @@ Route::get('/{any}', function (Illuminate\Http\Request $request) {
     // 2. Wrap everything in a boot object
     $bootData = [
         'settings' => $settings,
-        'user'     => $request->user()?->load('profile', 'role')
+        'user'     => null,
+        'notifications' => [],
+        'analytics' => null,
     ];
+
+    if ($user = $request->user()) {
+        $bootData['user'] = $user->load('profile', 'role');
+        $bootData['notifications'] = \App\Models\Notification::forUser($user)
+            ->orderByDesc('created_at')
+            ->take(50)
+            ->get();
+            
+        if ($user->role && in_array($user->role->slug, ['spadmin', 'program_head'])) {
+            $bootData['analytics'] = \Illuminate\Support\Facades\Cache::get('dashboard_analytics');
+        }
+    }
 
     return view('welcome', compact('bootData'));
 })->where('any', '.*');

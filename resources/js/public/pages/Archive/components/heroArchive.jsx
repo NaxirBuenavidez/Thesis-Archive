@@ -3,7 +3,7 @@ import { Typography, Input, Button } from 'antd';
 
 const { Title, Paragraph } = Typography;
 
-const heroArchive = ({ 
+const heroArchive = React.memo(({ 
     primaryColor, 
     primaryDark, 
     searchQuery, 
@@ -44,6 +44,6 @@ const heroArchive = ({
             </div>
         </div>
     );
-};
+});
 
 export default heroArchive;

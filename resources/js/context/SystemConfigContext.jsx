@@ -12,7 +12,7 @@ export function SystemConfigProvider({ children, initialData = null }) {
     });
     const [loading, setLoading] = useState(true);
 
-    const fetchSettings = async (initialData = null) => {
+    const fetchSettings = React.useCallback(async (initialData = null) => {
         if (initialData) {
             setSettings(prev => ({
                 ...prev,
@@ -44,16 +44,18 @@ export function SystemConfigProvider({ children, initialData = null }) {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchSettings(initialData);
-    }, [initialData]);
+    }, [fetchSettings, initialData]);
 
-    // We can conditionally render children only after loading, but since branding shouldn't 
-    // block the initial paint entirely, we allow it to render with defaults while fetching.
+    const contextValue = React.useMemo(() => ({
+        ...settings, loading, refreshSettings: fetchSettings
+    }), [settings, loading, fetchSettings]);
+
     return (
-        <SystemConfigContext.Provider value={{ ...settings, loading, refreshSettings: fetchSettings }}>
+        <SystemConfigContext.Provider value={contextValue}>
             {children}
         </SystemConfigContext.Provider>
     );

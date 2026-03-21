@@ -61,7 +61,7 @@ const statusTagColor = (status) => {
     return map[status] || 'default';
 };
 
-function StatCard({ title, value, icon, accentColor, subtext, large = false }) {
+const StatCard = React.memo(({ title, value, icon, accentColor, subtext, large = false }) => {
     const { token } = theme.useToken();
     const [hovered, setHovered] = useState(false);
 
@@ -132,9 +132,9 @@ function StatCard({ title, value, icon, accentColor, subtext, large = false }) {
             </div>
         </Card>
     );
-}
+});
 
-function SectionHeader({ icon, title, subtitle }) {
+const SectionHeader = React.memo(({ icon, title, subtitle }) => {
     const { token } = theme.useToken();
     return (
         <div style={{ marginBottom: 16 }}>
@@ -145,7 +145,7 @@ function SectionHeader({ icon, title, subtitle }) {
             {subtitle && <Text type="secondary" style={{ fontSize: 12, marginLeft: 24, display: 'block', marginTop: 2 }}>{subtitle}</Text>}
         </div>
     );
-}
+});
 
 export default function Dashboard() {
     const { user } = useAuth();
@@ -205,7 +205,14 @@ export default function Dashboard() {
     }, []);
 
     useEffect(() => {
-        fetchAnalytics();
+        // Initial load logic: skip if already in bootData
+        if (window.__boot_data && window.__boot_data.analytics) {
+            setData(window.__boot_data.analytics);
+            setLoading(false);
+        } else {
+            fetchAnalytics();
+        }
+        
         const interval = setInterval(fetchAnalytics, 60000);
         return () => clearInterval(interval);
     }, [fetchAnalytics]);
@@ -214,15 +221,19 @@ export default function Dashboard() {
         return null; // GlobalLoader from LoadingContext handles the visual
     }
 
-    const totals = data?.totals || {};
-    const byStatus = data?.by_status || [];
-    const byDept = data?.by_department || [];
-    const monthlyTrend = data?.monthly_trend || [];
-    const recentActivity = data?.recent_activity || [];
-    const byDegree = data?.by_degree_type || [];
-    const topDept = data?.top_dept_published || [];
+    const {
+        totals, byStatus, byDept, monthlyTrend, recentActivity, byDegree, topDept
+    } = React.useMemo(() => ({
+        totals: data?.totals || {},
+        byStatus: data?.by_status || [],
+        byDept: data?.by_department || [],
+        monthlyTrend: data?.monthly_trend || [],
+        recentActivity: data?.recent_activity || [],
+        byDegree: data?.by_degree_type || [],
+        topDept: data?.top_dept_published || [],
+    }), [data]);
 
-    const actCols = [
+    const actCols = React.useMemo(() => [
         {
             title: 'Thesis',
             dataIndex: 'title',
@@ -243,11 +254,13 @@ export default function Dashboard() {
             )
         },
         { title: 'Updated', dataIndex: 'updated_at', key: 'updated_at', render: (t) => <Text type="secondary" style={{ fontSize: 12 }}>{t}</Text>, responsive: ['md'] },
-    ];
+    ], []);
 
-    const publishedPct = totals.total_theses > 0
-        ? Math.round((totals.published / totals.total_theses) * 100)
-        : 0;
+    const publishedPct = React.useMemo(() => (
+        totals.total_theses > 0
+            ? Math.round((totals.published / totals.total_theses) * 100)
+            : 0
+    ), [totals.total_theses, totals.published]);
 
     return (
         <div style={{ paddingBottom: 8 }}>

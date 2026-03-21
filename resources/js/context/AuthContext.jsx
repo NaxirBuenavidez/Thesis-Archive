@@ -40,11 +40,11 @@ export const AuthProvider = ({ children, initialUser = undefined }) => {
         checkAuth(initialUser);
     }, [initialUser]);
 
-    const login = (userData) => {
+    const login = React.useCallback((userData) => {
         setUser(userData);
-    };
+    }, []);
 
-    const logout = async () => {
+    const logout = React.useCallback(async () => {
         try {
             await logoutArg();
         } catch (error) {
@@ -53,10 +53,14 @@ export const AuthProvider = ({ children, initialUser = undefined }) => {
             setUser(null);
             window.location.href = '/login';
         }
-    };
+    }, []);
+
+    const contextValue = React.useMemo(() => ({
+        user, login, logout, checkAuth, loading
+    }), [user, loading, login, logout]);
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, checkAuth, loading }}>
+        <AuthContext.Provider value={contextValue}>
             {!loading ? children : (
                 <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <Spin size="large" />
