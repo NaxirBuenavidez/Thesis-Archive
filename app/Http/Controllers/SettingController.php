@@ -14,7 +14,7 @@ class SettingController extends Controller
         
         if (isset($settings['logo_path']) && !empty($settings['logo_path'])) {
             $val = (string) $settings['logo_path'];
-            if (!str_starts_with($val, 'http') && !str_starts_with($val, 'data:image')) {
+            if (!str_starts_with($val, 'http') && !str_starts_with($val, 'data:image') && !str_starts_with($val, '/')) {
                 if (env('FILESYSTEM_DISK') === 's3') {
                     try {
                         $settings['logo_path'] = \Illuminate\Support\Facades\Storage::disk('s3')->temporaryUrl($val, now()->addMinutes(120));
@@ -24,6 +24,8 @@ class SettingController extends Controller
                 } else {
                     $settings['logo_path'] = url('storage/' . $val);
                 }
+            } elseif (str_starts_with($val, '/')) {
+                $settings['logo_path'] = url($val);
             }
         }
         

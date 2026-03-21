@@ -34,21 +34,29 @@ export default function GlobalLoader() {
             }
         };
 
-        // Safety reset for mobile: if we back/resume, we clear the loader
+        // Safety resets: clear loader on navigation / visibility change / focus
         const handleReset = () => {
             countRef.current = 0;
             setVisible(false);
             setIsLoading(false);
+            if (timerRef.current) clearTimeout(timerRef.current);
         };
 
         window.addEventListener('loading-start', handleStart);
         window.addEventListener('loading-stop', handleStop);
-        window.addEventListener('pageshow', handleReset); // Clear on browser back/history resume
+        window.addEventListener('pageshow', handleReset);
+        window.addEventListener('popstate', handleReset);
+        window.addEventListener('visibilitychange', () => {
+            if (document.hidden) handleReset();
+        });
+        window.addEventListener('focus', handleReset); // Often helps on mobile resume
 
         return () => {
             window.removeEventListener('loading-start', handleStart);
             window.removeEventListener('loading-stop', handleStop);
             window.removeEventListener('pageshow', handleReset);
+            window.removeEventListener('popstate', handleReset);
+            window.removeEventListener('focus', handleReset);
             clearTimeout(timerRef.current);
         };
     }, []);
@@ -150,16 +158,7 @@ export default function GlobalLoader() {
                     <div className="gl-arc" />
                     <div className="gl-arc gl-arc2" />
                     <div className="gl-logo">
-                        {logo_path ? (
                         <img src="/images/pecit-logo.png" alt="System Logo" />
-                        ) : (
-                            <div
-                                className="gl-fallback"
-                                style={{ background: color }}
-                            >
-                                TA
-                            </div>
-                        )}
                     </div>
                 </div>
             </div>
