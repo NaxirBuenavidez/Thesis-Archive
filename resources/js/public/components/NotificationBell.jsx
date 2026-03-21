@@ -23,17 +23,10 @@ export default function NotificationBell({ isMobile, onClickMobile }) {
     const timeoutRef = useRef(null);
     const abortControllerRef = useRef(null);
     const errorCountRef = useRef(0);
-    const lastFetchRef = useRef(0);
     
     const { token } = theme.useToken();
 
     const fetchNotifications = async (initialLoad = false) => {
-        // Apply a 20-second cooldown "before it load again" as requested by user
-        const now = Date.now();
-        if (!initialLoad && (now - lastFetchRef.current < 20000)) {
-            return;
-        }
-
         try {
             // Cancel previous pending request to prevent fetch race conditions
             if (abortControllerRef.current) {
@@ -41,9 +34,8 @@ export default function NotificationBell({ isMobile, onClickMobile }) {
             }
             abortControllerRef.current = new AbortController();
 
-            if (initialLoad && notifications.length === 0) setLoading(true);
+            if (initialLoad) setLoading(true);
             
-            lastFetchRef.current = now;
             const { data } = await window.axios.get('/api/notifications', {
                 signal: abortControllerRef.current.signal,
                 silent: true
