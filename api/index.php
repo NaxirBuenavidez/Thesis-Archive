@@ -22,9 +22,16 @@ $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
 putenv('SANCTUM_STATEFUL_DOMAINS=' . $host);
 $_ENV['SANCTUM_STATEFUL_DOMAINS'] = $host;
 
-// Force the session cookie domain to precisely match so the browser doesn't natively reject the token
+// Force the session domain to precisely match so the browser doesn't natively reject the token
 putenv('SESSION_DOMAIN=' . $host);
 $_ENV['SESSION_DOMAIN'] = $host;
+
+// 🚨 VERCEL READ-ONLY FILESYSTEM FIX
+// Force all file uploads and storage operations to S3/R2 to prevent permission errors on Vercel's immutable disk.
+putenv('FILESYSTEM_DISK=s3');
+$_ENV['FILESYSTEM_DISK'] = 's3';
+putenv('FILESYSTEM_DRIVER=s3');
+$_ENV['FILESYSTEM_DRIVER'] = 's3';
 
 $_ENV['APP_CONFIG_CACHE'] = '/tmp/config.php';
 $_ENV['APP_EVENTS_CACHE'] = '/tmp/events.php';
@@ -60,10 +67,16 @@ try {
     $app->useStoragePath('/tmp/storage');
     $storagePath = $app->storagePath();
 
-    foreach (['framework/views', 'framework/cache', 'framework/cache/data', 'framework/sessions', 'logs'] as $dir) {
-        if (!is_dir("{$storagePath}/{$dir}")) {
-            mkdir("{$storagePath}/{$dir}", 0777, true);
+    // Optimize: Only check directories if not already created in this worker's lifecycle
+    static $dirsCreated = false;
+    if (!$dirsCreated) {
+        foreach (['framework/views', 'framework/cache', 'framework/cache/data', 'framework/sessions', 'logs'] as $dir) {
+            $fullPath = "{$storagePath}/{$dir}";
+            if (!is_dir($fullPath)) {
+                @mkdir($fullPath, 0777, true);
+            }
         }
+        $dirsCreated = true;
     }
 
     $app->handleRequest(Request::capture());
