@@ -23,21 +23,38 @@
                     "value": "public, max-age=31536000, immutable"
                 }
             ]
+        },
+        {
+            "source": "/build/manifest.json",
+            "headers": [
+                {
+                    "key": "Cache-Control",
+                    "value": "no-cache, no-store, must-revalidate"
+                }
+            ]
         }
     ],
 
     "rewrites": [
         {
+            "source": "/build/assets/(.*)",
+            "destination": "/public/build/assets/$1"
+        },
+        {
+            "source": "/build/manifest.json",
+            "destination": "/public/build/manifest.json"
+        },
+        {
             "source": "/api/(.*)",
             "destination": "/api/index.php?__path_override=api/$1"
         },
         {
-            "source": "/build/(.*)",
-            "destination": "/public/build/$1"
-        },
-        {
             "source": "/favicon.ico",
             "destination": "/public/favicon.ico"
+        },
+        {
+            "source": "/images/(.*)",
+            "destination": "/public/images/$1"
         },
         {
             "source": "/(.*)",
