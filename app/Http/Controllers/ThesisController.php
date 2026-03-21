@@ -6,6 +6,9 @@ use App\Models\Thesis;
 use App\Models\User;
 use App\Models\Role;
 use App\Http\Controllers\NotificationController;
+use App\Http\Resources\ThesisResource;
+use App\Http\Requests\StoreThesisRequest;
+use App\Http\Requests\UpdateThesisRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
@@ -16,7 +19,7 @@ class ThesisController extends Controller
     public function index()
     {
         $theses = Thesis::with(['owner.profile', 'primarySupervisor'])->latest()->get();
-        return response()->json($theses);
+        return ThesisResource::collection($theses);
     }
 
     public function publicIndex(Request $request)
@@ -26,51 +29,14 @@ class ThesisController extends Controller
             ->where('status', 'published')
             ->where('is_confidential', false)
             ->latest()
-            ->get()
-            ->map(function ($thesis) {
-                // Manually strip highly sensitive document paths and admin metadata globally
-                $thesis->makeHidden([
-                    'pdf_path', 
-                    'pdf_original_name', 
-                    'docx_path', 
-                    'docx_original_name', 
-                    'archived_by', 
-                    'recommended_by', 
-                    'review_checklist'
-                ]);
-                return $thesis;
-            });
+            ->get();
 
-        return response()->json($theses);
+        return ThesisResource::collection($theses);
     }
 
-    public function store(Request $request)
+    public function store(StoreThesisRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|min:1',
-            'author' => 'required|string|max:255',
-            'subtitle' => 'nullable|string',
-            'abstract' => 'nullable|string',
-            'discipline' => 'nullable|string',
-            'keywords' => 'nullable|array',
-            'status' => ['required', 'string', Rule::in(['draft', 'submitted', 'under_review', 'accepted', 'rejected', 'published'])],
-            'degree_type' => 'nullable|string',
-            'institution' => 'nullable|string',
-            'department' => 'nullable|string',
-            'submission_date' => 'nullable|date',
-            'defense_date' => 'nullable|date',
-            'embargo_until' => 'nullable|date',
-            'is_confidential' => 'boolean',
-            'primary_supervisor_id' => 'nullable|exists:users,id',
-            'pdf_file' => 'nullable|file|mimes:pdf|max:51200',
-            'doi' => 'nullable|string|max:255|unique:theses,doi',
-            'co_author' => 'nullable|string|max:255',
-            'panelists' => 'nullable|string|max:255',
-            'review_checklist' => 'nullable|array',
-            'recommended_by' => 'nullable|string|max:255',
-            'archived_by' => 'nullable|string|max:255',
-        ]);
-
+        $validated = $request->validated();
         $validated['owner_id'] = $request->user()->id;
 
         if ($request->hasFile('pdf_file')) {
@@ -91,38 +57,15 @@ class ThesisController extends Controller
             ['thesis_id' => $thesis->id, 'author' => $thesis->author]
         );
 
-        return response()->json([
-            'message' => 'Thesis created successfully',
-            'thesis'  => $thesis->load(['owner', 'primarySupervisor'])
-        ], 201);
+        return (new ThesisResource($thesis->load(['owner', 'primarySupervisor'])))
+            ->additional(['message' => 'Thesis created successfully'])
+            ->response()
+            ->setStatusCode(201);
     }
 
-    public function update(Request $request, Thesis $thesis)
+    public function update(UpdateThesisRequest $request, Thesis $thesis)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|min:1',
-            'author' => 'required|string|max:255',
-            'subtitle' => 'nullable|string',
-            'abstract' => 'nullable|string',
-            'discipline' => 'nullable|string',
-            'keywords' => 'nullable|array',
-            'status' => ['required', 'string', Rule::in(['draft', 'submitted', 'under_review', 'accepted', 'rejected', 'published'])],
-            'degree_type' => 'nullable|string',
-            'institution' => 'nullable|string',
-            'department' => 'nullable|string',
-            'submission_date' => 'nullable|date',
-            'defense_date' => 'nullable|date',
-            'embargo_until' => 'nullable|date',
-            'is_confidential' => 'boolean',
-            'primary_supervisor_id' => 'nullable|exists:users,id',
-            'pdf_file' => 'nullable|file|mimes:pdf|max:51200',
-            'doi' => 'nullable|string|max:255|unique:theses,doi,' . $thesis->id,
-            'co_author' => 'nullable|string|max:255',
-            'panelists' => 'nullable|string|max:255',
-            'review_checklist' => 'nullable|array',
-            'recommended_by' => 'nullable|string|max:255',
-            'archived_by' => 'nullable|string|max:255',
-        ]);
+        $validated = $request->validated();
 
         if ($request->hasFile('pdf_file')) {
             if ($thesis->pdf_path) {
@@ -138,10 +81,13 @@ class ThesisController extends Controller
 
         $thesis->update($validated);
 
-        return response()->json([
-            'message' => 'Thesis updated successfully',
-            'thesis' => $thesis->load(['owner', 'primarySupervisor'])
-        ]);
+        return (new ThesisResource($thesis->load(['owner', 'primarySupervisor'])))
+            ->additional(['message' => 'Thesis updated successfully']);
+    }
+
+    public function show(Thesis $thesis)
+    {
+        return new ThesisResource($thesis->load(['owner', 'primarySupervisor']));
     }
 
     public function review(Request $request, Thesis $thesis)
@@ -181,30 +127,24 @@ class ThesisController extends Controller
             }
         }
 
-        return response()->json([
-            'message' => 'Thesis status updated to ' . $validated['status'],
-            'thesis'  => $thesis->fresh()->load(['owner', 'primarySupervisor'])
-        ]);
+        return (new ThesisResource($thesis->fresh()->load(['owner', 'primarySupervisor'])))
+            ->additional(['message' => 'Thesis status updated to ' . $validated['status']]);
     }
 
     public function publish(Request $request, Thesis $thesis)
     {
         $thesis->update(['status' => 'published']);
 
-        return response()->json([
-            'message' => 'Thesis has been published successfully',
-            'thesis' => $thesis->fresh()->load(['owner', 'primarySupervisor'])
-        ]);
+        return (new ThesisResource($thesis->fresh()->load(['owner', 'primarySupervisor'])))
+            ->additional(['message' => 'Thesis has been published successfully']);
     }
 
     public function toggleConfidential(Request $request, Thesis $thesis)
     {
         $thesis->update(['is_confidential' => !$thesis->is_confidential]);
 
-        return response()->json([
-            'message' => 'Thesis confidentiality updated successfully',
-            'thesis' => $thesis->fresh()->load(['owner', 'primarySupervisor'])
-        ]);
+        return (new ThesisResource($thesis->fresh()->load(['owner', 'primarySupervisor'])))
+            ->additional(['message' => 'Thesis confidentiality updated successfully']);
     }
 
     public function destroy(Thesis $thesis)
@@ -214,6 +154,25 @@ class ThesisController extends Controller
         }
         $thesis->delete();
         return response()->json(['message' => 'Thesis deleted successfully']);
+    }
+
+    public function bulkDelete(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:theses,id'
+        ]);
+
+        $theses = Thesis::whereIn('id', $request->ids)->get();
+        
+        foreach ($theses as $thesis) {
+            if ($thesis->pdf_path) {
+                Storage::disk('s3')->delete($thesis->pdf_path);
+            }
+            $thesis->delete();
+        }
+
+        return response()->json(['message' => count($request->ids) . ' theses deleted successfully']);
     }
 
     public function download(Request $request, Thesis $thesis)
@@ -228,12 +187,6 @@ class ThesisController extends Controller
         if (!Hash::check($request->password, $user->password)) {
             return response()->json(['message' => 'Invalid admin password provided.'], 403);
         }
-
-        // Additional security check: ensure user has admin role if required,
-        // though the prompt implies simply asking for the "admin password"
-        // which could mean the current user's password if they are an admin.
-        // We will assume the frontend only shows this to admins/authorized users,
-        // or that providing their own password is the authorization check.
 
         if ($request->format === 'pdf') {
             if (!$thesis->pdf_path) {
@@ -252,3 +205,4 @@ class ThesisController extends Controller
         return response()->json(['message' => 'Invalid format requested.'], 400);
     }
 }
+

@@ -36,7 +36,7 @@ const publicApi = {
      */
     getThesisById: async (id) => {
         const response = await axios.get(`/api/public/theses/${id}`);
-        return response.data;
+        return response.data.data || response.data;
     }
 };
 

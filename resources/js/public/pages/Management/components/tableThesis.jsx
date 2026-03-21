@@ -13,13 +13,15 @@ const tableThesis = React.memo(({
     onPreview, 
     onEdit, 
     onDelete,
-    screens
+    screens,
+    rowSelection
 }) => {
     // Note: columns are pre-configured in the parent for search props etc.
     // But we can customize them here if needed.
     
     return (
         <Table
+            rowSelection={rowSelection} // Enable multi-selection
             columns={columns}
             dataSource={dataSource}
             loading={loading}

@@ -80,7 +80,7 @@ Route::get('/api/boot', function (Illuminate\Http\Request $request) {
 Route::get('/api/settings', [App\Http\Controllers\SettingController::class, 'index']);
 
 // Public Thesis Archive Repository
-Route::get('/api/public/theses', [App\Http\Controllers\ThesisController::class, 'publicIndex']);
+Route::get('/api/public/theses', [App\Http\Controllers\ThesisController::class, 'publicIndex'])->name('theses.publicIndex');
 
 // S3 Image Proxy Fallback
 // Image Proxy with S3 to Local fallback for Vercel
@@ -137,6 +137,7 @@ Route::middleware('auth:web')->group(function () {
 
     // Thesis Management Routes
     Route::apiResource('/api/theses', App\Http\Controllers\ThesisController::class);
+    Route::post('/api/theses/bulk-delete', [App\Http\Controllers\ThesisController::class, 'bulkDelete']);
     Route::patch('/api/theses/{thesis}/review', [App\Http\Controllers\ThesisController::class, 'review']);
     Route::patch('/api/theses/{thesis}/publish', [App\Http\Controllers\ThesisController::class, 'publish']);
     Route::patch('/api/theses/{thesis}/toggle-confidential', [App\Http\Controllers\ThesisController::class, 'toggleConfidential']);

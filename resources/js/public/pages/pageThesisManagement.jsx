@@ -40,6 +40,7 @@ export default function ThesisManagement() {
     const [searchParams, setSearchParams] = useSearchParams();
     const [previewThesis, setPreviewThesis] = useState(null);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
     const activeTab = searchParams.get('tab') || 'preview';
     const setActiveTab = (key) => setSearchParams({ tab: key }, { replace: true });
@@ -49,7 +50,7 @@ export default function ThesisManagement() {
         try {
             const thesesRes = await thesesApi.getAll({ silent: true });
             
-            const formattedTheses = (thesesRes || []).map(thesis => ({
+            const formattedTheses = (thesesRes.data || thesesRes || []).map(thesis => ({
                 key: thesis.id,
                 title: thesis.title,
                 subtitle: thesis.subtitle,
@@ -67,6 +68,7 @@ export default function ThesisManagement() {
             }));
             
             setData(formattedTheses);
+            setSelectedRowKeys([]); // Reset selection on refresh
             setDepartments(bootDepts || []);
             setPrograms(bootProgs || []);
         } catch (error) {
@@ -80,6 +82,24 @@ export default function ThesisManagement() {
     useEffect(() => {
         fetchInitialData();
     }, []);
+
+    const handleBulkDelete = () => {
+        modal.confirm({
+            title: `Delete ${selectedRowKeys.length} Theses`,
+            content: `Are you sure you want to delete the selected ${selectedRowKeys.length} thesis records? This action cannot be undone.`,
+            okText: 'Yes, Delete All',
+            okType: 'danger',
+            onOk: async () => {
+                try {
+                    await thesesApi.bulkDelete(selectedRowKeys);
+                    message.success(`${selectedRowKeys.length} theses deleted successfully`);
+                    fetchInitialData();
+                } catch (error) {
+                    message.error('Failed to perform bulk deletion');
+                }
+            }
+        });
+    };
 
     const openCreateModal = () => {
         setEditingId(null);
@@ -174,6 +194,20 @@ export default function ThesisManagement() {
         return colors[status] || 'default';
     }, []);
 
+    const onSelectChange = (newSelectedRowKeys) => {
+        setSelectedRowKeys(newSelectedRowKeys);
+    };
+
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: onSelectChange,
+        selections: [
+            Table.SELECTION_ALL,
+            Table.SELECTION_INVERT,
+            Table.SELECTION_NONE,
+        ],
+    };
+
     const columns = React.useMemo(() => [
         {
             title: 'Action',
@@ -243,6 +277,18 @@ export default function ThesisManagement() {
                         </div>
                         {!isMobile && (
                             <Space>
+                                {selectedRowKeys.length > 0 && (
+                                    <Button 
+                                        danger 
+                                        type="primary" 
+                                        icon={<Delete20Filled />} 
+                                        size="large" 
+                                        onClick={handleBulkDelete}
+                                        className="bulk-delete-btn"
+                                    >
+                                        Delete Selected ({selectedRowKeys.length})
+                                    </Button>
+                                )}
                                 <Tooltip title="Refresh List"><Button icon={<ReloadOutlined />} size="large" onClick={() => { setGlobalSearchText(''); fetchInitialData(); }} /></Tooltip>
                                 <Button type="primary" icon={<PlusOutlined />} size="large" onClick={openCreateModal}>Archive</Button>
                             </Space>
@@ -252,6 +298,22 @@ export default function ThesisManagement() {
                         <Input placeholder="Search theses..." prefix={<SearchOutlined />} value={globalSearchText} onChange={(e) => setGlobalSearchText(e.target.value)} size="large" allowClear />
                         {isMobile && <Button type="primary" icon={<PlusOutlined />} size="large" onClick={openCreateModal} />}
                     </div>
+                    
+                    {isMobile && selectedRowKeys.length > 0 && (
+                        <div style={{ marginTop: 12 }}>
+                            <Button 
+                                danger 
+                                type="primary" 
+                                icon={<Delete20Filled />} 
+                                block 
+                                size="large" 
+                                onClick={handleBulkDelete}
+                                style={{ borderRadius: 12 }}
+                            >
+                                Delete Selected ({selectedRowKeys.length})
+                            </Button>
+                        </div>
+                    )}
                 </div>
 
                 <Card className="management-card">
@@ -268,17 +330,52 @@ export default function ThesisManagement() {
                     
                     {isMobile ? (
                         <div style={{ padding: '12px 16px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
+                                <Button 
+                                    size="small" 
+                                    onClick={() => setSelectedRowKeys(selectedRowKeys.length === filteredData.length ? [] : filteredData.map(d => d.key))}
+                                >
+                                    {selectedRowKeys.length === filteredData.length ? 'Deselect All' : 'Select All'}
+                                </Button>
+                            </div>
                             {filteredData.map(record => (
-                                <div key={record.key} className="mobile-thesis-item" onClick={() => {
-                                    if (activeTab === 'preview') { setPreviewThesis(record); setIsPreviewOpen(true); }
-                                    else if (activeTab === 'modify') openEditModal(record);
-                                    else if (activeTab === 'remove') handleDelete(record.key);
-                                }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 6 }}>
-                                        <Text strong style={{ fontSize: 13, flex: 1 }} ellipsis>{record.title}</Text>
-                                        <Tag color={getStatusColor(record.status)} className="status-tag" style={{ fontSize: 11 }}>{record.status.toUpperCase()}</Tag>
+                                <div 
+                                    key={record.key} 
+                                    className={`mobile-thesis-item ${selectedRowKeys.includes(record.key) ? 'selected' : ''}`} 
+                                    onClick={() => {
+                                        if (selectedRowKeys.length > 0) {
+                                            // If in selection mode, toggle selection
+                                            onSelectChange(selectedRowKeys.includes(record.key) ? selectedRowKeys.filter(k => k !== record.key) : [...selectedRowKeys, record.key]);
+                                        } else {
+                                            if (activeTab === 'preview') { setPreviewThesis(record); setIsPreviewOpen(true); }
+                                            else if (activeTab === 'modify') openEditModal(record);
+                                            else if (activeTab === 'remove') handleDelete(record.key);
+                                        }
+                                    }}
+                                    onContextMenu={(e) => {
+                                        e.preventDefault();
+                                        onSelectChange([...selectedRowKeys, record.key]);
+                                    }}
+                                >
+                                    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                                        {selectedRowKeys.length > 0 && (
+                                            <div style={{ 
+                                                width: 20, height: 20, borderRadius: 6, 
+                                                border: `2px solid ${selectedRowKeys.includes(record.key) ? primaryColor : token.colorBorder}`,
+                                                backgroundColor: selectedRowKeys.includes(record.key) ? primaryColor : 'transparent',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                            }}>
+                                                {selectedRowKeys.includes(record.key) && <div style={{ width: 8, height: 8, backgroundColor: '#fff', borderRadius: 2 }} />}
+                                            </div>
+                                        )}
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 6 }}>
+                                                <Text strong style={{ fontSize: 13, flex: 1 }} ellipsis>{record.title}</Text>
+                                                <Tag color={getStatusColor(record.status)} className="status-tag" style={{ fontSize: 11 }}>{record.status.toUpperCase()}</Tag>
+                                            </div>
+                                            <Text type="secondary" style={{ fontSize: 12 }}>{record.author} · {record.department || 'No dept'}</Text>
+                                        </div>
                                     </div>
-                                    <Text type="secondary" style={{ fontSize: 12 }}>{record.author} · {record.department || 'No dept'}</Text>
                                 </div>
                             ))}
                         </div>
@@ -292,6 +389,7 @@ export default function ThesisManagement() {
                             onEdit={openEditModal}
                             onDelete={handleDelete}
                             screens={screens}
+                            rowSelection={rowSelection}
                         />
                     )}
                 </Card>
