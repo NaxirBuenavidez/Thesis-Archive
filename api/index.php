@@ -38,6 +38,7 @@ if (isset($_GET['__path_override'])) {
 // Ensure Laravel doesn't think the app is hosted in an '/api' subfolder (which strips /api off routes!)
 $_SERVER['SCRIPT_NAME'] = '/index.php';
 $_SERVER['PHP_SELF'] = '/index.php';
+$_SERVER['SCRIPT_FILENAME'] = '/index.php';
 
 try {
     require __DIR__.'/../vendor/autoload.php';
