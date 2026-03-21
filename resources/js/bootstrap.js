@@ -7,16 +7,9 @@ window.axios.defaults.withCredentials = true;      // Send cookies (session + XS
 window.axios.defaults.withXSRFToken   = true;      // Auto-attach XSRF-TOKEN cookie as X-XSRF-TOKEN header
 window.axios.defaults.timeout = 30000;             // 30s global timeout to prevent indefinite XHR loading
 
-/**
- * reliable CSRF token implementation
- */
-const token = document.head.querySelector('meta[name="csrf-token"]');
-
-if (token) {
-    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
-} else {
-    console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
-}
+// XSRF Token Handling
+// We rely on withXSRFToken: true above to automatically attach the X-XSRF-TOKEN header from the cookie
+// This is more reliable for SPAs than the static meta tag, which can become stale.
 
 // Dispatch loading events so GlobalLoader shows/hides on network activity
 window.axios.interceptors.request.use(
