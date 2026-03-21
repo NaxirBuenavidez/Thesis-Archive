@@ -23,6 +23,10 @@
     ],
     "rewrites": [
         {
+            "source": "/api/(.*)",
+            "destination": "/api/index.php"
+        },
+        {
             "source": "/build/(.*)",
             "destination": "/public/build/$1"
         },
