@@ -153,12 +153,18 @@ export default function PublicLayout({ children }) {
 
     const mainMenuItems = isMobile ? mobileMainMenuItems : desktopMainMenuItems;
 
+    const isGuest = user?.role?.slug === 'anonymous';
+
     const bottomMenuItems = [
         {
             type: 'divider',
             style: { margin: '24px 16px', borderColor: 'rgba(255,255,255,0.15)' },
         },
-        {
+        isGuest ? {
+            key: 'login',
+            icon: <UserOutlined style={{ fontSize: '20px' }} />,
+            label: <span style={{ fontWeight: 600, fontSize: '16px' }}>Sign In</span>,
+        } : {
             key: 'signout',
             icon: <LogoutOutlined style={{ fontSize: '20px' }} />,
             label: <span style={{ fontWeight: 600, fontSize: '16px' }}>Sign Out</span>,
@@ -178,10 +184,10 @@ export default function PublicLayout({ children }) {
                 {!collapsed && (
                     <div style={{ textAlign: 'center' }}>
                         <Text style={{ color: '#fff', display: 'block', fontWeight: 700, fontSize: '16px', letterSpacing: '0.5px' }}>
-                            {user?.name || 'User'}
+                            {isGuest ? 'Guest User' : (user?.name || 'User')}
                         </Text>
                         <Text style={{ color: 'rgba(255,255,255,0.65)', fontSize: '13px', marginTop: '4px', display: 'block' }}>
-                            {user?.role?.title ? user.role.title : 'User'}
+                            {isGuest ? 'Anonymous Access' : (user?.role?.title ? user.role.title : 'User')}
                         </Text>
                     </div>
                 )}
@@ -258,6 +264,8 @@ export default function PublicLayout({ children }) {
                         if (isMobile) setDrawerVisible(false);
                         if (key === 'signout') {
                             handleLogout();
+                        } else if (key === 'login') {
+                            navigate('/login');
                         }
                     }}
                 />

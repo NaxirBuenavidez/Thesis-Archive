@@ -10,7 +10,12 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuth = async (initialUser = undefined) => {
         if (initialUser !== undefined) {
-            setUser(initialUser);
+            // If the server explicitly returned no user, we inject our Guest identity
+            if (initialUser === null) {
+                setUser({ role: { slug: 'anonymous', title: 'Guest' }, name: 'Guest' });
+            } else {
+                setUser(initialUser);
+            }
             setLoading(false);
             return;
         }
@@ -21,10 +26,11 @@ export const AuthProvider = ({ children }) => {
             if (response && response.data) {
                 setUser(response.data);
             } else {
-                setUser(null);
+                // Anonymous is the default role if not authenticated
+                setUser({ role: { slug: 'anonymous', title: 'Guest' }, name: 'Guest' });
             }
         } catch (error) {
-            setUser(null);
+            setUser({ role: { slug: 'anonymous', title: 'Guest' }, name: 'Guest' });
         } finally {
             setLoading(false);
         }

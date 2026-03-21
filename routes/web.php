@@ -47,10 +47,19 @@ Route::get('/api/settings', [App\Http\Controllers\SettingController::class, 'ind
 Route::get('/api/public/theses', [App\Http\Controllers\ThesisController::class, 'publicIndex']);
 
 // S3 Image Proxy Fallback
+// Image Proxy with S3 to Local fallback for Vercel
 Route::get('/images/{filename}', function ($filename) {
+    // 1. Try S3 first (User uploaded assets/branding)
     if (env('FILESYSTEM_DISK') === 's3' && \Illuminate\Support\Facades\Storage::disk('s3')->exists($filename)) {
         return \Illuminate\Support\Facades\Storage::disk('s3')->response($filename);
     }
+    
+    // 2. Fallback to Local Public (Static system assets like npc-logo.png)
+    $localPath = public_path('images/' . $filename);
+    if (file_exists($localPath)) {
+        return response()->file($localPath);
+    }
+
     abort(404);
 })->where('filename', '.*');
 

@@ -33,7 +33,7 @@ const ProtectedRoute = ({ children }) => {
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
     );
-    if (!user) return <Navigate to="/login" replace />;
+    if (!user || user.role?.slug === 'anonymous') return <Navigate to="/login" replace />;
     return children;
 };
 
