@@ -58,6 +58,27 @@ Route::get('/debug-migrate', function () {
     }
 });
 
+Route::get('/debug-test-update', function () {
+    try {
+        $user = \App\Models\User::first();
+        if (!$user) return response()->json(['status' => 'No user found']);
+        
+        $oldToken = $user->session_token;
+        $newToken = (string) \Illuminate\Support\Str::uuid();
+        
+        $user->update(['session_token' => $newToken]);
+        
+        return response()->json([
+            'status' => 'UPDATE SUCCESS',
+            'old_token' => $oldToken,
+            'new_token' => $newToken,
+            'current_in_db' => \App\Models\User::first()->session_token
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['status' => 'FAILED', 'error' => $e->getMessage()]);
+    }
+});
+
 
 Route::middleware('auth:web')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
