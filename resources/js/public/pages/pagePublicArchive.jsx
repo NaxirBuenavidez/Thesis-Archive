@@ -32,7 +32,7 @@ export default function PublicArchive() {
     useEffect(() => {
         const load = async () => {
             try {
-                const data = await publicApi.getTheses();
+                const data = await publicApi.getTheses(false, { silent: true });
                 setTheses(data);
             } finally {
                 setLoading(false);

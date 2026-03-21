@@ -22,7 +22,7 @@ const { useBreakpoint } = Grid;
 export default function ThesisManagement() {
     const { user } = useAuth();
     const screens = useBreakpoint();
-    const { token } = theme.useToken();
+    const { token, departments: bootDepts, programs: bootProgs } = useSystemConfig();
     const primaryColor = token.colorPrimary;
     const { message, modal } = App.useApp();
 
@@ -47,11 +47,7 @@ export default function ThesisManagement() {
     const fetchInitialData = async () => {
         setLoading(true);
         try {
-            const [thesesRes, deptsRes, progsRes] = await Promise.all([
-                thesesApi.getAll(),
-                systemApi.getDepartments(),
-                systemApi.getPrograms()
-            ]);
+            const thesesRes = await thesesApi.getAll({ silent: true });
             
             const formattedTheses = (thesesRes || []).map(thesis => ({
                 key: thesis.id,
@@ -71,8 +67,8 @@ export default function ThesisManagement() {
             }));
             
             setData(formattedTheses);
-            setDepartments(deptsRes || []);
-            setPrograms(progsRes || []);
+            setDepartments(bootDepts || []);
+            setPrograms(bootProgs || []);
         } catch (error) {
             console.error("Failed to fetch initial data", error);
             message.error("Failed to load systems resources");

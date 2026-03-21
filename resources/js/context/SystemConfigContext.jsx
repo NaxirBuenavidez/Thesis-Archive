@@ -10,18 +10,31 @@ export function SystemConfigProvider({ children, initialData = null }) {
         site_description: 'PHILIPPINE ELECTRONICS & COMMUNICATION INSTITUTE OF TECHNOLOGY',
         logo_path: null
     });
+    const [departments, setDepartments] = useState([]);
+    const [programs, setPrograms] = useState([]);
+    const [roles, setRoles] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const fetchSettings = React.useCallback(async (initialData = null) => {
         if (initialData) {
+            const s = initialData.settings || initialData; // Handle both full bootData and legacy settings-only data
+            const d = initialData.departments;
+            const p = initialData.programs;
+            const r = initialData.roles;
+
             setSettings(prev => ({
                 ...prev,
-                primary_color: initialData.primary_color || prev.primary_color,
-                primary_color_dark: initialData.primary_color_dark || prev.primary_color_dark,
-                site_title: initialData.site_title || prev.site_title,
-                site_description: initialData.site_description || prev.site_description,
-                logo_path: initialData.logo_path || prev.logo_path
+                primary_color: s.primary_color || prev.primary_color,
+                primary_color_dark: s.primary_color_dark || prev.primary_color_dark,
+                site_title: s.site_title || prev.site_title,
+                site_description: s.site_description || prev.site_description,
+                logo_path: s.logo_path || prev.logo_path
             }));
+
+            if (d) setDepartments(d);
+            if (p) setPrograms(p);
+            if (r) setRoles(r);
+
             setLoading(false);
             return;
         }
@@ -51,8 +64,13 @@ export function SystemConfigProvider({ children, initialData = null }) {
     }, [fetchSettings, initialData]);
 
     const contextValue = React.useMemo(() => ({
-        ...settings, loading, refreshSettings: fetchSettings
-    }), [settings, loading, fetchSettings]);
+        ...settings, 
+        departments,
+        programs,
+        roles,
+        loading, 
+        refreshSettings: fetchSettings
+    }), [settings, departments, programs, roles, loading, fetchSettings]);
 
     return (
         <SystemConfigContext.Provider value={contextValue}>

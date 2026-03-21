@@ -195,7 +195,7 @@ export default function Dashboard() {
 
     const fetchAnalytics = useCallback(async () => {
         try {
-            const resp = await window.axios.get('/api/dashboard/analytics');
+            const resp = await window.axios.get('/api/dashboard/analytics', { silent: true });
             setData(resp.data);
         } catch {
             // use empty defaults

@@ -16,31 +16,47 @@ Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallbac
 
 // Consolidated Boot API — returns branding + user in 1 request to slash load times on Vercel
 Route::get('/api/boot', function (Illuminate\Http\Request $request) {
-    $settings = \App\Models\Setting::all()->pluck('value', 'key')->toArray();
-    
-    // Handle logo URL logic identical to SettingController
-    if (isset($settings['logo_path']) && !empty($settings['logo_path'])) {
-        $val = (string) $settings['logo_path'];
-        if (!str_starts_with($val, 'http') && !str_starts_with($val, 'data:image') && !str_starts_with($val, '/')) {
-            if (env('FILESYSTEM_DISK') === 's3') {
-                try {
-                    $settings['logo_path'] = \Illuminate\Support\Facades\Storage::disk('s3')->temporaryUrl($val, now()->addMinutes(120));
-                } catch (\Exception $e) {
-                    $settings['logo_path'] = url('storage/' . $val);
+    $settings = \Illuminate\Support\Facades\Cache::remember('system_settings', 3600, function () {
+        $data = \App\Models\Setting::all()->pluck('value', 'key')->toArray();
+        if (isset($data['logo_path']) && !empty($data['logo_path'])) {
+            $val = (string) $data['logo_path'];
+            if (!str_starts_with($val, 'http') && !str_starts_with($val, 'data:image') && !str_starts_with($val, '/')) {
+                if (env('FILESYSTEM_DISK') === 's3') {
+                    try {
+                        $data['logo_path'] = \Illuminate\Support\Facades\Storage::disk('s3')->temporaryUrl($val, now()->addMinutes(120));
+                    } catch (\Exception $e) {
+                        $data['logo_path'] = url('storage/' . $val);
+                    }
+                } else {
+                    $data['logo_path'] = url('storage/' . $val);
                 }
-            } else {
-                $settings['logo_path'] = url('storage/' . $val);
+            } elseif (str_starts_with($val, '/')) {
+                $data['logo_path'] = url($val);
             }
-        } elseif (str_starts_with($val, '/')) {
-            $settings['logo_path'] = url($val);
         }
-    }
+        return $data;
+    });
+
+    $departments = \Illuminate\Support\Facades\Cache::remember('system_departments', 3600, function () {
+        return \App\Models\Department::all();
+    });
+
+    $programs = \Illuminate\Support\Facades\Cache::remember('system_programs', 3600, function () {
+        return \App\Models\Program::all();
+    });
+
+    $roles = \Illuminate\Support\Facades\Cache::remember('system_roles', 3600, function () {
+        return \App\Models\Role::all();
+    });
 
     $bootData = [
-        'settings' => $settings,
-        'user'     => null,
+        'settings'      => $settings,
+        'departments'   => $departments,
+        'programs'      => $programs,
+        'roles'         => $roles,
+        'user'          => null,
         'notifications' => [],
-        'analytics' => null,
+        'analytics'     => null,
     ];
 
     if ($user = $request->user()) {
@@ -143,33 +159,49 @@ Route::middleware('auth:web')->group(function () {
 
 
 Route::get('/{any}', function (Illuminate\Http\Request $request) {
-    // 1. Fetch Branding/Settings (Cached via internal logic or DB)
-    $settings = \App\Models\Setting::all()->pluck('value', 'key')->toArray();
-    
-    // Handle logo URL logic identical to SettingController
-    if (isset($settings['logo_path']) && !empty($settings['logo_path'])) {
-        $val = (string) $settings['logo_path'];
-        if (!str_starts_with($val, 'http') && !str_starts_with($val, 'data:image') && !str_starts_with($val, '/')) {
-            if (env('FILESYSTEM_DISK') === 's3') {
-                try {
-                    $settings['logo_path'] = \Illuminate\Support\Facades\Storage::disk('s3')->temporaryUrl($val, now()->addMinutes(120));
-                } catch (\Exception $e) {
-                    $settings['logo_path'] = url('storage/' . $val);
+    // 1. Fetch Shared Resources (Cached)
+    $settings = \Illuminate\Support\Facades\Cache::remember('system_settings', 3600, function () {
+        $data = \App\Models\Setting::all()->pluck('value', 'key')->toArray();
+        if (isset($data['logo_path']) && !empty($data['logo_path'])) {
+            $val = (string) $data['logo_path'];
+            if (!str_starts_with($val, 'http') && !str_starts_with($val, 'data:image') && !str_starts_with($val, '/')) {
+                if (env('FILESYSTEM_DISK') === 's3') {
+                    try {
+                        $data['logo_path'] = \Illuminate\Support\Facades\Storage::disk('s3')->temporaryUrl($val, now()->addMinutes(120));
+                    } catch (\Exception $e) {
+                        $data['logo_path'] = url('storage/' . $val);
+                    }
+                } else {
+                    $data['logo_path'] = url('storage/' . $val);
                 }
-            } else {
-                $settings['logo_path'] = url('storage/' . $val);
+            } elseif (str_starts_with($val, '/')) {
+                $data['logo_path'] = url($val);
             }
-        } elseif (str_starts_with($val, '/')) {
-            $settings['logo_path'] = url($val);
         }
-    }
+        return $data;
+    });
+
+    $departments = \Illuminate\Support\Facades\Cache::remember('system_departments', 3600, function () {
+        return \App\Models\Department::all();
+    });
+
+    $programs = \Illuminate\Support\Facades\Cache::remember('system_programs', 3600, function () {
+        return \App\Models\Program::all();
+    });
+
+    $roles = \Illuminate\Support\Facades\Cache::remember('system_roles', 3600, function () {
+        return \App\Models\Role::all();
+    });
 
     // 2. Wrap everything in a boot object
     $bootData = [
-        'settings' => $settings,
-        'user'     => null,
+        'settings'      => $settings,
+        'departments'   => $departments,
+        'programs'      => $programs,
+        'roles'         => $roles,
+        'user'          => null,
         'notifications' => [],
-        'analytics' => null,
+        'analytics'     => null,
     ];
 
     if ($user = $request->user()) {

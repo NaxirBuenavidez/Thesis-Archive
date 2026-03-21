@@ -20,6 +20,7 @@ class DepartmentController extends Controller
             'description' => 'nullable|string',
         ]);
 
+        \Illuminate\Support\Facades\Cache::forget('system_departments');
         $department = Department::create($validated);
         return response()->json($department, 201);
     }
@@ -31,12 +32,14 @@ class DepartmentController extends Controller
             'description' => 'nullable|string',
         ]);
 
+        \Illuminate\Support\Facades\Cache::forget('system_departments');
         $department->update($validated);
         return response()->json($department);
     }
 
     public function destroy(Department $department)
     {
+        \Illuminate\Support\Facades\Cache::forget('system_departments');
         $department->delete();
         return response()->json(['message' => 'Department deleted successfully']);
     }

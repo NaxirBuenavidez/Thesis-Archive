@@ -37,7 +37,8 @@ export default function NotificationBell({ isMobile, onClickMobile }) {
             if (initialLoad) setLoading(true);
             
             const { data } = await window.axios.get('/api/notifications', {
-                signal: abortControllerRef.current.signal
+                signal: abortControllerRef.current.signal,
+                silent: true
             });
             
             errorCountRef.current = 0; // Reset error backoff on success
@@ -88,7 +89,7 @@ export default function NotificationBell({ isMobile, onClickMobile }) {
             }
             
             // Exponential backoff logic
-            let delay = 60000; // default 1m
+            let delay = 120000; // default 2m (increased from 1m to reduce latency overhead)
             if (errorCountRef.current > 0) {
                  delay = Math.min(60000 * Math.pow(2, errorCountRef.current), 300000); // Max 5m
             }
@@ -112,13 +113,13 @@ export default function NotificationBell({ isMobile, onClickMobile }) {
             
             // Start the loop after the standard delay
             if (isSubscribed) {
-                timeoutRef.current = setTimeout(loop, 60000);
+                timeoutRef.current = setTimeout(loop, 120000);
             }
         } else {
             // Initial fetch
             fetchNotifications(true).then(() => {
                 if (isSubscribed) {
-                    timeoutRef.current = setTimeout(loop, 60000);
+                    timeoutRef.current = setTimeout(loop, 120000);
                 }
             });
         }
@@ -131,7 +132,7 @@ export default function NotificationBell({ isMobile, onClickMobile }) {
                 fetchNotifications(false).then(() => {
                     if (isSubscribed) {
                         clearTimeout(timeoutRef.current);
-                        timeoutRef.current = setTimeout(loop, 60000);
+                        timeoutRef.current = setTimeout(loop, 120000);
                     }
                 });
             }

@@ -7,9 +7,9 @@ const thesesApi = {
     /**
      * Fetch all theses (admin/reviewer view)
      */
-    getAll: async () => {
+    getAll: async (config = {}) => {
         try {
-            const response = await axios.get('/api/theses');
+            const response = await axios.get('/api/theses', config);
             return response.data;
         } catch (error) {
             console.error('API Error: thesesApi.getAll', error);

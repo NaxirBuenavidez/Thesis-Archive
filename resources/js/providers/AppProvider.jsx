@@ -85,7 +85,7 @@ export function AppProvider({ children }) {
     }
 
     return (
-        <SystemConfigProvider initialData={bootData?.settings}>
+        <SystemConfigProvider initialData={bootData}>
             <ThemedApp>
                 <AuthProvider initialUser={bootData?.user}>
                     {children}

@@ -22,6 +22,7 @@ import { BookOpen, Clock, Calendar, Globe, Lock } from 'lucide-react';
 import { Earth20Filled, LockClosed20Filled } from '@fluentui/react-icons';
 import { useAuth } from '../../context/AuthContext';
 import { Spin } from 'antd';
+import thesesApi from '../../api/thesesApi';
 
 const { Title, Text, Paragraph } = Typography;
 const { useBreakpoint } = Grid;
@@ -67,9 +68,9 @@ export default function Repository() {
     const fetchTheses = async () => {
         setLoading(true);
         try {
-            const response = await window.axios.get('/api/theses');
-            if (response.data) {
-                const theses = response.data
+            const response = await thesesApi.getAll({ silent: true });
+            if (response) {
+                const theses = response
                     .filter(t => t.status === 'accepted' || t.status === 'published')
                     .map(thesis => ({
                         key: thesis.id,

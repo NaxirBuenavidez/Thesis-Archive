@@ -55,6 +55,7 @@ class SettingController extends Controller
             );
         }
 
+        \Illuminate\Support\Facades\Cache::forget('system_settings');
         $settings = Setting::all()->pluck('value', 'key');
         return response()->json(['message' => 'Settings updated successfully', 'settings' => $settings]);
     }

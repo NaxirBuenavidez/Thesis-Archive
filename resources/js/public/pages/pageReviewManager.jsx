@@ -20,6 +20,7 @@ import { useTableSearch } from '../../hooks/useTableSearch';
 import { useAuth } from '../../context/AuthContext';
 import { Spin } from 'antd';
 import SignaturePad from '../components/UI/SignaturePad';
+import thesesApi from '../../api/thesesApi';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -49,9 +50,9 @@ export default function ReviewManager() {
     const fetchTheses = async () => {
         setLoading(true);
         try {
-            const response = await window.axios.get('/api/theses');
-            if (response.data) {
-                const theses = response.data
+            const response = await thesesApi.getAll({ silent: true });
+            if (response) {
+                const theses = response
                     .filter(t => t.status === 'under_review')
                     .map(thesis => ({
                         key: thesis.id,

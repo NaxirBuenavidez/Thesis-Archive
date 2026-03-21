@@ -21,7 +21,7 @@ const { useBreakpoint } = Grid;
 export default function Users() {
     const { user } = useAuth();
     const screens = useBreakpoint();
-    const { token } = theme.useToken();
+    const { token, roles: bootRoles } = useSystemConfig();
     const primaryColor = token.colorPrimary;
 
 
@@ -33,21 +33,25 @@ export default function Users() {
     const [submitLoading, setSubmitLoading] = useState(false);
     const [roles, setRoles] = useState([]);
 
-    const fetchRoles = async () => {
+    const fetchRoles = React.useCallback(async () => {
+        if (bootRoles && bootRoles.length > 0) {
+            setRoles(bootRoles);
+            return;
+        }
         try {
-            const response = await window.axios.get('/api/roles');
+            const response = await window.axios.get('/api/roles', { silent: true });
             if (response.data) {
                 setRoles(response.data);
             }
         } catch (error) {
             console.error("Failed to fetch roles", error);
         }
-    };
+    }, [bootRoles]);
 
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const response = await window.axios.get('/api/users');
+            const response = await window.axios.get('/api/users', { silent: true });
             if (response.data) {
                 // Map API data to table format. Handle both paginated and direct array responses
                 const usersList = response.data.data || (Array.isArray(response.data) ? response.data : []);
@@ -72,7 +76,7 @@ export default function Users() {
     useEffect(() => {
         fetchUsers();
         fetchRoles();
-    }, []);
+    }, [fetchRoles]);
 
     const handleCreateUser = async (values) => {
         setSubmitLoading(true);

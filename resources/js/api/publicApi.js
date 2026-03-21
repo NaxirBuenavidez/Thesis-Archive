@@ -13,13 +13,13 @@ const publicApi = {
     /**
      * Fetch all public theses (cached)
      */
-    getTheses: async (forceRefresh = false) => {
+    getTheses: async (forceRefresh = false, config = {}) => {
         const now = Date.now();
         if (!forceRefresh && thesisCache.data && (now - thesisCache.timestamp < CACHE_TTL)) {
             return thesisCache.data;
         }
 
-        const response = await axios.get('/api/public/theses');
+        const response = await axios.get('/api/public/theses', config);
         let results = [];
         if (Array.isArray(response.data)) {
             results = response.data;
