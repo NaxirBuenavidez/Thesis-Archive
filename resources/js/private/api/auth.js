@@ -1,25 +1,25 @@
 import axios from 'axios';
 
-// Since we can't easily use hooks (useLoading) inside standard JS functions 
-// without passing them in, we might need a different approach for "every process".
-// However, typically we set up axios interceptors in a component or a setup file that has access to the provider.
-// But `auth.js` is a static service. 
-// A common pattern is to export a setup function or events.
+// Ensure the local axios import uses the defaults we setup in bootstrap
+const apiClient = axios;
 
-// For simplicity and "realtime" requirement, let's assume we trigger it manually in components 
-// OR we use a global event bus that the LoadingContext listens to.
-// Let's iterate: modifying bootstrap.js to dispatch events is cleaner for "every process".
+// Intercept transparent HTML redirects (200 OK but HTML content)
+apiClient.interceptors.response.use((response) => {
+    if (typeof response.data === 'string' && response.data.includes('<!DOCTYPE html>')) {
+        return Promise.reject({ response: { status: 401, data: { message: 'Unauthenticated.' } } });
+    }
+    return response;
+});
 
 export const loginArg = async (credentials) => {
-    // Seed the CSRF cookie before posting so Laravel doesn't return 419
-    await axios.get('/sanctum/csrf-cookie');
-    return axios.post('/login', credentials);
+    await apiClient.get('/sanctum/csrf-cookie', { headers: { 'Accept': 'application/json' } });
+    return apiClient.post('/login', credentials, { headers: { 'Accept': 'application/json' } });
 };
 
 export const logoutArg = () => {
-    return axios.post('/logout');
+    return apiClient.post('/logout', {}, { headers: { 'Accept': 'application/json' } });
 };
 
 export const getUserArg = () => {
-    return axios.get('/api/user');
+    return apiClient.get('/api/user', { headers: { 'Accept': 'application/json' } });
 };
