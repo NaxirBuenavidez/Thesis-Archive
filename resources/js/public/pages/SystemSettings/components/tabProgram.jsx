@@ -20,7 +20,7 @@ export default function tabProgram({ apiEndpoint = '/api/programs', isSeniorHigh
     const fetchPrograms = async () => {
         setLoading(true);
         try {
-            const response = await window.axios.get(apiEndpoint);
+            const response = await window.axios.get(apiEndpoint, { silent: true });
             setData(response.data);
         } catch (error) {
             message.error('Failed to fetch programs');
@@ -31,7 +31,7 @@ export default function tabProgram({ apiEndpoint = '/api/programs', isSeniorHigh
 
     const fetchDepartments = async () => {
         try {
-            const response = await window.axios.get('/api/departments');
+            const response = await window.axios.get('/api/departments', { silent: true });
             if (isSeniorHigh) {
                 const shsDept = response.data.filter(d => d.name === 'SENIOR HIGH SCHOOL');
                 setDepartments(shsDept);
@@ -57,10 +57,10 @@ export default function tabProgram({ apiEndpoint = '/api/programs', isSeniorHigh
         setSubmitLoading(true);
         try {
             if (editingId) {
-                await window.axios.put(`${apiEndpoint}/${editingId}`, values);
+                await window.axios.put(`${apiEndpoint}/${editingId}`, values, { silent: true });
                 message.success('Program updated successfully');
             } else {
-                await window.axios.post(apiEndpoint, values);
+                await window.axios.post(apiEndpoint, values, { silent: true });
                 message.success('Program created successfully');
             }
             setIsModalOpen(false);
@@ -97,7 +97,7 @@ export default function tabProgram({ apiEndpoint = '/api/programs', isSeniorHigh
 
     const handleDelete = async (id) => {
         try {
-            await window.axios.delete(`${apiEndpoint}/${id}`);
+            await window.axios.delete(`${apiEndpoint}/${id}`, { silent: true });
             message.success('Program deleted successfully');
             fetchPrograms();
         } catch (error) {

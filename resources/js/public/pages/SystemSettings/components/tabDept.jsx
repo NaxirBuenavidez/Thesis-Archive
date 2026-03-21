@@ -19,7 +19,7 @@ export default function tabDept() {
     const fetchDepartments = async () => {
         setLoading(true);
         try {
-            const response = await window.axios.get('/api/departments');
+            const response = await window.axios.get('/api/departments', { silent: true });
             setData(response.data);
         } catch (error) {
             Feedback.error('Failed to fetch departments');
@@ -36,10 +36,10 @@ export default function tabDept() {
         setSubmitLoading(true);
         try {
             if (editingId) {
-                await window.axios.put(`/api/departments/${editingId}`, values);
+                await window.axios.put(`/api/departments/${editingId}`, values, { silent: true });
                 Feedback.success('Department updated successfully');
             } else {
-                await window.axios.post('/api/departments', values);
+                await window.axios.post('/api/departments', values, { silent: true });
                 Feedback.success('Department created successfully');
             }
             setIsModalOpen(false);
@@ -68,7 +68,7 @@ export default function tabDept() {
 
     const handleDelete = async (id) => {
         try {
-            await window.axios.delete(`/api/departments/${id}`);
+            await window.axios.delete(`/api/departments/${id}`, { silent: true });
             Feedback.success('Department deleted successfully');
             fetchDepartments();
         } catch (error) {
