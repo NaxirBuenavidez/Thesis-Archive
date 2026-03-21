@@ -14,6 +14,13 @@
             "use": "@vercel/static"
         }
     ],
+    "redirects": [
+        {
+            "source": "/",
+            "destination": "/archive",
+            "permanent": false
+        }
+    ],
     "rewrites": [
         {
             "source": "/build/(.*)",
