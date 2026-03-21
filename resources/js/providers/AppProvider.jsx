@@ -59,8 +59,17 @@ export function AppProvider({ children }) {
         boot();
     }, []);
 
-    // We still render the providers, but we pass the bootData for hydration.
-    // The SystemConfigProvider will use the settings, and AuthProvider will use the user.
+    if (booting) {
+        return (
+            <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#f0f2f5' }}>
+                <div style={{ textAlign: 'center' }}>
+                    <div style={{ width: 40, height: 40, border: '3px solid rgba(0,0,0,0.1)', borderTopColor: '#2845D6', borderRadius: '50%', animation: 'gl-spin 0.8s linear infinite', margin: '0 auto 16px' }} />
+                    <div style={{ color: '#8c8c8c', fontSize: 14 }}>Initializing System...</div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <SystemConfigProvider initialData={bootData?.settings}>
             <ThemedApp>

@@ -47,8 +47,8 @@ export function SystemConfigProvider({ children }) {
     };
 
     useEffect(() => {
-        fetchSettings();
-    }, []);
+        fetchSettings(initialData);
+    }, [initialData]);
 
     // We can conditionally render children only after loading, but since branding shouldn't 
     // block the initial paint entirely, we allow it to render with defaults while fetching.

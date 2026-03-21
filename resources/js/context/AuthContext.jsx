@@ -31,8 +31,8 @@ export const AuthProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        checkAuth();
-    }, []);
+        checkAuth(initialUser);
+    }, [initialUser]);
 
     const login = (userData) => {
         setUser(userData);
