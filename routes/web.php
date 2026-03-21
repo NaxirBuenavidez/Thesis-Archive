@@ -28,60 +28,6 @@ Route::get('/images/{filename}', function ($filename) {
     abort(404);
 })->where('filename', '.*');
 
-// 🔴 EMERGENCY VERCEL DEBUG ROUTES
-Route::get('/debug-db', function () {
-    try {
-        \Illuminate\Support\Facades\DB::connection()->getPdo();
-        return response()->json(['status' => 'CONNECTED SUCCESSFULLY']);
-    } catch (\Exception $e) {
-        return response()->json(['status' => 'FAILED', 'error' => $e->getMessage()]);
-    }
-});
-
-Route::get('/debug-env', function () {
-    return response()->json([
-        'APP_KEY' => env('APP_KEY') ? 'EXISTS' : 'CRITICAL: MISSING',
-        'DB_HOST' => env('DB_HOST') ? env('DB_HOST') : 'CRITICAL: MISSING',
-        'CACHE_STORE' => env('CACHE_STORE'),
-        'SESSION_DRIVER' => env('SESSION_DRIVER'),
-        'AWS_URL' => env('AWS_URL') ? 'EXISTS' : 'MISSING',
-    ]);
-});
-
-Route::get('/debug-migrate', function () {
-    try {
-        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-        return response()->json([
-            'status' => 'MIGRATION SUCCESS',
-            'output' => \Illuminate\Support\Facades\Artisan::output()
-        ]);
-    } catch (\Exception $e) {
-        return response()->json(['status' => 'FAILED', 'error' => $e->getMessage()]);
-    }
-});
-
-Route::get('/debug-test-update', function () {
-    try {
-        $user = \App\Models\User::first();
-        if (!$user) return response()->json(['status' => 'No user found']);
-        
-        $oldToken = $user->session_token;
-        $newToken = (string) \Illuminate\Support\Str::uuid();
-        
-        $user->update(['session_token' => $newToken]);
-        
-        return response()->json([
-            'status' => 'UPDATE SUCCESS',
-            'old_token' => $oldToken,
-            'new_token' => $newToken,
-            'current_in_db' => \App\Models\User::first()->session_token
-        ]);
-    } catch (\Exception $e) {
-        return response()->json(['status' => 'FAILED', 'error' => $e->getMessage()]);
-    }
-});
-
-
 Route::middleware('auth:web')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/api/user', function (Illuminate\Http\Request $request) {

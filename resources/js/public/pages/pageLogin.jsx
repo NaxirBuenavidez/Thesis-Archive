@@ -225,6 +225,27 @@ const STYLES = `
   object-fit: contain;
   padding: 6px;
 }
+
+@media (max-width: 480px) {
+  .login-root {
+    padding: 16px;
+  }
+  .login-card {
+    padding: 32px 24px 28px;
+    border-radius: 20px;
+  }
+  .login-logo-wrap {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 16px;
+  }
+  .login-btn {
+    height: 46px !important;
+  }
+  .login-divider {
+    margin: 16px 0;
+  }
+}
 `;
 
 /* Inject styles into <head> once */
@@ -372,8 +393,8 @@ export default function Login() {
                             color: '#fff',
                             margin: 0,
                             fontWeight: 800,
-                            fontSize: 18,
-                            letterSpacing: 1.5,
+                            fontSize: 'clamp(14px, 4vw, 18px)',
+                            letterSpacing: 1.2,
                             lineHeight: 1.3,
                             textTransform: 'uppercase',
                         }}
@@ -383,7 +404,7 @@ export default function Login() {
                     <Text
                         style={{
                             color: 'rgba(255,255,255,0.55)',
-                            fontSize: 11,
+                            fontSize: 'clamp(9px, 2.5vw, 11px)',
                             display: 'block',
                             marginTop: 4,
                             letterSpacing: 0.5,
