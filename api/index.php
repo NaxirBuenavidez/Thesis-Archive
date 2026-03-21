@@ -15,6 +15,11 @@ putenv('VIEW_COMPILED_PATH=/tmp/storage/framework/views');
 putenv('SESSION_DRIVER=database');
 $_ENV['SESSION_DRIVER'] = 'database';
 
+// Dynamically whitelist Vercel's active domain for Sanctum CSRF stateful cookie validation!
+$host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+putenv('SANCTUM_STATEFUL_DOMAINS=' . $host);
+$_ENV['SANCTUM_STATEFUL_DOMAINS'] = $host;
+
 $_ENV['APP_CONFIG_CACHE'] = '/tmp/config.php';
 $_ENV['APP_EVENTS_CACHE'] = '/tmp/events.php';
 $_ENV['APP_PACKAGES_CACHE'] = '/tmp/packages.php';
