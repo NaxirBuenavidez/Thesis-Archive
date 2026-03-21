@@ -38,9 +38,9 @@ window.axios.interceptors.response.use(
         window.dispatchEvent(new Event('loading-stop'));
         if (error.response && (error.response.status === 401 || error.response.status === 419)) {
             // Unauthenticated interceptor: Don't redirect if on login or designated public pages
-            const publicPaths = ['/login', '/archive'];
+            const publicPaths = ['/', '/archive'];
             if (!publicPaths.includes(window.location.pathname)) {
-                window.location.href = '/login';
+                window.location.href = '/';
             }
         }
         return Promise.reject(error);

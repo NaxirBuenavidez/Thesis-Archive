@@ -175,7 +175,7 @@ export default function PublicArchive() {
                             {item.icon} <span style={{ marginLeft: 6 }}>{item.label}</span>
                         </div>
                     ))}
-                    <Link to="/login">
+                    <Link to="/">
                         <Button type="primary" style={{ background: primaryColor, borderRadius: 6, fontWeight: 500 }}>
                             Admin / Client Portal
                         </Button>
@@ -645,7 +645,7 @@ export default function PublicArchive() {
                             <Text style={{ color: '#475569', fontSize: 15, display: 'block', marginBottom: 24, maxWidth: 600, margin: '0 auto 24px auto' }}>
                                 The full manuscript, raw methodology, and dataset results are strictly shielded for internal use. Access is restricted to authorized clients securely connected to the Intranet Portal.
                             </Text>
-                            <Link to="/login">
+                            <Link to="/">
                                 <Button type="primary" size="large" style={{ background: '#334155', borderRadius: 8, fontWeight: 800, padding: '0 32px', height: 48, fontSize: 15 }}>
                                     See more... Login to Portal
                                 </Button>

@@ -34,7 +34,7 @@ const ProtectedRoute = ({ children }) => {
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
     );
-    if (!user) return <Navigate to="/login" replace />;
+    if (!user) return <Navigate to="/" replace />;
     return children;
 };
 
@@ -42,7 +42,7 @@ const ProtectedRoute = ({ children }) => {
 const AlreadyAuthedRoute = ({ children }) => {
     const { user, loading } = useAuth();
     if (loading) return null;
-    if (user) return <Navigate to="/" replace />;
+    if (user) return <Navigate to="/dashboard" replace />;
     return children;
 };
 
@@ -50,7 +50,7 @@ const AlreadyAuthedRoute = ({ children }) => {
 const RoleRoute = ({ children, allowedRoles }) => {
     const { user } = useAuth();
     const slug = user?.role?.slug;
-    if (!slug || !allowedRoles.includes(slug)) return <Navigate to="/" replace />;
+    if (!slug || !allowedRoles.includes(slug)) return <Navigate to="/dashboard" replace />;
     return children;
 };
 
@@ -67,7 +67,7 @@ const router = createBrowserRouter([
         ),
         children: [
             {
-                path: "/login",
+                path: "/",
                 element: <AlreadyAuthedRoute><Login /></AlreadyAuthedRoute>,
             },
             {
@@ -75,11 +75,10 @@ const router = createBrowserRouter([
                 element: <PublicArchive />,
             },
             {
-                path: "/",
                 element: <ProtectedRoute><PublicLayout><Outlet /></PublicLayout></ProtectedRoute>,
                 children: [
                     {
-                        path: "/",
+                        path: "/dashboard",
                         element: <Dashboard />,
                     },
                     {
@@ -122,7 +121,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "*",
-                element: <Navigate to="/" replace />,
+                element: <Navigate to="/dashboard" replace />,
             }
         ]
     }
