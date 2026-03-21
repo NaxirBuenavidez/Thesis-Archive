@@ -20,7 +20,7 @@ const systemApi = {
         }
         
         try {
-            const response = await axios.get('/api/departments');
+            const response = await axios.get('/api/departments', { silent: true });
             cache.departments = { data: response.data, timestamp: now };
             return response.data;
         } catch (error) {
@@ -39,7 +39,7 @@ const systemApi = {
         }
 
         try {
-            const response = await axios.get('/api/programs');
+            const response = await axios.get('/api/programs', { silent: true });
             cache.programs = { data: response.data, timestamp: now };
             return response.data;
         } catch (error) {
@@ -52,7 +52,7 @@ const systemApi = {
      * Get system settings
      */
     getSettings: async () => {
-        const response = await axios.get('/api/settings');
+        const response = await axios.get('/api/settings', { silent: true });
         return response.data;
     }
 };

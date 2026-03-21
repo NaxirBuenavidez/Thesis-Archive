@@ -162,7 +162,7 @@ export default function NotificationBell({ isMobile, onClickMobile }) {
 
     const handleMarkAllAsRead = async () => {
         try {
-            await window.axios.post('/api/notifications/mark-read');
+            await window.axios.post('/api/notifications/mark-read', {}, { silent: true });
             setUnreadCount(0);
             setNotifications(prev => prev.map(n => ({ ...n, read_at: new Date().toISOString() })));
             CustomNotification.success('All notifications marked as read');
@@ -173,7 +173,7 @@ export default function NotificationBell({ isMobile, onClickMobile }) {
 
     const handleMarkAsRead = async (id) => {
         try {
-            await window.axios.post(`/api/notifications/${id}/mark-read`);
+            await window.axios.post(`/api/notifications/${id}/mark-read`, {}, { silent: true });
             setUnreadCount(prev => Math.max(0, prev - 1));
             setNotifications(prev => prev.map(n => n.id === id ? { ...n, read_at: new Date().toISOString() } : n));
         } catch (error) {

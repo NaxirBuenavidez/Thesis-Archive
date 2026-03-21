@@ -40,7 +40,7 @@ export function SystemConfigProvider({ children, initialData = null }) {
         }
 
         try {
-            const response = await window.axios.get('/api/settings');
+            const response = await window.axios.get('/api/settings', { silent: true });
             const data = response.data;
             
             // Only update if keys exist in DB

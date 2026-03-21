@@ -21,5 +21,5 @@ export const logoutArg = () => {
 };
 
 export const getUserArg = () => {
-    return apiClient.get('/api/user', { headers: { 'Accept': 'application/json' } });
+    return apiClient.get('/api/user', { headers: { 'Accept': 'application/json' }, silent: true });
 };
