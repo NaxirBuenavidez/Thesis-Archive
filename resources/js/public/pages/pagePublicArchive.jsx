@@ -44,7 +44,14 @@ export default function PublicArchive() {
         const fetchPublicData = async () => {
             try {
                 const response = await axios.get('/api/public/theses');
-                setTheses(response.data);
+                if (Array.isArray(response.data)) {
+                    setTheses(response.data);
+                } else if (response.data && Array.isArray(response.data.data)) {
+                    setTheses(response.data.data);
+                } else {
+                    console.error("API returned non-array data:", response.data);
+                    setTheses([]);
+                }
             } catch (error) {
                 console.error("Failed to load public repository", error);
             } finally {

@@ -23,14 +23,6 @@
     ],
     "rewrites": [
         {
-            "source": "/build/(.*)",
-            "destination": "/public/build/$1"
-        },
-        {
-            "source": "/favicon.ico",
-            "destination": "/public/favicon.ico"
-        },
-        {
             "source": "/(.*)",
             "destination": "/api/index.php"
         }
