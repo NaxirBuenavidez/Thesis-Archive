@@ -42,6 +42,8 @@ Route::get('/debug-env', function () {
     return response()->json([
         'APP_KEY' => env('APP_KEY') ? 'EXISTS' : 'CRITICAL: MISSING',
         'DB_HOST' => env('DB_HOST') ? env('DB_HOST') : 'CRITICAL: MISSING',
+        'CACHE_STORE' => env('CACHE_STORE'),
+        'SESSION_DRIVER' => env('SESSION_DRIVER'),
         'AWS_URL' => env('AWS_URL') ? 'EXISTS' : 'MISSING',
     ]);
 });
