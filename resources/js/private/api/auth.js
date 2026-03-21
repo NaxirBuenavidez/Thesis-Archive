@@ -13,11 +13,11 @@ apiClient.interceptors.response.use((response) => {
 
 export const loginArg = async (credentials) => {
     await apiClient.get('/sanctum/csrf-cookie', { headers: { 'Accept': 'application/json' } });
-    return apiClient.post('/login', credentials, { headers: { 'Accept': 'application/json' } });
+    return apiClient.post('/login', credentials, { headers: { 'Accept': 'application/json' }, useLoader: true });
 };
 
 export const logoutArg = () => {
-    return apiClient.post('/logout', {}, { headers: { 'Accept': 'application/json' } });
+    return apiClient.post('/logout', {}, { headers: { 'Accept': 'application/json' }, useLoader: true });
 };
 
 export const getUserArg = () => {

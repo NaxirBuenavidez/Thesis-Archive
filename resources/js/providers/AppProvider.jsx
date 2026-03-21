@@ -62,7 +62,8 @@ export function AppProvider({ children }) {
 
             try {
                 const { data } = await window.axios.get('/api/boot', { 
-                    silent: window.location.pathname === '/archive' 
+                    silent: window.location.pathname === '/archive',
+                    useLoader: true 
                 });
                 setBootData(data);
             } catch (error) {

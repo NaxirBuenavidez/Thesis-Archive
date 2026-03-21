@@ -11,29 +11,34 @@ window.axios.defaults.timeout = 30000;             // 30s global timeout to prev
 // We rely on withXSRFToken: true above to automatically attach the X-XSRF-TOKEN header from the cookie
 // This is more reliable for SPAs than the static meta tag, which can become stale.
 
-// Dispatch loading events so GlobalLoader shows/hides on network activity
+// Dispatch loading events so GlobalLoader shows/hides ONLY when explicitly requested via 'useLoader: true'
 window.axios.interceptors.request.use(
     config => {
-        if (!config.silent) {
+        if (config.useLoader) {
             window.dispatchEvent(new Event('loading-start'));
         }
         return config;
     },
     error => {
-        window.dispatchEvent(new Event('loading-stop'));
+        // We only stop if the original config wanted the loader
+        if (error.config?.useLoader) {
+            window.dispatchEvent(new Event('loading-stop'));
+        }
         return Promise.reject(error);
     }
 );
 
 window.axios.interceptors.response.use(
     response => {
-        if (!response.config.silent) {
+        if (response.config.useLoader) {
             window.dispatchEvent(new Event('loading-stop'));
         }
         return response;
     },
     error => {
-        window.dispatchEvent(new Event('loading-stop'));
+        if (error.config?.useLoader) {
+            window.dispatchEvent(new Event('loading-stop'));
+        }
 
         const originalRequest = error.config;
 

@@ -26,7 +26,8 @@ const thesesApi = {
             const config = { 
                 headers: { 'Content-Type': 'multipart/form-data' },
                 // Allow longer timeout for file uploads
-                timeout: 120000 
+                timeout: 120000,
+                useLoader: true 
             };
             const response = await axios.post('/api/theses', formData, config);
             return response.data;
@@ -45,7 +46,8 @@ const thesesApi = {
         try {
             const config = { 
                 headers: { 'Content-Type': 'multipart/form-data' },
-                timeout: 120000
+                timeout: 120000,
+                useLoader: true
             };
             // Use POST with _method=PUT for multipart/form-data compatibility with Laravel
             if (formData instanceof FormData && !formData.has('_method')) {
