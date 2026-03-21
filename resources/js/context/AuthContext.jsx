@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
             console.error('Logout failed', error);
         } finally {
             setUser(null);
-            window.location.href = '/';
+            window.location.href = '/login';
         }
     };
 

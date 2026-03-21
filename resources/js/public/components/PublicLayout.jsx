@@ -46,7 +46,7 @@ export default function PublicLayout({ children }) {
     // Breadcrumb Logic
     const pathSnippets = location.pathname.split('/').filter((i) => i);
     const breadcrumbNameMap = {
-        '/dashboard': 'Dashboard',
+        '/': 'Dashboard',
         '/users': 'Users',
         '/repository': 'Repository',
         '/thesis-management': 'Thesis Management',
@@ -85,7 +85,7 @@ export default function PublicLayout({ children }) {
 
     const breadcrumbItems = [
         {
-            title: <Link to="/dashboard"><HomeOutlined style={{ color: colorTextTertiary, fontSize: '18px' }} /></Link>,
+            title: <Link to="/"><HomeOutlined style={{ color: colorTextTertiary, fontSize: '18px' }} /></Link>,
             key: 'home',
         },
     ].concat(extraBreadcrumbItems);
@@ -232,7 +232,7 @@ export default function PublicLayout({ children }) {
 
                         // Map keys to routes
                         const routeMap = {
-                            'dashboard': '/dashboard',
+                            'dashboard': '/',
                             'users': '/users',
                             'repository': '/repository',
                             'thesis-management': '/thesis-management',
