@@ -186,49 +186,51 @@ export default function NotificationBell({ isMobile, onClickMobile }) {
     };
 
     const content = (
-        <div style={{ width: 320, maxHeight: 400, display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 12, borderBottom: `1px solid ${token.colorBorderSecondary}` }}>
-                <Text strong>System Alerts</Text>
-                <div>
-                    <Button type="link" size="small" onClick={handleClearLoaded} style={{ color: token.colorTextSecondary }}>
+        <div style={{ width: 'min(360px, 90vw)', maxHeight: 450, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px 12px', borderBottom: `1px solid ${token.colorBorderSecondary}` }}>
+                <Text strong style={{ fontSize: 15 }}>System Alerts</Text>
+                <div style={{ display: 'flex', gap: 4 }}>
+                    <Button type="link" size="small" onClick={handleClearLoaded} style={{ color: token.colorTextSecondary, padding: '0 4px' }}>
                         Clear
                     </Button>
                     {unreadCount > 0 && (
-                        <Button type="link" size="small" onClick={handleMarkAllAsRead}>
+                        <Button type="link" size="small" onClick={handleMarkAllAsRead} style={{ padding: '0 4px' }}>
                             Read All
                         </Button>
                     )}
                 </div>
             </div>
-            <div style={{ flex: 1, overflowY: 'auto', paddingTop: 8, paddingRight: 4 }}>
+            <div style={{ flex: 1, overflowY: 'auto', paddingTop: 8, paddingRight: 4, scrollbarWidth: 'thin' }}>
                 {loading && notifications.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: 20 }}><Spin /></div>
                 ) : notifications.length === 0 ? (
                     <Empty description="No notifications" image={Empty.PRESENTED_IMAGE_SIMPLE} />
                 ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                         {notifications.map(item => (
                             <div
                                 key={item.id}
                                 style={{
                                     padding: '12px 14px',
-                                    border: `1px solid ${item.read_at ? token.colorBorderSecondary : 'rgba(255, 77, 79, 0.2)'}`,
-                                    backgroundColor: item.read_at ? token.colorBgContainer : 'rgba(255, 77, 79, 0.04)',
-                                    borderRadius: 6,
+                                    border: `1px solid ${item.read_at ? token.colorBorderSecondary : 'rgba(255, 77, 79, 0.25)'}`,
+                                    backgroundColor: item.read_at ? token.colorBgContainer : 'rgba(255, 77, 79, 0.05)',
+                                    borderRadius: 10,
                                     cursor: 'pointer',
                                     display: 'flex',
-                                    flexDirection: 'column'
+                                    flexDirection: 'column',
+                                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    boxShadow: item.read_at ? 'none' : '0 2px 8px rgba(255, 77, 79, 0.08)'
                                 }}
                                 onClick={() => {
                                     if (!item.read_at) handleMarkAsRead(item.id);
                                 }}
                             >
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-                                    <Text strong={!item.read_at} style={{ fontSize: 13, lineHeight: 1.3 }}>{item.title}</Text>
-                                    {!item.read_at && <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#ff4d4f', marginTop: 4, flexShrink: 0, marginLeft: 8 }} />}
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
+                                    <Text strong={!item.read_at} style={{ fontSize: 13, lineHeight: 1.4, color: item.read_at ? token.colorText : token.colorTextHeading }}>{item.title}</Text>
+                                    {!item.read_at && <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#ff4d4f', marginTop: 5, flexShrink: 0, marginLeft: 8 }} />}
                                 </div>
-                                <div style={{ color: token.colorTextSecondary, fontSize: 13, marginBottom: 4 }}>{item.message}</div>
-                                <div style={{ color: token.colorTextTertiary, fontSize: 11 }}>{formatTime(item.created_at)}</div>
+                                <div style={{ color: token.colorTextSecondary, fontSize: 12.5, marginBottom: 6, lineHeight: 1.5 }}>{item.message}</div>
+                                <div style={{ color: token.colorTextTertiary, fontSize: 11, fontWeight: 500 }}>{formatTime(item.created_at)}</div>
                             </div>
                         ))}
                     </div>
@@ -272,16 +274,16 @@ export default function NotificationBell({ isMobile, onClickMobile }) {
                 {BellButton}
                 <Drawer
                     title={
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-                            <div style={{ width: 40, height: 4, backgroundColor: token.colorBorder, borderRadius: 4, marginBottom: 16 }} />
-                            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
-                                <Text strong style={{ fontSize: 18 }}>System Alerts</Text>
-                                <div>
-                                    <Button type="link" onClick={handleClearLoaded} style={{ padding: 0, marginRight: 16, color: token.colorTextSecondary }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', cursor: 'pointer' }}>
+                            <div style={{ width: 40, height: 5, backgroundColor: token.colorBorder, borderRadius: 10, marginBottom: 12, opacity: 0.6 }} />
+                            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center', padding: '0 4px' }}>
+                                <Text strong style={{ fontSize: 19, letterSpacing: -0.5 }}>System Alerts</Text>
+                                <div style={{ display: 'flex', gap: 8 }}>
+                                    <Button type="text" onClick={handleClearLoaded} style={{ padding: '0 8px', color: token.colorTextSecondary, fontSize: 14 }}>
                                         Clear
                                     </Button>
                                     {unreadCount > 0 && (
-                                        <Button type="link" onClick={handleMarkAllAsRead} style={{ padding: 0 }}>
+                                        <Button type="primary" size="small" onClick={handleMarkAllAsRead} style={{ borderRadius: 6, fontSize: 12, height: 28 }}>
                                             Read All
                                         </Button>
                                     )}
@@ -294,10 +296,10 @@ export default function NotificationBell({ isMobile, onClickMobile }) {
                     onClose={() => setDrawerOpen(false)}
                     open={drawerOpen}
                     styles={{
-                        wrapper: { height: '85vh' },
-                        body: { padding: 0, backgroundColor: token.colorBgLayout },
-                        header: { borderBottom: `1px solid ${token.colorBorderSecondary}`, padding: '12px 20px 16px', borderTopLeftRadius: 20, borderTopRightRadius: 20 },
-                        content: { borderTopLeftRadius: 20, borderTopRightRadius: 20, overflow: 'hidden' }
+                        wrapper: { height: 'min(650px, 85vh)' },
+                        body: { padding: 0, backgroundColor: token.colorBgLayout, overflowX: 'hidden' },
+                        header: { borderBottom: `1px solid ${token.colorBorderSecondary}`, padding: '10px 20px 14px', borderTopLeftRadius: 24, borderTopRightRadius: 24 },
+                        content: { borderTopLeftRadius: 24, borderTopRightRadius: 24, overflow: 'hidden', boxShadow: '0 -10px 40px rgba(0,0,0,0.1)' }
                     }}
                 >
                     <div style={{ flex: 1, overflowY: 'auto', padding: '16px', height: '100%' }}>
@@ -306,29 +308,30 @@ export default function NotificationBell({ isMobile, onClickMobile }) {
                         ) : notifications.length === 0 ? (
                             <Empty description="No notifications" image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ marginTop: 60 }} />
                         ) : (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                                 {notifications.map(item => (
                                     <div
                                         key={item.id}
                                         style={{
-                                            padding: '16px',
-                                            backgroundColor: item.read_at ? token.colorBgContainer : 'rgba(255, 77, 79, 0.04)',
-                                            border: `1px solid ${item.read_at ? token.colorBorderSecondary : 'rgba(255, 77, 79, 0.2)'}`,
-                                            borderRadius: 12,
-                                            boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
+                                            padding: '16px 18px',
+                                            backgroundColor: item.read_at ? token.colorBgContainer : 'rgba(255, 77, 79, 0.06)',
+                                            border: `1px solid ${item.read_at ? token.colorBorderSecondary : 'rgba(255, 77, 79, 0.3)'}`,
+                                            borderRadius: 16,
+                                            boxShadow: item.read_at ? '0 2px 8px rgba(0,0,0,0.02)' : '0 4px 12px rgba(255, 77, 79, 0.08)',
                                             display: 'flex',
-                                            flexDirection: 'column'
+                                            flexDirection: 'column',
+                                            transition: 'all 0.3s ease'
                                         }}
                                         onClick={() => {
                                             if (!item.read_at) handleMarkAsRead(item.id);
                                         }}
                                     >
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-                                            <Text strong={!item.read_at} style={{ fontSize: 14, lineHeight: 1.3 }}>{item.title}</Text>
-                                            {!item.read_at && <div style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: '#ff4d4f', marginTop: 4, flexShrink: 0, marginLeft: 8 }} />}
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                                            <Text strong={!item.read_at} style={{ fontSize: 15, lineHeight: 1.4, color: item.read_at ? token.colorText : token.colorTextHeading }}>{item.title}</Text>
+                                            {!item.read_at && <div style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: '#ff4d4f', marginTop: 6, flexShrink: 0, marginLeft: 12, boxShadow: '0 0 10px rgba(255,77,79,0.4)' }} />}
                                         </div>
-                                        <div style={{ color: token.colorTextSecondary, fontSize: 14, marginBottom: 6 }}>{item.message}</div>
-                                        <div style={{ color: token.colorTextTertiary, fontSize: 12 }}>{formatTime(item.created_at)}</div>
+                                        <div style={{ color: token.colorTextSecondary, fontSize: 14.5, marginBottom: 8, lineHeight: 1.6 }}>{item.message}</div>
+                                        <div style={{ color: token.colorTextTertiary, fontSize: 12, fontWeight: 500 }}>{formatTime(item.created_at)}</div>
                                     </div>
                                 ))}
                             </div>

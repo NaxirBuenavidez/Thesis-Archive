@@ -98,7 +98,7 @@ const STYLES = `
   box-shadow:
     0 8px 32px rgba(0,0,0,0.4),
     0 1px 0 rgba(255,255,255,0.12) inset;
-  padding: clamp(32px, 8vw, 44px) clamp(20px, 6vw, 40px) clamp(28px, 6vw, 36px);
+  padding: clamp(24px, 7vw, 44px) clamp(16px, 5vw, 40px) clamp(20px, 5vw, 36px);
   animation: loginCardIn 0.6s cubic-bezier(.22,1,.36,1) both;
 }
 
@@ -403,9 +403,9 @@ export default function Login() {
                             color: '#fff',
                             margin: 0,
                             fontWeight: 800,
-                            fontSize: 'clamp(14px, 4vw, 18px)',
-                            letterSpacing: 1.2,
-                            lineHeight: 1.3,
+                            fontSize: 'clamp(16px, 5vw, 22px)',
+                            letterSpacing: 'min(0.05em, 1.5px)',
+                            lineHeight: 1.2,
                             textTransform: 'uppercase',
                         }}
                     >
@@ -413,13 +413,15 @@ export default function Login() {
                     </Title>
                     <Text
                         style={{
-                            color: 'rgba(255,255,255,0.55)',
-                            fontSize: 'clamp(9px, 2.5vw, 11px)',
+                            color: 'rgba(255,255,255,0.6)',
+                            fontSize: 'clamp(10px, 2.8vw, 12px)',
                             display: 'block',
-                            marginTop: 4,
-                            letterSpacing: 0.5,
-                            lineHeight: 1.4,
+                            marginTop: 6,
+                            letterSpacing: '0.05em',
+                            lineHeight: 1.5,
                             textTransform: 'uppercase',
+                            maxWidth: '280px',
+                            marginInline: 'auto'
                         }}
                     >
                         {appDesc}
@@ -434,12 +436,13 @@ export default function Login() {
                     }} />
 
                     <Text style={{ 
-                        color: 'rgba(255,255,255,0.7)', 
-                        fontSize: 'clamp(12px, 3.5vw, 14px)', 
+                        color: 'rgba(255,255,255,0.8)', 
+                        fontSize: 'clamp(13px, 3.8vw, 15px)', 
                         display: 'block', 
-                        marginTop: 'clamp(8px, 3vw, 12px)' 
+                        marginTop: 'clamp(12px, 4vw, 18px)',
+                        fontWeight: 400
                     }}>
-                        Welcome back — sign in to continue
+                        Sign in to access your archive
                     </Text>
                 </div>
 
