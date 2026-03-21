@@ -9,19 +9,20 @@ const footerArchive = React.memo(({ logoPath, primaryColor, primaryDark, appName
     return (
         <Footer style={{ background: '#efefef', color: '#333', padding: '60px 5% 40px', borderTop: `4px solid ${primaryDark}`, position: 'relative', zIndex: 1 }}>
             <Row gutter={[48, 32]}>
-                <Col xs={24} md={6} style={{ textAlign: 'center' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-                        <div>
+                <Col xs={24} md={8} style={{ textAlign: 'center' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, alignItems: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 24, justifyContent: 'center', flexWrap: 'wrap' }}>
                             <a href="https://pecit.edu.ph/" target="_blank" rel="noopener noreferrer">
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                                    {logoPath ? (
-                                        <img src={logoPath} alt="PECIT Logo" style={{ height: 120, objectFit: 'contain' }} />
-                                    ) : (
-                                        <div style={{ width: 100, height: 100, background: primaryColor, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 40 }}>P</div>
-                                    )}
-                                    <Text strong style={{ color: primaryDark, fontSize: 16, lineHeight: 1.2 }}>PECIT</Text>
+                                    <img src="/images/pecit-logo.png" alt="PECIT Logo" style={{ height: 100, objectFit: 'contain' }} />
+                                    <Text strong style={{ color: primaryDark, fontSize: 14, lineHeight: 1.2 }}>PECIT</Text>
                                 </div>
                             </a>
+                            <div style={{ width: 1, height: 60, background: '#ccc', opacity: 0.5 }} />
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                                <img src="/images/ptas-logo.png" alt="PTAS Logo" style={{ height: 100, objectFit: 'contain' }} />
+                                <Text strong style={{ color: primaryDark, fontSize: 14, lineHeight: 1.2 }}>PTAS</Text>
+                            </div>
                         </div>
                     </div>
                 </Col>
@@ -38,7 +39,7 @@ const footerArchive = React.memo(({ logoPath, primaryColor, primaryDark, appName
                     </ul>
                 </Col>
                 
-                <Col xs={24} md={6}>
+                <Col xs={24} md={5}>
                     <Title level={5} style={{ color: '#333', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 16 }}>CONTACT US</Title>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%' }}>
                         <div>
@@ -62,7 +63,7 @@ const footerArchive = React.memo(({ logoPath, primaryColor, primaryDark, appName
                     </div>
                 </Col>
                 
-                <Col xs={24} md={6}>
+                <Col xs={24} md={5}>
                     <Title level={5} style={{ color: '#333', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 16 }}>FOR INQUIRIES</Title>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%' }}>
                         <div>

@@ -165,7 +165,7 @@ export default function GlobalLoader() {
                     <div className="gl-arc" />
                     <div className="gl-arc gl-arc2" />
                     <div className="gl-logo">
-                        <img src="/images/pecit-logo.png" alt="System Logo" />
+                        <img src="/images/ptas-logo.png" alt="PTAS Logo" />
                     </div>
                 </div>
             </div>
