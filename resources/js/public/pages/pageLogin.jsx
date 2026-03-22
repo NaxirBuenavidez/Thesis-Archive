@@ -248,18 +248,8 @@ export default function Login() {
     // Check for error from URL params (e.g. Google OAuth fail)
     const hasError = searchParams.has('error');
 
-    // Redirect already-authenticated users away from login
-    useEffect(() => {
-        if (!authLoading && user && user.role?.slug !== 'anonymous') {
-            const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
-            if (currentPath === '/login') {
-                console.log('[LOGIN] Already authenticated, redirecting to /');
-                navigate('/', { replace: true });
-            }
-        }
-    }, [user, authLoading, navigate]);
-
     // Show error from URL params (e.g. Google OAuth fail)
+
 
     useEffect(() => {
         if (hasError) {
