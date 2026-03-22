@@ -15,6 +15,7 @@ import { useTableSearch } from '../../hooks/useTableSearch';
 import { handleFormErrors } from '../../utils/formUtils';
 import { Feedback } from '../components/UI/SystemNotifications';
 import { useAuth } from '../../context/AuthContext';
+import { useSystemConfig } from '../../context/SystemConfigContext';
 
 const { Title, Text } = Typography;
 const { useBreakpoint } = Grid;
