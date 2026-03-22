@@ -14,7 +14,7 @@ const footerArchive = React.memo(({ logoPath, primaryColor, primaryDark, appName
                         <div style={{ display: 'flex', alignItems: 'center', gap: 24, justifyContent: 'center', flexWrap: 'wrap' }}>
                             <a href="https://pecit.edu.ph/" target="_blank" rel="noopener noreferrer">
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                                    <img src="/images/pecit-logo.png" alt="PECIT Logo" style={{ height: 100, objectFit: 'contain' }} />
+                                    <img src="/images/pecit-mono-logo.png" alt="PECIT Logo" style={{ height: 100, objectFit: 'contain' }} />
                                     <AntText strong style={{ color: '#fff', fontSize: 14, lineHeight: 1.2 }}>PECIT</AntText>
                                 </div>
                             </a>
