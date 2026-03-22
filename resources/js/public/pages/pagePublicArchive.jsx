@@ -328,7 +328,6 @@ export default function PublicArchive() {
                 </div>
 
                 <GuidesSection primaryColor={primaryColor} primaryDark={primaryDark} />
-                <FAQSection primaryColor={primaryColor} primaryDark={primaryDark} />
             </Content>
 
             <Footer logoPath={logo_path} primaryColor={primaryColor} primaryDark={primaryDark} appName={site_title} />
