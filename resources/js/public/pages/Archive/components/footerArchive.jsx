@@ -7,7 +7,7 @@ const { Title, Text, Paragraph } = Typography;
 
 const footerArchive = React.memo(({ logoPath, primaryColor, primaryDark, appName }) => {
     return (
-        <Footer style={{ background: '#efefef', color: '#333', padding: '60px 5% 40px', borderTop: `4px solid ${primaryDark}`, position: 'relative', zIndex: 1 }}>
+        <Footer style={{ background: '#f8fafc', color: '#333', padding: '60px 5% 40px', borderTop: `1px solid rgba(0,0,0,0.06)`, position: 'relative', zIndex: 1 }}>
             <Row gutter={[48, 32]}>
                 <Col xs={24} md={8} style={{ textAlign: 'center' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, alignItems: 'center' }}>
@@ -27,8 +27,8 @@ const footerArchive = React.memo(({ logoPath, primaryColor, primaryDark, appName
                     </div>
                 </Col>
                 
-                <Col xs={24} md={6}>
-                    <Title level={5} style={{ color: '#333', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 16 }}>PHILIPPINE ELECTRONICS AND COMMUNICATION INSTITUTE OF TECHNOLOGY</Title>
+                <Col xs={24} md={6} id="guides">
+                    <Title level={5} style={{ color: '#333', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 16 }}>Manual & Guides</Title>
                     <Paragraph style={{ color: '#555', fontSize: 13, lineHeight: 1.6 }}>
                         All content is in the public domain unless otherwise stated. This digital archive exclusively serves the thesis research output of our brilliant students and faculty.
                     </Paragraph>
@@ -39,8 +39,8 @@ const footerArchive = React.memo(({ logoPath, primaryColor, primaryDark, appName
                     </ul>
                 </Col>
                 
-                <Col xs={24} md={5}>
-                    <Title level={5} style={{ color: '#333', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 16 }}>CONTACT US</Title>
+                <Col xs={24} md={5} id="faq">
+                    <Title level={5} style={{ color: '#333', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 16 }}>Frequently Asked Questions</Title>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%' }}>
                         <div>
                             <Text style={{ color: '#555', display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, fontWeight: 700, marginBottom: 4 }}>

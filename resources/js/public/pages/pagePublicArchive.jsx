@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Layout, Row, Col, Pagination, Spin, Empty } from 'antd';
+import { Layout, Row, Col, Pagination, Spin, Empty, Drawer, List } from 'antd';
 import { GlobalOutlined, SearchOutlined, BookOutlined, InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import publicApi from '../../api/publicApi';
 import { useSystemConfig } from '../../context/SystemConfigContext';
@@ -86,8 +86,8 @@ export default function PublicArchive() {
     const Footer = footerArchive;
 
     return (
-        <Layout className="public-archive-layout" style={{ background: 'linear-gradient(rgba(240, 242, 245, 0.94), rgba(240, 242, 245, 0.94)), url("https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2000&auto=format&fit=crop") center/cover fixed' }}>
-            <div className="archive-tile-bg" style={{ backgroundImage: tileBg }} />
+        <Layout className="public-archive-layout" style={{ background: '#f8fafc', minHeight: '100vh' }}>
+            <div className="archive-tile-bg" style={{ backgroundImage: tileBg, opacity: 0.4 }} />
             
             <Navbar 
                 logoPath={logo_path} 
@@ -149,6 +149,39 @@ export default function PublicArchive() {
             <Footer logoPath={logo_path} primaryColor={primaryColor} primaryDark={primaryDark} appName={site_title} />
 
             <ThesisModal thesis={viewThesis} onClose={() => setViewThesis(null)} />
+
+            <Drawer
+                title={<span style={{ color: primaryDark }}>Menu</span>}
+                placement="right"
+                onClose={() => setMobileMenuOpen(false)}
+                open={mobileMenuOpen}
+                width={280}
+            >
+                <List
+                    dataSource={navItems}
+                    renderItem={item => (
+                        <List.Item 
+                            onClick={() => {
+                                scrollToSection(item.id);
+                                setMobileMenuOpen(false);
+                            }}
+                            style={{ cursor: 'pointer', border: 'none', padding: '16px 0' }}
+                        >
+                            <Space style={{ color: activeSection === item.id ? primaryColor : '#555', fontWeight: activeSection === item.id ? 600 : 400 }}>
+                                {item.icon}
+                                {item.label}
+                            </Space>
+                        </List.Item>
+                    )}
+                />
+                <div style={{ marginTop: 24 }}>
+                    <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                        <Button type="primary" block style={{ background: primaryColor, borderRadius: 6, height: 45 }}>
+                            Admin / Client Portal
+                        </Button>
+                    </Link>
+                </div>
+            </Drawer>
         </Layout>
     );
 }
