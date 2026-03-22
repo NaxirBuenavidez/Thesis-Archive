@@ -83,16 +83,22 @@ const STYLES = `
 
 /* Input styling enhancement */
 .login-card .ant-input-affix-wrapper {
-  background: rgba(0, 0, 0, 0.2) !important;
-  border: 1.5px solid rgba(255,255,255,0.1) !important;
+  background: #fff !important;
+  border: 1.5px solid rgba(0,0,0,0.1) !important;
   border-radius: 14px !important;
-  color: #fff !important;
+  color: #000 !important;
   height: 52px !important;
   padding: 4px 16px !important;
 }
+.login-card .ant-input-affix-wrapper input {
+  color: #000 !important;
+}
 .login-card .ant-input-affix-wrapper:hover, .login-card .ant-input-affix-wrapper-focused {
-  border-color: rgba(255,255,255,0.3) !important;
-  background: rgba(0, 0, 0, 0.3) !important;
+  border-color: var(--login-theme-color, #1a2ca3) !important;
+  background: #fff !important;
+}
+.login-card .ant-input-placeholder {
+  color: rgba(0,0,0,0.45) !important;
 }
 
 /* Button enhancement */
@@ -114,8 +120,9 @@ const STYLES = `
 .login-google-btn {
   height: 52px !important;
   border-radius: 14px !important;
-  background: rgba(0, 0, 0, 0.2) !important;
-  border: 1.5px solid rgba(255,255,255,0.1) !important;
+  background: #fff !important;
+  border: 1.5px solid rgba(0,0,0,0.1) !important;
+  color: #000 !important;
 }
 
 .login-logo-wrap {
@@ -346,39 +353,6 @@ export default function Login() {
                     >
                         {appName}
                     </Title>
-                    <Text
-                        style={{
-                            color: 'rgba(255,255,255,0.6)',
-                            fontSize: 'clamp(10px, 2.8vw, 12px)',
-                            display: 'block',
-                            marginTop: 6,
-                            letterSpacing: '0.05em',
-                            lineHeight: 1.5,
-                            textTransform: 'uppercase',
-                            maxWidth: '280px',
-                            marginInline: 'auto'
-                        }}
-                    >
-                        {appDesc}
-                    </Text>
-
-                    <div style={{
-                        margin: '18px auto 0',
-                        width: 40,
-                        height: 3,
-                        borderRadius: 8,
-                        background: `linear-gradient(90deg, ${primaryColor}, rgba(246,128,72,0.8))`,
-                    }} />
-
-                    <Text style={{
-                        color: 'rgba(255,255,255,0.8)',
-                        fontSize: 'clamp(13px, 3.8vw, 15px)',
-                        display: 'block',
-                        marginTop: 'clamp(12px, 4vw, 18px)',
-                        fontWeight: 400
-                    }}>
-                        Sign in to access your archive
-                    </Text>
                 </div>
 
                 {/* ── Form ── */}
@@ -398,7 +372,7 @@ export default function Login() {
                         <Input
                             prefix={
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ marginRight: 4 }}>
-                                    <path d="M20 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="rgba(255,255,255,0.7)" />
+                                    <path d="M20 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="rgba(0,0,0,0.45)" />
                                 </svg>
                             }
                             placeholder="Email Address"
@@ -414,7 +388,7 @@ export default function Login() {
                         <Input.Password
                             prefix={
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ marginRight: 4 }}>
-                                    <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" fill="rgba(255,255,255,0.7)" />
+                                    <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" fill="rgba(0,0,0,0.45)" />
                                 </svg>
                             }
                             placeholder="Password"
