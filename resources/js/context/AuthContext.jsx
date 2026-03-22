@@ -9,6 +9,7 @@ export const AuthProvider = ({ children, initialUser = undefined }) => {
     const [loading, setLoading] = useState(true);
 
     const checkAuth = async (initialUser = undefined) => {
+        console.log('[DEBUG-AUTH] checkAuth called with initialUser:', initialUser ? 'Present' : 'None');
         if (initialUser !== undefined) {
             // If the server explicitly returned no user, we inject our Guest identity
             if (initialUser === null) {

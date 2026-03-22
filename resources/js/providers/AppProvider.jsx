@@ -61,13 +61,15 @@ export function AppProvider({ children }) {
             }, 10000);
 
             try {
+                console.log('[DEBUG-BOOT] Fetching /api/boot...');
                 const { data } = await window.axios.get('/api/boot', { 
                     silent: window.location.pathname === '/archive',
                     useLoader: true 
                 });
+                console.log('[DEBUG-BOOT] Success. User:', data.user?.role?.slug);
                 setBootData(data);
             } catch (error) {
-                console.error('Boot failed', error);
+                console.error('[DEBUG-BOOT] Boot failed:', error.response?.status, error.message);
             } finally {
                 clearTimeout(timeout);
                 setBooting(false);

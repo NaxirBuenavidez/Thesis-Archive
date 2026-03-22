@@ -8,10 +8,7 @@ import { RouterProvider } from 'react-router-dom';
 import router from './router';
 
 function App() {
-    // For now, let's just render PublicApp. 
-    // In a real app, we'd use a Router (react-router-dom) to switch between them.
-    // Or check a global variable/prop to decide.
-    // Let's assume we are on the public side for now.
+    console.log('[DEBUG-ROOT] app.jsx rendering. Path:', window.location.pathname);
     const isPrivate = window.location.pathname.startsWith('/admin');
 
     return (

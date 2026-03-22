@@ -40,8 +40,8 @@ const ProtectedRoute = ({ children }) => {
 
     if (!user || user.role?.slug === 'anonymous') {
         if (path === '/login') return children;
-        console.warn(`[ROUTER] ProtectedRoute: Redirecting Guest from [${window.location.pathname}] to /login`);
-        return <Navigate to="/login" replace />;
+        console.error(`[LOOP-PREVENTION] ProtectedRoute would redirect Guest from [${window.location.pathname}] to /login`);
+        return <div style={{ padding: 20, color: 'red' }}>[ACCESS DENIED] Please <a href="/login">Login</a></div>;
     }
     return children;
 };
@@ -55,8 +55,8 @@ const AlreadyAuthedRoute = ({ children }) => {
 
     if (user && user.role?.slug !== 'anonymous') {
         if (path === '/') return children;
-        console.warn(`[ROUTER] AlreadyAuthedRoute: Redirecting User from [${window.location.pathname}] to /`);
-        return <Navigate to="/" replace />;
+        console.error(`[LOOP-PREVENTION] AlreadyAuthedRoute would redirect User from [${window.location.pathname}] to /`);
+        return <div style={{ padding: 20, color: 'blue' }}>[ALREADY LOGGED IN] Go to <a href="/">Dashboard</a></div>;
     }
     return children;
 };
