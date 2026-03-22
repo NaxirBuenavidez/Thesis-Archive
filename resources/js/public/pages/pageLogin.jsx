@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Checkbox, App, Typography } from 'antd';
 import ReCAPTCHA from "react-google-recaptcha";
-import Particles from "react-tsparticles";
-import { loadFull } from "tsparticles";
+import Particles, { initParticlesEngine } from "@tsparticles/react";
+import { loadSlim } from "@tsparticles/slim";
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSystemConfig } from '../../context/SystemConfigContext';
@@ -239,8 +239,18 @@ export default function Login() {
     // Gradient for shimmer button
     const btnGradient = `linear-gradient(90deg, ${primaryColor} 0%, ${primaryDark} 40%, ${primaryColor} 80%, ${primaryDark} 100%)`;
 
+    const [init, setInit] = useState(false);
+
+    useEffect(() => {
+        initParticlesEngine(async (engine) => {
+            await loadSlim(engine);
+        }).then(() => {
+            setInit(true);
+        });
+    }, []);
+
     const particlesInit = async (main) => {
-        await loadFull(main);
+        // No-op, handled by initParticlesEngine
     };
 
     const particlesConfig = {
@@ -293,11 +303,12 @@ export default function Login() {
                 '--login-theme-color': primaryColor
             }}
         >
-            <Particles
-                id="tsparticles"
-                init={particlesInit}
-                options={particlesConfig}
-            />
+            {init && (
+                <Particles
+                    id="tsparticles"
+                    options={particlesConfig}
+                />
+            )}
 
             <div className="login-card">
                 {/* ── Logo + Branding ── */}
