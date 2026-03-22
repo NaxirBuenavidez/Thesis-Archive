@@ -9,9 +9,9 @@ export const AuthProvider = ({ children, initialUser = undefined }) => {
     const [loading, setLoading] = useState(true);
 
     const checkAuth = async (initialUser = undefined) => {
-        console.log('[DEBUG-AUTH] checkAuth called with initialUser:', initialUser ? 'Present' : 'None');
+        console.log('[DEBUG-AUTH] checkAuth called. initialUser:', !!initialUser);
         if (initialUser !== undefined) {
-            // If the server explicitly returned no user, we inject our Guest identity
+            console.log('[DEBUG-AUTH] Using initialUser:', initialUser?.role?.slug || 'Guest');
             if (initialUser === null) {
                 setUser({ role: { slug: 'anonymous', title: 'Guest' }, name: 'Guest' });
             } else {
@@ -22,20 +22,23 @@ export const AuthProvider = ({ children, initialUser = undefined }) => {
         }
 
         try {
-            // We catch the error here, so the 401 is expected if not logged in.
+            console.log('[DEBUG-AUTH] Fetching user from API...');
             const response = await getUserArg().catch(() => null);
             if (response && response.data) {
+                console.log('[DEBUG-AUTH] API User verified:', response.data.role?.slug);
                 setUser(response.data);
             } else {
-                // Anonymous is the default role if not authenticated
+                console.log('[DEBUG-AUTH] API check failed, setting Guest.');
                 setUser({ role: { slug: 'anonymous', title: 'Guest' }, name: 'Guest' });
             }
         } catch (error) {
+            console.error('[DEBUG-AUTH] checkAuth error:', error);
             setUser({ role: { slug: 'anonymous', title: 'Guest' }, name: 'Guest' });
         } finally {
             setLoading(false);
         }
     };
+
 
     useEffect(() => {
         checkAuth(initialUser);
