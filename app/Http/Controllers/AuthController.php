@@ -25,8 +25,8 @@ class AuthController extends Controller
         ]);
 
         // ── Verify reCAPTCHA token ──────────────────────────────────────
-        // Bypass for debugging if SKIP_CAPTCHA is true
-        if (config('app.env') !== 'production' || env('SKIP_CAPTCHA') === true || env('SKIP_CAPTCHA') === 'true') {
+        // Bypass for debugging as requested by user
+        if (true || config('app.env') !== 'production' || env('SKIP_CAPTCHA') === true || env('SKIP_CAPTCHA') === 'true') {
             // Skip verification
             $captchaSuccess = true;
         } else {
@@ -70,7 +70,7 @@ class AuthController extends Controller
         }
         // ────────────────────────────────────────────────────────────────
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        if (Auth::attempt($request->only(['email', 'password']), $request->boolean('remember'))) {
             $user = Auth::user()->load('role');
             return $this->handleSuccessfulLogin($request, $user, $throttleKey);
         }
