@@ -8,6 +8,8 @@ import { RouterProvider } from 'react-router-dom';
 import router from './router';
 
 function App() {
+    const [loopError, setLoopError] = React.useState(null);
+
     React.useEffect(() => {
         let navCount = 0;
         let lastNav = Date.now();
