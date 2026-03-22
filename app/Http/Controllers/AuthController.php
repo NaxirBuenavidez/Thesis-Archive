@@ -39,8 +39,11 @@ class AuthController extends Controller
         }
 
         if (!$captchaSuccess) {
+            $errorCodes = isset($response) ? $response->json('error-codes') : ['unknown'];
+            $errorMsg = is_array($errorCodes) ? implode(', ', $errorCodes) : 'Security verification failed';
+            
             throw ValidationException::withMessages([
-                'captcha_token' => ['Security verification failed. Please try again.'],
+                'captcha_token' => ["Security verification failed: {$errorMsg}. Check your RECAPTCHA_SECRET_KEY and domain authorization."],
             ]);
         }
         // ────────────────────────────────────────────────────────────────
