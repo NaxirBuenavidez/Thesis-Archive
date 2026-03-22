@@ -27,39 +27,34 @@ const footerArchive = React.memo(({ logoPath, primaryColor, primaryDark, appName
                     </div>
                 </Col>
                 
-                <Col xs={24} md={6} id="guides">
+                <Col xs={24} md={6} id="footer-guides">
                     <Title level={5} style={{ color: '#333', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 16 }}>Manual & Guides</Title>
-                    <Paragraph style={{ color: '#555', fontSize: 13, lineHeight: 1.6 }}>
-                        All content is in the public domain unless otherwise stated. This digital archive exclusively serves the thesis research output of our brilliant students and faculty.
-                    </Paragraph>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: 13, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        <li><a href="#" style={{ color: '#555', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}><InfoCircleOutlined style={{ fontSize: 14 }} /> User Manual</a></li>
+                        <li><a href="#" style={{ color: '#555', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}><InfoCircleOutlined style={{ fontSize: 14 }} /> Research Policy</a></li>
+                        <li><a href="#" style={{ color: '#555', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}><InfoCircleOutlined style={{ fontSize: 14 }} /> Submission Guide</a></li>
+                    </ul>
                     <Title level={5} style={{ color: '#333', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 24, marginBottom: 16 }}>Terms & Privacy</Title>
-                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: 13, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: 13, display: 'flex', flexDirection: 'column', gap: 8 }}>
                         <li><a href="#" style={{ color: '#555', textDecoration: 'none' }}>Terms of Use and Conditions</a></li>
                         <li><a href="#" style={{ color: '#555', textDecoration: 'none' }}>Data Privacy Policy</a></li>
                     </ul>
                 </Col>
                 
-                <Col xs={24} md={5} id="faq">
+                <Col xs={24} md={5} id="footer-faq">
                     <Title level={5} style={{ color: '#333', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 16 }}>Frequently Asked Questions</Title>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%' }}>
-                        <div>
-                            <Text style={{ color: '#555', display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, fontWeight: 700, marginBottom: 4 }}>
-                                <HomeOutlined style={{ marginTop: 3 }} /> Address
-                            </Text>
-                            <Paragraph style={{ color: '#666', fontSize: 13, margin: 0, paddingLeft: 22, lineHeight: 1.5 }}>
-                                Capitol-Bonbon Road, Imadejas Subd.<br/>
-                                Butuan City, Philippines 8600
-                            </Paragraph>
-                        </div>
-                        <div>
-                            <Text style={{ color: '#555', display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 700, marginBottom: 4 }}>
-                                <MailOutlined /> Emails
-                            </Text>
-                            <Paragraph style={{ color: '#666', fontSize: 13, margin: 0, paddingLeft: 22, lineHeight: 1.5 }}>
-                                pecit83@gmail.com<br/>
-                                pecit.education83@gmail.com
-                            </Paragraph>
-                        </div>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: 13, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        <li><a href="#" style={{ color: '#555', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}><QuestionCircleOutlined style={{ fontSize: 14 }} /> General Access FAQ</a></li>
+                        <li><a href="#" style={{ color: '#555', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}><QuestionCircleOutlined style={{ fontSize: 14 }} /> Submission FAQ</a></li>
+                        <li><a href="#" style={{ color: '#555', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}><QuestionCircleOutlined style={{ fontSize: 14 }} /> Account Help</a></li>
+                    </ul>
+                    <div style={{ marginTop: 24, borderTop: '1px solid rgba(0,0,0,0.05)', paddingTop: 16 }}>
+                        <Text strong style={{ color: '#333', display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12, marginBottom: 4 }}>
+                            <HomeOutlined style={{ marginTop: 2 }} /> Institution Address
+                        </Text>
+                        <Paragraph style={{ color: '#777', fontSize: 12, margin: 0, lineHeight: 1.5 }}>
+                            Capitol-Bonbon Road, Imadejas Subd., Butuan City, PH
+                        </Paragraph>
                     </div>
                 </Col>
                 

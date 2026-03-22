@@ -80,48 +80,45 @@ const SectionSkeleton = ({ cards = 3 }) => (
     </Row>
 );
 
-const GuidesSection = ({ primaryColor, primaryDark }) => {
-    const { user_manual_path, research_policy_path, submission_guide_path } = useSystemConfig();
-    const [isLoading, setIsLoading] = useState(true);
-    
-    useEffect(() => {
-        const timer = setTimeout(() => setIsLoading(false), 2000);
-        return () => clearTimeout(timer);
-    }, []);
-
-    const guides = [
-        { title: 'User Manual', desc: 'Step-by-step guide on how to navigate and use the archive portal features effectively.', icon: user_manual_path || '/images/user-manual.png' },
-        { title: 'Research Policy', desc: 'Understand the rules and regulations regarding the use of public research data and intellectual property.', icon: research_policy_path || '/images/research-policy.png' },
-        { title: 'Submission Guide', desc: "Guidelines for students and faculty on how to prepare their thesis for public archiving.", icon: submission_guide_path || '/images/submission-guide.png' }
-    ];
-
+const PrivacySection = ({ primaryColor, primaryDark }) => {
     return (
-        <div id="guides" style={{ padding: '80px 5%', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
-            <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div id="privacy" style={{ padding: '80px 5%', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+            <div style={{ maxWidth: 1000, margin: '0 auto' }}>
                 <SectionHeading 
-                    icon={user_manual_path || "/images/manuals-3d.png"} 
-                    title="Manual & Guides" 
-                    subtitle="Everything you need to know about using our digital thesis archive and submission policies."
+                    icon="/images/npc-logo.png" 
+                    title="Data Privacy & NPC Compliance" 
+                    subtitle="We are committed to protecting your research data and adhering to the Data Privacy Act of 2012 (RA 10173)."
                     primaryColor={primaryColor}
                 />
                 
-                {isLoading ? (
-                    <SectionSkeleton cards={3} />
-                ) : (
-                    <Row gutter={[32, 32]}>
-                        {guides.map((g, i) => (
-                            <Col xs={24} md={8} key={i}>
-                                <div className="guide-card" style={{ padding: 32, background: '#fff', borderRadius: 16, height: '100%', border: '1px solid rgba(0,0,0,0.03)', transition: 'all 0.3s' }}>
-                                    <div style={{ width: 64, height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24 }} className="entry-animate">
-                                        <img src={g.icon} alt={g.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                                    </div>
-                                    <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12, color: '#2d3748' }}>{g.title}</h3>
-                                    <p style={{ color: '#718096', lineHeight: 1.6, margin: 0 }}>{g.desc}</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 40, alignItems: 'center', background: '#fff', padding: 40, borderRadius: 24, border: '1px solid rgba(0,0,0,0.03)', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
+                    <div style={{ width: '100%' }}>
+                        <h3 style={{ fontSize: 24, fontWeight: 800, color: primaryDark, marginBottom: 20 }}>Your Data, Protected.</h3>
+                        <p style={{ color: '#4a5568', fontSize: 16, lineHeight: 1.8, marginBottom: 24 }}>
+                            This digital archive exclusively serves the thesis research output of our brilliant students and faculty. 
+                            In compliance with the <strong>National Privacy Commission (NPC)</strong>, we ensure that all metadata and 
+                            abstracts are handled with strict confidentiality and used solely for academic referencing.
+                        </p>
+                        <Row gutter={[20, 20]}>
+                            <Col xs={24} sm={12}>
+                                <div style={{ padding: 20, background: '#f8fafc', borderRadius: 12, height: '100%' }}>
+                                    <Text strong style={{ display: 'block', marginBottom: 8, fontSize: 16 }}>Academic Use Only</Text>
+                                    <Text style={{ fontSize: 13, color: '#666' }}>All research materials are processed strictly for academic citation and verification purposes.</Text>
                                 </div>
                             </Col>
-                        ))}
-                    </Row>
-                )}
+                            <Col xs={24} sm={12}>
+                                <div style={{ padding: 20, background: '#f8fafc', borderRadius: 12, height: '100%' }}>
+                                    <Text strong style={{ display: 'block', marginBottom: 8, fontSize: 16 }}>RA 10173 Compliant</Text>
+                                    <Text style={{ fontSize: 13, color: '#666' }}>Full adherence to the Philippine Data Privacy laws ensuring your intellectual property is safe.</Text>
+                                </div>
+                            </Col>
+                        </Row>
+                    </div>
+                    <div style={{ textAlign: 'center', borderTop: '1px solid rgba(0,0,0,0.05)', paddingTop: 40, width: '100%' }}>
+                        <img src="/images/npc-logo.png" alt="NPC Seal" style={{ height: 120, objectFit: 'contain', filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.1))' }} />
+                        <Text strong style={{ display: 'block', marginTop: 16, fontSize: 14, color: '#666', letterSpacing: 1 }}>NPC COMPLIANT SYSTEM</Text>
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -193,7 +190,7 @@ export default function PublicArchive() {
         { label: 'Home', id: 'home', icon: <GlobalOutlined /> },
         { label: 'Search', id: 'search', icon: <SearchOutlined /> },
         { label: 'Research Categories', id: 'categories', icon: <BookOutlined /> },
-        { label: 'Manual & Guides', id: 'guides', icon: <InfoCircleOutlined /> },
+        { label: 'Privacy & Compliance', id: 'privacy', icon: <InfoCircleOutlined /> },
     ], []);
 
     const svgHex = primaryColor.replace('#', '%23');
@@ -327,7 +324,7 @@ export default function PublicArchive() {
                     </div>
                 </div>
 
-                <GuidesSection primaryColor={primaryColor} primaryDark={primaryDark} />
+                <PrivacySection primaryColor={primaryColor} primaryDark={primaryDark} />
             </Content>
 
             <Footer logoPath={logo_path} primaryColor={primaryColor} primaryDark={primaryDark} appName={site_title} />
