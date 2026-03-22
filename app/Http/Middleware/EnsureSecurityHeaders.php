@@ -26,8 +26,8 @@ class EnsureSecurityHeaders
         // Force HTTPS for 1 year (only meaningful over HTTPS, safe to include)
         $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
 
-        // Disable sensitive browser features and allow reCAPTCHA tokens
-        $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), private-state-token-redemption=(self "https://www.google.com"), private-state-token-issuance=(self "https://www.google.com")');
+        // Disable sensitive browser features
+        $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
 
         // Content Security Policy
         // In local dev, also allow the Vite dev server host so HMR and assets aren't blocked.
@@ -46,12 +46,12 @@ class EnsureSecurityHeaders
 
         $csp = implode('; ', [
             "default-src 'self'",
-            "script-src {$scriptSrc}",
-            "style-src {$styleSrc}",
+            "script-src {$scriptSrc} https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/",
+            "style-src {$styleSrc} https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/",
             "font-src {$fontSrc}",
-            "img-src 'self' data: blob: https: http: https://www.gstatic.com/",   // Allow logo uploads + Google avatars
-            "connect-src {$connectSrc}",
-            "frame-src 'self' data: blob: https: http: https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/ https://www.gstatic.com/recaptcha/",
+            "img-src 'self' data: blob: https: http: https://www.google.com/ https://www.gstatic.com/",   // Allow logo uploads + Google avatars
+            "connect-src {$connectSrc} https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/",
+            "frame-src 'self' data: blob: https: http: https://www.google.com/ https://recaptcha.google.com/ https://www.gstatic.com/",
             "frame-ancestors 'self'",
             "base-uri 'self'",
             "form-action 'self' https://www.google.com/recaptcha/",
