@@ -32,7 +32,7 @@ const STYLES = `
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
   position: relative;
   overflow: hidden;
-  background: #000; /* Dark base for particles */
+  background: #f8fafc; /* Clean light background */
   margin: 0;
   padding: 24px;
 }
@@ -60,18 +60,19 @@ const STYLES = `
   color: #fff;
 }
 
-/* Mobile specific: Bottom sheet style */
+/* Mobile specific: Proportional layout */
 @media (max-width: 576px) {
   .login-root {
-    align-items: flex-end;
-    padding: 0;
+    align-items: center; /* Center instead of end to avoid stretch */
+    padding: 20px;
   }
   .login-card {
-    max-width: none;
-    border-radius: 32px 32px 0 0;
-    padding: 32px 24px 48px;
-    border-bottom: none;
-    animation: mobileSlideUp 0.6s cubic-bezier(0.1, 0.9, 0.2, 1);
+    max-width: 400px; /* Keep it compact on mobile too */
+    border-radius: 28px;
+    padding: 40px 24px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: loginCardIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 }
 
@@ -288,9 +289,9 @@ export default function Login() {
                 density: { enable: true, area: 800 },
                 value: 80,
             },
-            opacity: { value: 0.5 },
+            opacity: { value: 0.3 },
             shape: { type: "circle" },
-            size: { value: { min: 1, max: 5 } },
+            size: { value: { min: 1, max: 4 } },
         },
         detectRetina: true,
     };
