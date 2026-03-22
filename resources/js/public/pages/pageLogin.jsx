@@ -220,7 +220,9 @@ export default function Login() {
         name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
 
     const onFinish = async (values) => {
-        if (submitted) return;
+        if (submitted || loading) return;
+        setLoading(true);
+        setSubmitted(true);
         const token = recaptchaRef.current?.getValue() || '';
         const skipCaptcha = import.meta.env.VITE_SKIP_CAPTCHA === 'true' || import.meta.env.VITE_SKIP_CAPTCHA === true;
 
