@@ -4,7 +4,7 @@ import { FileProtectOutlined, FileTextOutlined, LockOutlined, GlobalOutlined, Us
 import { Link } from 'react-router-dom';
 import dayjs from 'dayjs';
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text: AntText, Paragraph } = Typography;
 const { useBreakpoint } = Grid;
 
 const modalThesis = ({ thesis, onClose }) => {
@@ -60,9 +60,9 @@ const modalThesis = ({ thesis, onClose }) => {
                         <Card 
                             size="small" 
                             title={
-                                <Text strong style={{ color: '#1e293b', fontSize: 15 }}>
+                                <AntText strong style={{ color: '#1e293b', fontSize: 15 }}>
                                     <FileTextOutlined style={{ marginRight: 8 }}/> Abstract Overview
-                                </Text>
+                                </AntText>
                             } 
                             variant="borderless" 
                             style={{ 
@@ -86,59 +86,59 @@ const modalThesis = ({ thesis, onClose }) => {
                     
                     <Col xs={24} sm={12}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                            <Text style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: '#64748b', fontWeight: 700 }}>
+                            <AntText style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: '#64748b', fontWeight: 700 }}>
                                 <UserOutlined style={{ marginRight: 4 }} /> Primary Author
-                            </Text>
-                            <Text strong style={{ fontSize: isMobile ? 16 : 18, color: '#1e293b' }}>
+                            </AntText>
+                            <AntText strong style={{ fontSize: isMobile ? 16 : 18, color: '#1e293b' }}>
                                 {thesis.author}
-                            </Text>
+                            </AntText>
                         </div>
                     </Col>
 
                     {thesis.co_author && (
                         <Col xs={24} sm={12}>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                                <Text style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: '#64748b', fontWeight: 700 }}>
+                                <AntText style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: '#64748b', fontWeight: 700 }}>
                                     <UserOutlined style={{ marginRight: 4 }} /> Co-Authors
-                                </Text>
-                                <Text strong style={{ fontSize: isMobile ? 16 : 18, color: '#1e293b' }}>
+                                </AntText>
+                                <AntText strong style={{ fontSize: isMobile ? 16 : 18, color: '#1e293b' }}>
                                     {thesis.co_author}
-                                </Text>
+                                </AntText>
                             </div>
                         </Col>
                     )}
 
                     <Col xs={24} sm={12}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                            <Text style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: '#64748b', fontWeight: 700 }}>
+                            <AntText style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: '#64748b', fontWeight: 700 }}>
                                 <GlobalOutlined style={{ marginRight: 4 }} /> Institution & Year
-                            </Text>
-                            <Text strong style={{ fontSize: isMobile ? 16 : 18, color: '#1e293b' }}>
+                            </AntText>
+                            <AntText strong style={{ fontSize: isMobile ? 16 : 18, color: '#1e293b' }}>
                                 {thesis.institution || 'Institutional Record'} 
                                 <span style={{ opacity: 0.3, margin: '0 8px' }}>•</span> 
                                 <CalendarOutlined style={{ marginRight: 4, fontSize: 14, verticalAlign: 'middle' }} />
                                 {dayjs(thesis.submission_date || thesis.created_at).format('YYYY')}
-                            </Text>
+                            </AntText>
                         </div>
                     </Col>
                     
                     {thesis.doi && (
                         <Col xs={24} sm={12}>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                                <Text style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: '#64748b', fontWeight: 700 }}>
+                                <AntText style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: '#64748b', fontWeight: 700 }}>
                                     <LinkOutlined style={{ marginRight: 4 }} /> DOI Reference
-                                </Text>
-                                <Text strong style={{ fontSize: isMobile ? 16 : 18, color: '#1e293b', wordBreak: 'break-all' }}>
+                                </AntText>
+                                <AntText strong style={{ fontSize: isMobile ? 16 : 18, color: '#1e293b', wordBreak: 'break-all' }}>
                                     {thesis.doi}
-                                </Text>
+                                </AntText>
                             </div>
                         </Col>
                     )}
 
                     <Col span={24}>
-                        <Text style={{ display: 'block', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: '#64748b', fontWeight: 700, marginBottom: 12 }}>
+                        <AntText style={{ display: 'block', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: '#64748b', fontWeight: 700, marginBottom: 12 }}>
                             Indexed Keywords
-                        </Text>
+                        </AntText>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                             {(thesis.keywords || []).map(k => (
                                 <Tag key={k} color="#e2e8f0" style={{ 
@@ -153,7 +153,7 @@ const modalThesis = ({ thesis, onClose }) => {
                                     {k}
                                 </Tag>
                             ))}
-                            {(!thesis.keywords || thesis.keywords.length === 0) && <Text type="secondary" style={{ fontSize: 14 }}>N/A</Text>}
+                            {(!thesis.keywords || thesis.keywords.length === 0) && <AntText type="secondary" style={{ fontSize: 14 }}>N/A</AntText>}
                         </div>
                     </Col>
                 </Row>

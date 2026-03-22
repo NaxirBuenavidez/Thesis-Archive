@@ -17,7 +17,7 @@ import 'placeholder-loading/dist/css/placeholder-loading.min.css';
 import '../../../css/public-archive.scss';
 
 const { Content } = Layout;
-const { Text, Title, Paragraph } = Typography;
+const { Text: AntText, Title, Paragraph } = Typography;
 
 const STYLES = `
 @keyframes fadeInUp {
@@ -170,21 +170,21 @@ const PrivacySection = ({ primaryColor, primaryDark }) => {
                         <Row gutter={[20, 20]}>
                             <Col xs={24} sm={12}>
                                 <div style={{ padding: 20, background: '#f8fafc', borderRadius: 12, height: '100%' }}>
-                                    <Text strong style={{ display: 'block', marginBottom: 8, fontSize: 16 }}>Academic Use Only</Text>
-                                    <Text style={{ fontSize: 13, color: '#666' }}>All research materials are processed strictly for academic citation and verification purposes.</Text>
+                                    <AntText strong style={{ display: 'block', marginBottom: 8, fontSize: 16 }}>Academic Use Only</AntText>
+                                    <AntText style={{ fontSize: 13, color: '#666' }}>All research materials are processed strictly for academic citation and verification purposes.</AntText>
                                 </div>
                             </Col>
                             <Col xs={24} sm={12}>
                                 <div style={{ padding: 20, background: '#f8fafc', borderRadius: 12, height: '100%' }}>
-                                    <Text strong style={{ display: 'block', marginBottom: 8, fontSize: 16 }}>RA 10173 Compliant</Text>
-                                    <Text style={{ fontSize: 13, color: '#666' }}>Full adherence to the Philippine Data Privacy laws ensuring your intellectual property is safe.</Text>
+                                    <AntText strong style={{ display: 'block', marginBottom: 8, fontSize: 16 }}>RA 10173 Compliant</AntText>
+                                    <AntText style={{ fontSize: 13, color: '#666' }}>Full adherence to the Philippine Data Privacy laws ensuring your intellectual property is safe.</AntText>
                                 </div>
                             </Col>
                         </Row>
                     </div>
                     <div style={{ textAlign: 'center', borderTop: '1px solid rgba(0,0,0,0.05)', paddingTop: 40, width: '100%' }}>
                         <img src="/images/npc-logo.png" alt="NPC Seal" style={{ height: 120, objectFit: 'contain', filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.1))' }} />
-                        <Text strong style={{ display: 'block', marginTop: 16, fontSize: 14, color: '#666', letterSpacing: 1 }}>NPC COMPLIANT SYSTEM</Text>
+                        <AntText strong style={{ display: 'block', marginTop: 16, fontSize: 14, color: '#666', letterSpacing: 1 }}>NPC COMPLIANT SYSTEM</AntText>
                     </div>
                 </div>
             </div>

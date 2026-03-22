@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography, Space, Tag, Divider } from 'antd';
 import { BookOutlined } from '@ant-design/icons';
 
-const { Title, Text } = Typography;
+const { Title, Text: AntText } = Typography;
 
 const filtersArchive = ({ 
     categories, 
@@ -40,7 +40,7 @@ const filtersArchive = ({
             <Divider />
 
             <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text type="secondary">Showing {filteredCount} published studies</Text>
+                <AntText type="secondary">Showing {filteredCount} published studies</AntText>
                 {searchQuery && (
                     <Tag closable onClose={() => setSearchQuery('')} color="blue">
                         Search: {searchQuery}

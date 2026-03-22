@@ -1,9 +1,9 @@
 import React from 'react';
 import { Layout, Row, Col, Typography } from 'antd';
-import { HomeOutlined, MailOutlined, PhoneOutlined } from '@ant-design/icons';
+import { HomeOutlined, MailOutlined, PhoneOutlined, InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 
 const { Footer } = Layout;
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text: AntText, Paragraph } = Typography;
 
 const footerArchive = React.memo(({ logoPath, primaryColor, primaryDark, appName }) => {
     return (
@@ -15,13 +15,13 @@ const footerArchive = React.memo(({ logoPath, primaryColor, primaryDark, appName
                             <a href="https://pecit.edu.ph/" target="_blank" rel="noopener noreferrer">
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
                                     <img src="/images/pecit-logo.png" alt="PECIT Logo" style={{ height: 100, objectFit: 'contain' }} />
-                                    <Text strong style={{ color: primaryDark, fontSize: 14, lineHeight: 1.2 }}>PECIT</Text>
+                                    <AntText strong style={{ color: primaryDark, fontSize: 14, lineHeight: 1.2 }}>PECIT</AntText>
                                 </div>
                             </a>
                             <div style={{ width: 1, height: 60, background: '#ccc', opacity: 0.5 }} />
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
                                 <img src="/images/ptas.png" alt="PTAS Logo" style={{ height: 100, objectFit: 'contain' }} />
-                                <Text strong style={{ color: primaryDark, fontSize: 14, lineHeight: 1.2 }}>PTAS</Text>
+                                <AntText strong style={{ color: primaryDark, fontSize: 14, lineHeight: 1.2 }}>PTAS</AntText>
                             </div>
                         </div>
                     </div>
@@ -49,9 +49,9 @@ const footerArchive = React.memo(({ logoPath, primaryColor, primaryDark, appName
                         <li><a href="#" style={{ color: '#555', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}><QuestionCircleOutlined style={{ fontSize: 14 }} /> Account Help</a></li>
                     </ul>
                     <div style={{ marginTop: 24, borderTop: '1px solid rgba(0,0,0,0.05)', paddingTop: 16 }}>
-                        <Text strong style={{ color: '#333', display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12, marginBottom: 4 }}>
+                        <AntText strong style={{ color: '#333', display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12, marginBottom: 4 }}>
                             <HomeOutlined style={{ marginTop: 2 }} /> Institution Address
-                        </Text>
+                        </AntText>
                         <Paragraph style={{ color: '#777', fontSize: 12, margin: 0, lineHeight: 1.5 }}>
                             Capitol-Bonbon Road, Imadejas Subd., Butuan City, PH
                         </Paragraph>
@@ -62,27 +62,27 @@ const footerArchive = React.memo(({ logoPath, primaryColor, primaryDark, appName
                     <Title level={5} style={{ color: '#333', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 16 }}>FOR INQUIRIES</Title>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%' }}>
                         <div>
-                            <Text style={{ color: primaryDark, display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 700, marginBottom: 4 }}>
+                            <AntText style={{ color: primaryDark, display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 700, marginBottom: 4 }}>
                                 <PhoneOutlined /> COLLEGE
-                            </Text>
+                            </AntText>
                             <Paragraph style={{ color: '#666', fontSize: 13, margin: 0, paddingLeft: 22 }}>
                                 (+63) 92704-95730 or<br/>
                                 (+63) 95138-70989
                             </Paragraph>
                         </div>
                         <div>
-                            <Text style={{ color: primaryDark, display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 700, marginBottom: 4 }}>
+                            <AntText style={{ color: primaryDark, display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 700, marginBottom: 4 }}>
                                 <PhoneOutlined /> TESDA
-                            </Text>
+                            </AntText>
                             <Paragraph style={{ color: '#666', fontSize: 13, margin: 0, paddingLeft: 22 }}>
                                 (+63) 96391-58460 or<br/>
                                 (+63) 92704-95730
                             </Paragraph>
                         </div>
                         <div>
-                            <Text style={{ color: primaryDark, display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 700, marginBottom: 4 }}>
+                            <AntText style={{ color: primaryDark, display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 700, marginBottom: 4 }}>
                                 <PhoneOutlined /> BASIC EDUCATION
-                            </Text>
+                            </AntText>
                             <Paragraph style={{ color: '#666', fontSize: 13, margin: 0, paddingLeft: 22 }}>
                                 (+63) 93868-50231
                             </Paragraph>

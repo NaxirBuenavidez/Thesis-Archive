@@ -3,7 +3,7 @@ import { Card, Typography, Tag } from 'antd';
 import { LockOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text: AntText, Paragraph } = Typography;
 
 const cardThesis = React.memo(({ item, primaryColor, primaryDark, onClick }) => {
     return (
@@ -34,17 +34,17 @@ const cardThesis = React.memo(({ item, primaryColor, primaryDark, onClick }) => 
             <Title level={5} style={{ marginTop: 0, marginBottom: 8, lineHeight: 1.4, color: primaryDark }}>
                 {item.title}
             </Title>
-            <Text type="secondary" style={{ marginBottom: 4, display: 'block' }}>
-                By <Text strong>{item.author}</Text>
-            </Text>
-            <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 12 }}>
+            <AntText type="secondary" style={{ marginBottom: 4, display: 'block' }}>
+                By <AntText strong>{item.author}</AntText>
+            </AntText>
+            <AntText type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 12 }}>
                 Published {dayjs(item.submission_date || item.created_at).format('YYYY')}
-            </Text>
+            </AntText>
             
             {item.doi && (
-                <Text style={{ display: 'inline-block', fontSize: 12, background: 'rgba(40,69,214,0.06)', color: primaryColor, padding: '4px 10px', borderRadius: 4, marginBottom: 16, fontWeight: 700 }}>
+                <AntText style={{ display: 'inline-block', fontSize: 12, background: 'rgba(40,69,214,0.06)', color: primaryColor, padding: '4px 10px', borderRadius: 4, marginBottom: 16, fontWeight: 700 }}>
                     DOI: {item.doi}
-                </Text>
+                </AntText>
             )}
 
             <Paragraph ellipsis={{ rows: 3 }} type="secondary" style={{ flex: 1, marginBottom: 0, fontSize: 13, lineHeight: 1.6 }}>
