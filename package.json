@@ -27,6 +27,8 @@
         "react-highlight-words": "^0.21.0",
         "react-router-dom": "^7.13.0",
         "react-spinners": "^0.17.0",
-        "recharts": "^3.8.0"
+        "react-tsparticles": "^2.12.2",
+        "recharts": "^3.8.0",
+        "tsparticles": "^3.9.1"
     }
 }

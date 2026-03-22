@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Checkbox, App, Typography } from 'antd';
-import ReCAPTCHA from "react-google-recaptcha";
+import Particles from "react-tsparticles";
+import { loadFull } from "tsparticles";
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSystemConfig } from '../../context/SystemConfigContext';
@@ -9,9 +10,6 @@ import { handleFormErrors } from '../../utils/formUtils';
 
 const { Title, Text } = Typography;
 
-/* ───────────────────────────────────────────
-   Keyframe style block injected once
-─────────────────────────────────────────── */
 const STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -33,9 +31,18 @@ const STYLES = `
   font-family: 'Inter', sans-serif;
   position: relative;
   overflow: hidden;
-  background: radial-gradient(circle at 20% 20%, #1a2ca3 0%, #0a1045 40%, #000000 100%);
+  background: #000; /* Dark base for particles */
   margin: 0;
   padding: 24px;
+}
+
+#tsparticles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
 }
 
 .login-card {
@@ -43,14 +50,13 @@ const STYLES = `
   z-index: 2;
   width: 100%;
   max-width: 440px;
-  background: rgba(255, 255, 255, 0.07);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: var(--login-theme-bg, #1a2ca3); /* Primary color fallback */
   border-radius: 28px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
   padding: 44px 40px;
   animation: loginCardIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  color: #fff;
 }
 
 /* Mobile specific: Bottom sheet style */
@@ -75,16 +81,16 @@ const STYLES = `
 
 /* Input styling enhancement */
 .login-card .ant-input-affix-wrapper {
-  background: rgba(255,255,255,0.08) !important;
-  border: 1.5px solid rgba(255,255,255,0.15) !important;
+  background: rgba(0, 0, 0, 0.2) !important;
+  border: 1.5px solid rgba(255,255,255,0.1) !important;
   border-radius: 14px !important;
   color: #fff !important;
   height: 52px !important;
   padding: 4px 16px !important;
 }
 .login-card .ant-input-affix-wrapper:hover, .login-card .ant-input-affix-wrapper-focused {
-  border-color: rgba(255,255,255,0.4) !important;
-  background: rgba(255,255,255,0.12) !important;
+  border-color: rgba(255,255,255,0.3) !important;
+  background: rgba(0, 0, 0, 0.3) !important;
 }
 
 /* Button enhancement */
@@ -94,17 +100,20 @@ const STYLES = `
   font-size: 16px !important;
   font-weight: 700 !important;
   box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
+  background: #fff !important;
+  color: var(--login-theme-color, #1a2ca3) !important;
 }
 .login-btn:hover {
   transform: scale(1.01) !important;
   box-shadow: 0 8px 25px rgba(0,0,0,0.4) !important;
+  opacity: 0.9 !important;
 }
 
 .login-google-btn {
   height: 52px !important;
   border-radius: 14px !important;
-  background: rgba(255,255,255,0.08) !important;
-  border: 1.5px solid rgba(255,255,255,0.15) !important;
+  background: rgba(0, 0, 0, 0.2) !important;
+  border: 1.5px solid rgba(255,255,255,0.1) !important;
 }
 
 .login-logo-wrap {
@@ -124,7 +133,7 @@ const STYLES = `
   display: flex;
   justify-content: center;
   padding: 12px;
-  background: rgba(255,255,255,0.04);
+  background: rgba(0, 0, 0, 0.2);
   border-radius: 16px;
   border: 1px solid rgba(255,255,255,0.1);
 }
@@ -159,13 +168,13 @@ export default function Login() {
     const { checkAuth, user, loading: authLoading } = useAuth();
     const { site_title, site_description, logo_path, primary_color, primary_color_dark } = useSystemConfig();
 
-    const primaryColor  = primary_color  || '#2845D6';
-    const primaryDark   = primary_color_dark || '#1A2CA3';
-    const appName       = site_title     || 'THESIS ARCHIVE SYSTEM';
-    const appDesc       = site_description || 'PHILIPPINE ELECTRONICS & COMMUNICATION INSTITUTE OF TECHNOLOGY';
+    const primaryColor = primary_color || '#2845D6';
+    const primaryDark = primary_color_dark || '#1A2CA3';
+    const appName = site_title || 'THESIS ARCHIVE SYSTEM';
+    const appDesc = site_description || 'PHILIPPINE ELECTRONICS & COMMUNICATION INSTITUTE OF TECHNOLOGY';
 
     injectStyles();
-    
+
     // Check for error from URL params (e.g. Google OAuth fail)
     const hasError = searchParams.has('error');
 
@@ -229,20 +238,75 @@ export default function Login() {
     // Gradient for shimmer button
     const btnGradient = `linear-gradient(90deg, ${primaryColor} 0%, ${primaryDark} 40%, ${primaryColor} 80%, ${primaryDark} 100%)`;
 
+    const particlesInit = async (main) => {
+        await loadFull(main);
+    };
+
+    const particlesConfig = {
+        background: { color: { value: "transparent" } },
+        fpsLimit: 120,
+        interactivity: {
+            events: {
+                onClick: { enable: true, mode: "push" },
+                onHover: { enable: true, mode: "repulse" },
+                resize: true,
+            },
+            modes: {
+                push: { quantity: 4 },
+                repulse: { distance: 200, duration: 0.4 },
+            },
+        },
+        particles: {
+            color: { value: primaryColor },
+            links: {
+                color: primaryColor,
+                distance: 150,
+                enable: true,
+                opacity: 0.5,
+                width: 1,
+            },
+            move: {
+                direction: "none",
+                enable: true,
+                outModes: { default: "bounce" },
+                random: false,
+                speed: 1,
+                straight: false,
+            },
+            number: {
+                density: { enable: true, area: 800 },
+                value: 80,
+            },
+            opacity: { value: 0.5 },
+            shape: { type: "circle" },
+            size: { value: { min: 1, max: 5 } },
+        },
+        detectRetina: true,
+    };
+
     return (
         <div
             className="login-root"
+            style={{ 
+                '--login-theme-bg': primaryColor,
+                '--login-theme-color': primaryColor
+            }}
         >
+            <Particles
+                id="tsparticles"
+                init={particlesInit}
+                options={particlesConfig}
+            />
 
             <div className="login-card">
                 {/* ── Logo + Branding ── */}
                 <div style={{ textAlign: 'center', marginBottom: 28 }}>
                     <div className="login-logo-wrap" style={{ background: (logo_path && logo_path.includes('/')) ? 'rgba(255,255,255,0.15)' : primaryColor }}>
                         {(logo_path && logo_path.includes('/')) ? (
-                            <img 
-                                src={logo_path} 
-                                alt={appName} 
-                                className="login-logo-img" 
+                            <img
+                                src={logo_path}
+                                alt={appName}
+                                className="login-logo-img"
                                 onError={(e) => {
                                     e.target.style.display = 'none';
                                     e.target.parentElement.innerHTML = `<span style="color: #fff; font-size: 26px; font-weight: 800; letter-spacing: -1px;">${getInitials(appName)}</span>`;
@@ -293,10 +357,10 @@ export default function Login() {
                         background: `linear-gradient(90deg, ${primaryColor}, rgba(246,128,72,0.8))`,
                     }} />
 
-                    <Text style={{ 
-                        color: 'rgba(255,255,255,0.8)', 
-                        fontSize: 'clamp(13px, 3.8vw, 15px)', 
-                        display: 'block', 
+                    <Text style={{
+                        color: 'rgba(255,255,255,0.8)',
+                        fontSize: 'clamp(13px, 3.8vw, 15px)',
+                        display: 'block',
                         marginTop: 'clamp(12px, 4vw, 18px)',
                         fontWeight: 400
                     }}>
@@ -393,10 +457,10 @@ export default function Login() {
                     {/* Google Sign-in */}
                     <div className="login-divider">
                         <div className="login-divider-line" />
-                        <Text style={{ 
-                            color: 'rgba(255,255,255,0.4)', 
-                            fontSize: 'clamp(10px, 3vw, 12px)', 
-                            whiteSpace: 'nowrap' 
+                        <Text style={{
+                            color: 'rgba(255,255,255,0.4)',
+                            fontSize: 'clamp(10px, 3vw, 12px)',
+                            whiteSpace: 'nowrap'
                         }}>
                             OR CONTINUE WITH
                         </Text>
@@ -432,18 +496,18 @@ export default function Login() {
                 </div>
 
                 <div style={{ textAlign: 'center', marginTop: 'clamp(10px, 4vw, 16px)' }}>
-                    <Text style={{ 
-                        color: 'rgba(255,255,255,0.4)', 
-                        fontSize: 'clamp(11px, 3.2vw, 12px)' 
+                    <Text style={{
+                        color: 'rgba(255,255,255,0.4)',
+                        fontSize: 'clamp(11px, 3.2vw, 12px)'
                     }}>
                         Don't have an account?{' '}
                     </Text>
                     <a
                         href="#"
-                        style={{ 
-                            color: 'rgba(255,255,255,0.75)', 
-                            fontSize: 'clamp(11px, 3.2vw, 12px)', 
-                            fontWeight: 600 
+                        style={{
+                            color: 'rgba(255,255,255,0.75)',
+                            fontSize: 'clamp(11px, 3.2vw, 12px)',
+                            fontWeight: 600
                         }}
                         onClick={e => e.preventDefault()}
                     >
