@@ -23,7 +23,8 @@ const { useBreakpoint } = Grid;
 export default function Users() {
     const { user } = useAuth();
     const screens = useBreakpoint();
-    const { token, roles: bootRoles } = useSystemConfig();
+    const { token } = theme.useToken();
+    const { roles: bootRoles } = useSystemConfig();
     const primaryColor = token.colorPrimary;
 
 

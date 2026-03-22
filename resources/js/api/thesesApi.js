@@ -10,7 +10,7 @@ const thesesApi = {
     getAll: async (config = {}) => {
         try {
             const response = await axios.get('/api/theses', config);
-            return response.data;
+            return response.data.data || response.data;
         } catch (error) {
             console.error('API Error: thesesApi.getAll', error);
             throw error;
