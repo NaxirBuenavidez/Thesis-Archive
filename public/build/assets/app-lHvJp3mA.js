@@ -528,10 +528,10 @@ Please change the parent <Route path="${C}"> to <Route path="${C==="/"?"*":`${C}
   z-index: 2;
   width: 100%;
   max-width: 440px;
-  background: var(--login-theme-bg, #1a2ca3); /* Primary color fallback */
+  background: linear-gradient(145deg, var(--login-theme-bg, #1a2ca3), #0d1a70);
   border-radius: 28px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
   padding: 44px 40px;
   animation: loginCardIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
   color: #fff;
@@ -617,10 +617,6 @@ Please change the parent <Route path="${C}"> to <Route path="${C==="/"?"*":`${C}
   margin-bottom: 24px;
   display: flex;
   justify-content: center;
-  padding: 12px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.1);
 }
 
 .login-logo-img {
