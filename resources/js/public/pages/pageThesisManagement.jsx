@@ -336,67 +336,83 @@ export default function ThesisManagement() {
                     
                     {isMobile ? (
                         <div style={{ padding: '12px 16px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
-                                <Button 
-                                    size="small" 
-                                    onClick={() => setSelectedRowKeys(selectedRowKeys.length === filteredData.length ? [] : filteredData.map(d => d.key))}
-                                >
-                                    {selectedRowKeys.length === filteredData.length ? 'Deselect All' : 'Select All'}
-                                </Button>
-                            </div>
-                            {filteredData.map(record => (
-                                <div 
-                                    key={record.key} 
-                                    className={`mobile-thesis-item ${selectedRowKeys.includes(record.key) ? 'selected' : ''}`} 
-                                    onClick={() => {
-                                        if (selectedRowKeys.length > 0) {
-                                            // If in selection mode, toggle selection
-                                            onSelectChange(selectedRowKeys.includes(record.key) ? selectedRowKeys.filter(k => k !== record.key) : [...selectedRowKeys, record.key]);
-                                        } else {
-                                            if (activeTab === 'preview') { setPreviewThesis(record); setIsPreviewOpen(true); }
-                                            else if (activeTab === 'modify') openEditModal(record);
-                                            else if (activeTab === 'remove') handleDelete(record.key);
-                                        }
-                                    }}
-                                    onContextMenu={(e) => {
-                                        e.preventDefault();
-                                        onSelectChange([...selectedRowKeys, record.key]);
-                                    }}
-                                >
-                                    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                                        {selectedRowKeys.length > 0 && (
-                                            <div style={{ 
-                                                width: 20, height: 20, borderRadius: 6, 
-                                                border: `2px solid ${selectedRowKeys.includes(record.key) ? primaryColor : token.colorBorder}`,
-                                                backgroundColor: selectedRowKeys.includes(record.key) ? primaryColor : 'transparent',
-                                                display: 'flex', alignItems: 'center', justifyContent: 'center'
-                                            }}>
-                                                {selectedRowKeys.includes(record.key) && <div style={{ width: 8, height: 8, backgroundColor: '#fff', borderRadius: 2 }} />}
-                                            </div>
-                                        )}
-                                        <div style={{ flex: 1 }}>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 6 }}>
-                                                <Text strong style={{ fontSize: 13, flex: 1 }} ellipsis>{record.title}</Text>
-                                                <Tag color={getStatusColor(record.status)} className="status-tag" style={{ fontSize: 11 }}>{record.status.toUpperCase()}</Tag>
-                                            </div>
-                                            <Text type="secondary" style={{ fontSize: 12 }}>{record.author} · {record.department || 'No dept'}</Text>
-                                        </div>
+                            {loading ? (
+                                [1, 2, 3, 4, 5].map(i => (
+                                    <Card key={i} style={{ marginBottom: 10, borderRadius: 10 }}>
+                                        <Skeleton active paragraph={{ rows: 2 }} />
+                                    </Card>
+                                ))
+                            ) : (
+                                <>
+                                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
+                                        <Button 
+                                            size="small" 
+                                            onClick={() => setSelectedRowKeys(selectedRowKeys.length === filteredData.length ? [] : filteredData.map(d => d.key))}
+                                        >
+                                            {selectedRowKeys.length === filteredData.length ? 'Deselect All' : 'Select All'}
+                                        </Button>
                                     </div>
-                                </div>
-                            ))}
+                                    {filteredData.map(record => (
+                                        <div 
+                                            key={record.key} 
+                                            className={`mobile-thesis-item ${selectedRowKeys.includes(record.key) ? 'selected' : ''}`} 
+                                            onClick={() => {
+                                                if (selectedRowKeys.length > 0) {
+                                                    // If in selection mode, toggle selection
+                                                    onSelectChange(selectedRowKeys.includes(record.key) ? selectedRowKeys.filter(k => k !== record.key) : [...selectedRowKeys, record.key]);
+                                                } else {
+                                                    if (activeTab === 'preview') { setPreviewThesis(record); setIsPreviewOpen(true); }
+                                                    else if (activeTab === 'modify') openEditModal(record);
+                                                    else if (activeTab === 'remove') handleDelete(record.key);
+                                                }
+                                            }}
+                                            onContextMenu={(e) => {
+                                                e.preventDefault();
+                                                onSelectChange([...selectedRowKeys, record.key]);
+                                            }}
+                                        >
+                                            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                                                {selectedRowKeys.length > 0 && (
+                                                    <div style={{ 
+                                                        width: 20, height: 20, borderRadius: 6, 
+                                                        border: `2px solid ${selectedRowKeys.includes(record.key) ? primaryColor : token.colorBorder}`,
+                                                        backgroundColor: selectedRowKeys.includes(record.key) ? primaryColor : 'transparent',
+                                                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                                    }}>
+                                                        {selectedRowKeys.includes(record.key) && <div style={{ width: 8, height: 8, backgroundColor: '#fff', borderRadius: 2 }} />}
+                                                    </div>
+                                                )}
+                                                <div style={{ flex: 1 }}>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 6 }}>
+                                                        <Text strong style={{ fontSize: 13, flex: 1 }} ellipsis>{record.title}</Text>
+                                                        <Tag color={getStatusColor(record.status)} className="status-tag" style={{ fontSize: 11 }}>{record.status.toUpperCase()}</Tag>
+                                                    </div>
+                                                    <Text type="secondary" style={{ fontSize: 12 }}>{record.author} · {record.department || 'No dept'}</Text>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </>
+                            )}
                         </div>
                     ) : (
-                        <ThesisTable 
-                            columns={columns} 
-                            dataSource={filteredData} 
-                            loading={loading} 
-                            activeTab={activeTab}
-                            onPreview={(rec) => { setPreviewThesis(rec); setIsPreviewOpen(true); }}
-                            onEdit={openEditModal}
-                            onDelete={handleDelete}
-                            screens={screens}
-                            rowSelection={rowSelection}
-                        />
+                        <div style={{ padding: loading ? '24px' : '0' }}>
+                            {loading ? (
+                                <Skeleton active paragraph={{ rows: 10 }} />
+                            ) : (
+                                <ThesisTable 
+                                    columns={columns} 
+                                    dataSource={filteredData} 
+                                    loading={false} 
+                                    activeTab={activeTab}
+                                    onPreview={(rec) => { setPreviewThesis(rec); setIsPreviewOpen(true); }}
+                                    onEdit={openEditModal}
+                                    onDelete={handleDelete}
+                                    screens={screens}
+                                    rowSelection={rowSelection}
+                                />
+                            )}
+                        </div>
                     )}
                 </Card>
 

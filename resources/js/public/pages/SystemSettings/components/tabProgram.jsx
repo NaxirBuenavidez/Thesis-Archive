@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Space, Modal, Form, Input, Select, Popconfirm, Typography, Tooltip, Tag, Dropdown, App } from 'antd';
+import { Table, Button, Space, Modal, Form, Input, Select, Popconfirm, Typography, Tooltip, Tag, Dropdown, App, Skeleton } from 'antd';
 import { PlusOutlined, DeleteOutlined, ReloadOutlined, SearchOutlined, MoreOutlined, EditOutlined } from '@ant-design/icons';
 import { handleFormErrors } from '../../../../utils/formUtils';
 
@@ -199,14 +199,20 @@ export default function tabProgram({ apiEndpoint = '/api/programs', isSeniorHigh
                 </Space>
             </div>
 
-            <Table
-                columns={columns}
-                dataSource={filteredData}
-                rowKey="id"
-                loading={loading}
-                pagination={{ pageSize: 10 }}
-                scroll={{ x: 600 }}
-            />
+            {loading ? (
+                <div style={{ padding: '24px 0' }}>
+                    <Skeleton active paragraph={{ rows: 8 }} />
+                </div>
+            ) : (
+                <Table
+                    columns={columns}
+                    dataSource={filteredData}
+                    rowKey="id"
+                    loading={false}
+                    pagination={{ pageSize: 10 }}
+                    scroll={{ x: 600 }}
+                />
+            )}
 
             <Modal
                 title={editingId ? (isSeniorHigh ? "Edit Senior High Program" : "Edit Program") : (isSeniorHigh ? "Add Senior High Program" : "Add New Program")}

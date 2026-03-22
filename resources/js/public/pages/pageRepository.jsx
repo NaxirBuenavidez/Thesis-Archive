@@ -410,9 +410,19 @@ export default function Repository() {
                         </div>
 
                         <div style={{ padding: isMobile ? '16px' : '24px' }}>
-                            {!loading && filteredData.length === 0 ? (
+                            {loading ? (
+                                <Row gutter={[24, 24]}>
+                                    {[1, 2, 3, 4, 5, 6].map(i => (
+                                        <Col xs={24} sm={12} md={12} lg={12} xl={8} xxl={6} key={i}>
+                                            <Card style={{ borderRadius: 12 }}>
+                                                <Skeleton active paragraph={{ rows: 4 }} />
+                                            </Card>
+                                        </Col>
+                                    ))}
+                                </Row>
+                            ) : filteredData.length === 0 ? (
                                 renderEmpty()
-                            ) : !loading && (
+                            ) : (
                                 <>
                                     <Row gutter={[24, 24]}>
                                         {paginatedData.map(thesis => (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-    Typography, Card, Row, Col, Tag, Table, Spin, theme, Space, Avatar, Grid, Divider, Progress
+    Typography, Card, Row, Col, Tag, Table, Spin, theme, Space, Avatar, Grid, Divider, Progress, Skeleton
 } from 'antd';
 const { useBreakpoint } = Grid;
 import {
@@ -61,9 +61,17 @@ const statusTagColor = (status) => {
     return map[status] || 'default';
 };
 
-const StatCard = React.memo(({ title, value, icon, accentColor, subtext, large = false }) => {
+const StatCard = React.memo(({ title, value, icon, accentColor, subtext, large = false, loading = false }) => {
     const { token } = theme.useToken();
     const [hovered, setHovered] = useState(false);
+
+    if (loading) {
+        return (
+            <Card style={{ borderRadius: 14, border: `1px solid ${token.colorBorderSecondary}`, background: token.colorBgContainer }}>
+                <Skeleton active paragraph={{ rows: 1 }} />
+            </Card>
+        );
+    }
 
     if (large) {
         return (
@@ -134,8 +142,9 @@ const StatCard = React.memo(({ title, value, icon, accentColor, subtext, large =
     );
 });
 
-const SectionHeader = React.memo(({ icon, title, subtitle }) => {
+const SectionHeader = React.memo(({ icon, title, subtitle, loading = false }) => {
     const { token } = theme.useToken();
+    if (loading) return <Skeleton active title={{ width: '40%' }} paragraph={{ rows: 0 }} style={{ marginBottom: 16 }} />;
     return (
         <div style={{ marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -205,21 +214,12 @@ export default function Dashboard() {
     }, []);
 
     useEffect(() => {
-        // Initial load logic: skip if already in bootData
-        if (window.__boot_data && window.__boot_data.analytics) {
-            setData(window.__boot_data.analytics);
-            setLoading(false);
-        } else {
-            fetchAnalytics();
-        }
+        fetchAnalytics();
         
         const interval = setInterval(fetchAnalytics, 60000);
         return () => clearInterval(interval);
     }, [fetchAnalytics]);
 
-    if (loading) {
-        return null; // GlobalLoader from LoadingContext handles the visual
-    }
 
     const {
         totals, byStatus, byDept, monthlyTrend, recentActivity, byDegree, topDept
@@ -311,28 +311,29 @@ export default function Dashboard() {
                         icon={<DocumentTextFilled />}
                         accentColor={sidebarColor}
                         large
+                        loading={loading}
                     />
                 </Col>
                 <Col xs={12} sm={12} md={6}>
-                    <StatCard title="Published" value={totals.published ?? 0} icon={<DocumentCheckmarkFilled />} accentColor="#10b981" />
+                    <StatCard title="Published" value={totals.published ?? 0} icon={<DocumentCheckmarkFilled />} accentColor="#10b981" loading={loading} />
                 </Col>
                 <Col xs={12} sm={12} md={6}>
-                    <StatCard title="Pending Review" value={totals.pending_review ?? 0} icon={<ClockFilled />} accentColor="#f59e0b" />
+                    <StatCard title="Pending Review" value={totals.pending_review ?? 0} icon={<ClockFilled />} accentColor="#f59e0b" loading={loading} />
                 </Col>
                 <Col xs={12} sm={12} md={6}>
-                    <StatCard title="Total Users" value={totals.total_users ?? 0} icon={<PeopleFilled />} accentColor="#6366f1" />
+                    <StatCard title="Total Users" value={totals.total_users ?? 0} icon={<PeopleFilled />} accentColor="#6366f1" loading={loading} />
                 </Col>
                 <Col xs={12} sm={12} md={6}>
-                    <StatCard title="Accepted" value={totals.accepted ?? 0} icon={<CheckmarkCircleFilled />} accentColor="#10b981" />
+                    <StatCard title="Accepted" value={totals.accepted ?? 0} icon={<CheckmarkCircleFilled />} accentColor="#10b981" loading={loading} />
                 </Col>
                 <Col xs={12} sm={12} md={6}>
-                    <StatCard title="Rejected" value={totals.rejected ?? 0} icon={<DismissCircleFilled />} accentColor="#ef4444" />
+                    <StatCard title="Rejected" value={totals.rejected ?? 0} icon={<DismissCircleFilled />} accentColor="#ef4444" loading={loading} />
                 </Col>
                 <Col xs={12} sm={12} md={6}>
-                    <StatCard title="Draft" value={totals.draft ?? 0} icon={<BookFilled />} accentColor={token.colorTextTertiary} />
+                    <StatCard title="Draft" value={totals.draft ?? 0} icon={<BookFilled />} accentColor={token.colorTextTertiary} loading={loading} />
                 </Col>
                 <Col xs={12} sm={12} md={6}>
-                    <StatCard title="Confidential" value={totals.confidential ?? 0} icon={<LockClosedFilled />} accentColor="#8b5cf6" />
+                    <StatCard title="Confidential" value={totals.confidential ?? 0} icon={<LockClosedFilled />} accentColor="#8b5cf6" loading={loading} />
                 </Col>
             </Row>
 
@@ -344,6 +345,7 @@ export default function Dashboard() {
                             icon={<ArrowTrending20Filled />}
                             title="Monthly Submission Trend"
                             subtitle="Submissions vs accepted — last 12 months"
+                            loading={loading}
                         />
                         <ResponsiveContainer width="100%" height={220}>
                             <AreaChart data={monthlyTrend} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
@@ -399,7 +401,7 @@ export default function Dashboard() {
                 </Col>
                 <Col xs={24} lg={9}>
                     <Card style={{ ...cardStyle, height: '100%' }} styles={{ body: { padding: isMobile ? '16px' : '22px' } }}>
-                        <SectionHeader icon={<DocumentTextFilled />} title="By Status" subtitle="Current distribution" />
+                        <SectionHeader icon={<DocumentTextFilled />} title="By Status" subtitle="Current distribution" loading={loading} />
                         {/* Donut with center total label */}
                         <div style={{ position: 'relative' }}>
                             <ResponsiveContainer width="100%" height={210}>
@@ -457,7 +459,7 @@ export default function Dashboard() {
             <Row gutter={[14, 14]} style={{ marginBottom: 14 }}>
                 <Col xs={24} lg={15}>
                     <Card style={cardStyle} styles={{ body: { padding: isMobile ? '16px 16px 10px' : '22px 22px 12px' } }}>
-                        <SectionHeader icon={<BookFilled />} title="Theses by Department" subtitle="Sorted by submission count" />
+                        <SectionHeader icon={<BookFilled />} title="Theses by Department" subtitle="Sorted by submission count" loading={loading} />
                         <ResponsiveContainer width="100%" height={Math.max(200, byDept.length * 36)}>
                             <BarChart data={byDept} layout="vertical" margin={{ top: 0, right: 40, left: 0, bottom: 0 }}>
                                 <defs>
@@ -501,7 +503,7 @@ export default function Dashboard() {
                 </Col>
                 <Col xs={24} lg={9}>
                     <Card style={{ ...cardStyle, height: '100%' }} styles={{ body: { padding: isMobile ? '16px' : '22px' } }}>
-                        <SectionHeader icon={<DocumentCheckmarkFilled />} title="By Degree Type" subtitle="Program-level breakdown" />
+                        <SectionHeader icon={<DocumentCheckmarkFilled />} title="By Degree Type" subtitle="Program-level breakdown" loading={loading} />
                         <div style={{ position: 'relative' }}>
                             <ResponsiveContainer width="100%" height={210}>
                                 <PieChart>
@@ -553,7 +555,7 @@ export default function Dashboard() {
 
             {/* ── Recent Activity ── */}
             <Card style={{ ...cardStyle, marginBottom: 14 }} styles={{ body: { padding: isMobile ? '16px' : '22px' } }}>
-                <SectionHeader icon={<ClockFilled />} title="Recent Activity" subtitle="Latest thesis submissions and updates" />
+                <SectionHeader icon={<ClockFilled />} title="Recent Activity" subtitle="Latest thesis submissions and updates" loading={loading} />
                 {isMobile ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                         {recentActivity.length === 0 ? (

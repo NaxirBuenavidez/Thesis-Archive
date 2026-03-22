@@ -352,38 +352,52 @@ export default function ReviewManager() {
                 {isMobile ? (
                     // Mobile card list
                     <div style={{ padding: '12px 16px' }}>
-                        {!loading && filteredData.filter(item => activeTab === 'public' ? !item.isConfidential : item.isConfidential).map(record => (
-                            <div
-                                key={record.key}
-                                style={{ background: token.colorFillAlter, borderRadius: 10, padding: '12px 14px', marginBottom: 10, border: `1px solid ${token.colorBorderSecondary}` }}
-                            >
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 6 }}>
-                                    <Text strong style={{ fontSize: 13, flex: 1, lineHeight: 1.4 }} ellipsis={{ tooltip: record.title }}>{record.title}</Text>
-                                    <Button type="primary" size="small" icon={<FileTextOutlined />} onClick={() => openDetailDrawer(record)} style={{ flexShrink: 0 }} />
+                        {loading ? (
+                            [1, 2, 3].map(i => (
+                                <Card key={i} style={{ marginBottom: 10, borderRadius: 10 }}>
+                                    <Skeleton active paragraph={{ rows: 2 }} />
+                                </Card>
+                            ))
+                        ) : (
+                            filteredData.filter(item => activeTab === 'public' ? !item.isConfidential : item.isConfidential).map(record => (
+                                <div
+                                    key={record.key}
+                                    style={{ background: token.colorFillAlter, borderRadius: 10, padding: '12px 14px', marginBottom: 10, border: `1px solid ${token.colorBorderSecondary}` }}
+                                >
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 6 }}>
+                                        <Text strong style={{ fontSize: 13, flex: 1, lineHeight: 1.4 }} ellipsis={{ tooltip: record.title }}>{record.title}</Text>
+                                        <Button type="primary" size="small" icon={<FileTextOutlined />} onClick={() => openDetailDrawer(record)} style={{ flexShrink: 0 }} />
+                                    </div>
+                                    <Text type="secondary" style={{ fontSize: 12 }}>{record.author} · {record.department || 'No dept'}</Text>
+                                    <div style={{ marginTop: 6 }}>
+                                        <Tag color="orange" style={{ borderRadius: 20, fontSize: 11, border: 'none' }}>UNDER REVIEW</Tag>
+                                    </div>
                                 </div>
-                                <Text type="secondary" style={{ fontSize: 12 }}>{record.author} · {record.department || 'No dept'}</Text>
-                                <div style={{ marginTop: 6 }}>
-                                    <Tag color="orange" style={{ borderRadius: 20, fontSize: 11, border: 'none' }}>UNDER REVIEW</Tag>
-                                </div>
-                            </div>
-                        ))}
+                            ))
+                        )}
                     </div>
                 ) : (
-                    <Table
-                        columns={columns}
-                        dataSource={filteredData.filter(item => activeTab === 'public' ? !item.isConfidential : item.isConfidential)}
-                        scroll={{ x: 900 }}
-                        pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: ['10', '25', '50'], showTotal: (total) => <Text type="secondary">{total} theses</Text>, style: { padding: '16px 24px' } }}
-                        rowClassName={(record, index) => {
-                            let className = index % 2 === 0 ? 'table-row-light' : 'table-row-dark';
-                            if (previewThesis && previewThesis.key === record.key) className += ' table-row-selected';
-                            return className;
-                        }}
-                        onRow={(record) => ({
-                            onClick: () => setPreviewThesis(record),
-                            style: { cursor: 'pointer' }
-                        })}
-                    />
+                    <div style={{ padding: loading ? '24px' : '0' }}>
+                        {loading ? (
+                            <Skeleton active paragraph={{ rows: 10 }} />
+                        ) : (
+                            <Table
+                                columns={columns}
+                                dataSource={filteredData.filter(item => activeTab === 'public' ? !item.isConfidential : item.isConfidential)}
+                                scroll={{ x: 900 }}
+                                pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: ['10', '25', '50'], showTotal: (total) => <Text type="secondary">{total} theses</Text>, style: { padding: '16px 24px' } }}
+                                rowClassName={(record, index) => {
+                                    let className = index % 2 === 0 ? 'table-row-light' : 'table-row-dark';
+                                    if (previewThesis && previewThesis.key === record.key) className += ' table-row-selected';
+                                    return className;
+                                }}
+                                onRow={(record) => ({
+                                    onClick: () => setPreviewThesis(record),
+                                    style: { cursor: 'pointer' }
+                                })}
+                            />
+                        )}
+                    </div>
                 )}
             </Card>
 

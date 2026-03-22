@@ -26,10 +26,10 @@ class AuthController extends Controller
 
         // ── Verify reCAPTCHA token ──────────────────────────────────────
         // Bypass for debugging as requested by user
-        if (true) { // Temporary deactivation as requested by user
-            // Skip verification
-            $captchaSuccess = true;
-        } else {
+        $captchaSuccess = true;
+        $captchaEnabled = false; // Set to true to re-enable verification
+        
+        if ($captchaEnabled && $request->filled('captcha_token')) {
             $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
                 'secret'   => env('RECAPTCHA_SECRET_KEY'),
                 'response' => $request->input('captcha_token'),

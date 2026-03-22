@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Table, Tag, Space, Button, Card, Input, Tooltip, Avatar, Grid, Dropdown, ConfigProvider, theme, Modal, Form, Select, App, Divider, Row, Col } from 'antd';
+import { Typography, Table, Tag, Space, Button, Card, Input, Tooltip, Avatar, Grid, Dropdown, ConfigProvider, theme, Modal, Form, Select, App, Divider, Row, Col, Skeleton } from 'antd';
 import {
     PlusOutlined,
     SearchOutlined,
@@ -52,7 +52,6 @@ export default function Users() {
     }, [bootRoles]);
 
     const fetchUsers = async () => {
-        setLoading(true);
         try {
             const response = await window.axios.get('/api/users', { silent: true });
             if (response.data) {
@@ -77,8 +76,12 @@ export default function Users() {
     };
 
     useEffect(() => {
-        fetchUsers();
-        fetchRoles();
+        const loadSequentially = async () => {
+            setLoading(true);
+            await fetchRoles();
+            await fetchUsers();
+        };
+        loadSequentially();
     }, [fetchRoles]);
 
     const handleCreateUser = async (values) => {
@@ -231,29 +234,43 @@ export default function Users() {
             {isMobile ? (
                 // ── Mobile: Card List ──
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    {!loading && filteredData.map(record => (
-                        <div key={record.key} style={{ background: token.colorBgContainer, borderRadius: 12, padding: '14px 16px', border: `1px solid ${token.colorBorderSecondary}`, display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <Avatar size={44} src={record.avatarUrl} icon={<UserOutlined />} style={{ backgroundColor: primaryColor, flexShrink: 0 }} />
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                                <Text strong style={{ fontSize: 14, display: 'block' }} ellipsis>{record.username}</Text>
-                                <Text type="secondary" style={{ fontSize: 12 }} ellipsis>{record.email}</Text>
-                                <div style={{ marginTop: 4 }}>
-                                    <Tag color={record.role === 'admin' ? 'blue' : record.role === 'viewer' ? 'default' : 'green'} style={{ borderRadius: 20, fontSize: 11, border: 'none' }}>{record.role.toUpperCase()}</Tag>
+                    {loading ? (
+                        [1, 2, 3, 4, 5].map(i => (
+                            <Card key={i} style={{ borderRadius: 12 }}>
+                                <Skeleton active avatar avatarProps={{ size: 44 }} paragraph={{ rows: 1 }} />
+                            </Card>
+                        ))
+                    ) : (
+                        filteredData.map(record => (
+                            <div key={record.key} style={{ background: token.colorBgContainer, borderRadius: 12, padding: '14px 16px', border: `1px solid ${token.colorBorderSecondary}`, display: 'flex', alignItems: 'center', gap: 12 }}>
+                                <Avatar size={44} src={record.avatarUrl} icon={<UserOutlined />} style={{ backgroundColor: primaryColor, flexShrink: 0 }} />
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                    <Text strong style={{ fontSize: 14, display: 'block' }} ellipsis>{record.username}</Text>
+                                    <Text type="secondary" style={{ fontSize: 12 }} ellipsis>{record.email}</Text>
+                                    <div style={{ marginTop: 4 }}>
+                                        <Tag color={record.role === 'admin' ? 'blue' : record.role === 'viewer' ? 'default' : 'green'} style={{ borderRadius: 20, fontSize: 11, border: 'none' }}>{record.role.toUpperCase()}</Tag>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
             ) : (
                 // ── Desktop: Table ──
                 <Card variant="borderless" style={{ borderRadius: '16px', boxShadow: '0 5px 20px rgba(0,0,0,0.05)', overflow: 'hidden', background: token.colorBgContainer }} styles={{ body: { padding: 0 } }}>
-                    <Table
-                        columns={columns}
-                        dataSource={filteredData}
-                        scroll={{ x: 800 }}
-                        pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: ['10', '25', '50'], showTotal: (total) => <Text type="secondary">{total} users found</Text>, style: { padding: '16px 24px' } }}
-                        rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'}
-                    />
+                    {loading ? (
+                        <div style={{ padding: 24 }}>
+                            <Skeleton active paragraph={{ rows: 10 }} />
+                        </div>
+                    ) : (
+                        <Table
+                            columns={columns}
+                            dataSource={filteredData}
+                            scroll={{ x: 800 }}
+                            pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: ['10', '25', '50'], showTotal: (total) => <Text type="secondary">{total} users found</Text>, style: { padding: '16px 24px' } }}
+                            rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'}
+                        />
+                    )}
                 </Card>
             )}
 

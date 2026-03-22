@@ -13,7 +13,9 @@ class DashboardController extends Controller
 {
     public function analytics()
     {
+        \Illuminate\Support\Facades\Log::debug('DashboardController: Fetching analytics data');
         $data = Cache::remember('dashboard_analytics', 60 * 5, function () {
+            \Illuminate\Support\Facades\Log::debug('DashboardController: Cache miss, calculating analytics');
             // --- Totals ---
             $totalTheses      = Thesis::count();
             $publishedTheses  = Thesis::where('status', 'published')->count();

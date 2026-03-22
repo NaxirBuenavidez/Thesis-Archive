@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Upload, Card, Typography, Space, Row, Col, ColorPicker, App } from 'antd';
+import { Form, Input, Button, Upload, Card, Typography, Space, Row, Col, ColorPicker, App, Skeleton } from 'antd';
 import { UploadOutlined, BuildOutlined, BgColorsOutlined } from '@ant-design/icons';
 import { useSystemConfig } from '../../../../context/SystemConfigContext';
 
@@ -83,65 +83,71 @@ export default function TabBranding() {
 
     return (
         <Card title={<Space><BuildOutlined /> <Text strong>System Identity & Branding (CMS)</Text></Space>} styles={{ header: { background: '#fafafa' } }}>
-            <Form form={form} layout="vertical" onFinish={handleSubmit}>
-                <Row gutter={24}>
-                    <Col xs={24} lg={12}>
-                        <Title level={5}>Core Identity Texts</Title>
-                        <Text type="secondary" style={{ display: 'block', marginBottom: 16 }}>
-                            These text fields dictate the navigation headers and system titles visible globally. 
-                        </Text>
-                        
-                        <Form.Item name="site_title" label={<Text strong>System Display Name (Header)</Text>} rules={[{ required: true }]}>
-                            <Input placeholder="e.g. THESIS ARCHIVE SYSTEM" size="large" />
-                        </Form.Item>
-
-                        <Form.Item name="site_description" label={<Text strong>Institution / Subheading</Text>} rules={[{ required: true }]}>
-                            <Input.TextArea rows={3} placeholder="e.g. PHILIPPINE ELECTRONICS & COMMUNICATION INSTITUTE OF TECHNOLOGY" />
-                        </Form.Item>
-                    </Col>
-                    
-                    <Col xs={24} lg={12}>
-                        <Title level={5}>Aesthetics & Graphics</Title>
-                        <Text type="secondary" style={{ display: 'block', marginBottom: 16 }}>
-                            Configure the organizational logo (also acts as watermarked background) and primary system hues.
-                        </Text>
-
-                        <Row gutter={16}>
-                            <Col span={12}>
-                                <Form.Item name="primary_color" label="Primary Main Color (Buttons, Links)">
-                                    <ColorPicker showText />
-                                </Form.Item>
-                            </Col>
-                            <Col span={12}>
-                                <Form.Item name="primary_color_dark" label="Primary Dark Color (Sidebar)">
-                                    <ColorPicker showText />
-                                </Form.Item>
-                            </Col>
-                        </Row>
-
-                        <Form.Item label={<Text strong>System Logo (PNG/JPG)</Text>}>
-                            <Upload
-                                beforeUpload={beforeUpload}
-                                onChange={handleChange}
-                                fileList={fileList}
-                                listType="picture"
-                                maxCount={1}
-                            >
-                                <Button icon={<UploadOutlined />}>Select Logo Photo</Button>
-                            </Upload>
-                            <Text type="secondary" style={{ display: 'block', marginTop: 8, fontSize: 12 }}>
-                                This logo replaces the initials on the header and spans across the app as a 5% opacity watermark.
-                            </Text>
-                        </Form.Item>
-                    </Col>
-                </Row>
-                
-                <div style={{ marginTop: 24, textAlign: 'right' }}>
-                    <Button type="primary" htmlType="submit" size="large" loading={submitLoading} icon={<BgColorsOutlined />}>
-                        Save Branding Configuration
-                    </Button>
+            {loading ? (
+                <div style={{ padding: '24px 0' }}>
+                    <Skeleton active paragraph={{ rows: 10 }} />
                 </div>
-            </Form>
+            ) : (
+                <Form form={form} layout="vertical" onFinish={handleSubmit}>
+                    <Row gutter={24}>
+                        <Col xs={24} lg={12}>
+                            <Title level={5}>Core Identity Texts</Title>
+                            <Text type="secondary" style={{ display: 'block', marginBottom: 16 }}>
+                                These text fields dictate the navigation headers and system titles visible globally. 
+                            </Text>
+                            
+                            <Form.Item name="site_title" label={<Text strong>System Display Name (Header)</Text>} rules={[{ required: true }]}>
+                                <Input placeholder="e.g. THESIS ARCHIVE SYSTEM" size="large" />
+                            </Form.Item>
+
+                            <Form.Item name="site_description" label={<Text strong>Institution / Subheading</Text>} rules={[{ required: true }]}>
+                                <Input.TextArea rows={3} placeholder="e.g. PHILIPPINE ELECTRONICS & COMMUNICATION INSTITUTE OF TECHNOLOGY" />
+                            </Form.Item>
+                        </Col>
+                        
+                        <Col xs={24} lg={12}>
+                            <Title level={5}>Aesthetics & Graphics</Title>
+                            <Text type="secondary" style={{ display: 'block', marginBottom: 16 }}>
+                                Configure the organizational logo (also acts as watermarked background) and primary system hues.
+                            </Text>
+
+                            <Row gutter={16}>
+                                <Col span={12}>
+                                    <Form.Item name="primary_color" label="Primary Main Color (Buttons, Links)">
+                                        <ColorPicker showText />
+                                    </Form.Item>
+                                </Col>
+                                <Col span={12}>
+                                    <Form.Item name="primary_color_dark" label="Primary Dark Color (Sidebar)">
+                                        <ColorPicker showText />
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+
+                            <Form.Item label={<Text strong>System Logo (PNG/JPG)</Text>}>
+                                <Upload
+                                    beforeUpload={beforeUpload}
+                                    onChange={handleChange}
+                                    fileList={fileList}
+                                    listType="picture"
+                                    maxCount={1}
+                                >
+                                    <Button icon={<UploadOutlined />}>Select Logo Photo</Button>
+                                </Upload>
+                                <Text type="secondary" style={{ display: 'block', marginTop: 8, fontSize: 12 }}>
+                                    This logo replaces the initials on the header and spans across the app as a 5% opacity watermark.
+                                </Text>
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    
+                    <div style={{ marginTop: 24, textAlign: 'right' }}>
+                        <Button type="primary" htmlType="submit" size="large" loading={submitLoading} icon={<BgColorsOutlined />}>
+                            Save Branding Configuration
+                        </Button>
+                    </div>
+                </Form>
+            )}
         </Card>
     );
 }

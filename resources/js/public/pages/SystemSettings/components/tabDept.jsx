@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Space, Input, Button, Tooltip } from 'antd';
+import { Space, Input, Button, Tooltip, Skeleton } from 'antd';
 import { Feedback } from '../../../components/UI/SystemNotifications';
 import { ReloadOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import TableDept from './departments/tableDept';
@@ -101,12 +101,18 @@ export default function tabDept() {
                 </Space>
             </div>
 
-            <TableDept
-                data={filteredData}
-                loading={loading}
-                onEdit={openEditModal}
-                onDelete={handleDelete}
-            />
+            {loading ? (
+                <div style={{ padding: '24px 0' }}>
+                    <Skeleton active paragraph={{ rows: 5 }} />
+                </div>
+            ) : (
+                <TableDept
+                    data={filteredData}
+                    loading={false}
+                    onEdit={openEditModal}
+                    onDelete={handleDelete}
+                />
+            )}
 
             <ModalDept
                 open={isModalOpen}
