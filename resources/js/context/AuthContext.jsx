@@ -9,18 +9,14 @@ export const AuthProvider = ({ children, initialUser = undefined }) => {
     const [loading, _setLoading] = useState(true);
 
     const setUser = (val) => {
-        console.log('[DEBUG-AUTH-STATE] setUser called with:', val?.role?.slug || 'Guest');
         _setUser(val);
     };
     const setLoading = (val) => {
-        console.log('[DEBUG-AUTH-STATE] setLoading:', val);
         _setLoading(val);
     };
 
     const checkAuth = async (initialUser = undefined) => {
-        console.log('[DEBUG-AUTH] checkAuth called. initialUser:', !!initialUser);
         if (initialUser !== undefined) {
-            console.log('[DEBUG-AUTH] Using initialUser:', initialUser?.role?.slug || 'Guest');
             if (initialUser === null) {
                 setUser({ role: { slug: 'anonymous', title: 'Guest' }, name: 'Guest' });
             } else {
@@ -31,13 +27,10 @@ export const AuthProvider = ({ children, initialUser = undefined }) => {
         }
 
         try {
-            console.log('[DEBUG-AUTH] Fetching user from API...');
             const response = await getUserArg().catch(() => null);
             if (response && response.data) {
-                console.log('[DEBUG-AUTH] API User verified:', response.data.role?.slug);
                 setUser(response.data);
             } else {
-                console.log('[DEBUG-AUTH] API check failed, setting Guest.');
                 setUser({ role: { slug: 'anonymous', title: 'Guest' }, name: 'Guest' });
             }
         } catch (error) {
@@ -54,7 +47,6 @@ export const AuthProvider = ({ children, initialUser = undefined }) => {
     useEffect(() => {
         const currentUserStr = JSON.stringify(initialUser);
         if (currentUserStr === lastInitialUserRef.current) {
-            console.log('[DEBUG-AUTH] initialUser unchanged, skipping checkAuth');
             return;
         }
         lastInitialUserRef.current = currentUserStr;

@@ -10,29 +10,7 @@ class SettingController extends Controller
 {
     public function index()
     {
-        $settings = Setting::all()->pluck('value', 'key');
-        
-        if (isset($settings['logo_path']) && !empty($settings['logo_path'])) {
-            $val = (string) $settings['logo_path'];
-            if (!str_starts_with($val, 'http') && !str_starts_with($val, 'data:image') && !str_starts_with($val, '/')) {
-                // If the file exists in public/images, use that direct path (better for Vercel/Simple hosting)
-                if (file_exists(public_path('images/' . $val))) {
-                    $settings->put('logo_path', (string) url('images/' . $val));
-                } elseif (env('FILESYSTEM_DISK') === 's3') {
-                    try {
-                        $settings->put('logo_path', \Illuminate\Support\Facades\Storage::disk('s3')->temporaryUrl($val, now()->addMinutes(120)));
-                    } catch (\Exception $e) {
-                        $settings->put('logo_path', url('storage/' . $val));
-                    }
-                } else {
-                    $settings->put('logo_path', url('storage/' . $val));
-                }
-            } elseif (str_starts_with($val, '/')) {
-                $settings->put('logo_path', url($val));
-            }
-        }
-        
-        return response()->json($settings);
+        return response()->json(Setting::getResolved());
     }
 
     public function update(Request $request)
@@ -59,7 +37,6 @@ class SettingController extends Controller
         }
 
         \Illuminate\Support\Facades\Cache::forget('system_settings');
-        $settings = Setting::all()->pluck('value', 'key');
-        return response()->json(['message' => 'Settings updated successfully', 'settings' => $settings]);
+        return response()->json(['message' => 'Settings updated successfully', 'settings' => Setting::getResolved()]);
     }
 }

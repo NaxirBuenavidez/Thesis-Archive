@@ -17,24 +17,7 @@ Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallbac
 // Consolidated Boot API — returns branding + user in 1 request to slash load times on Vercel
 Route::get('/api/boot', function (Illuminate\Http\Request $request) {
     $settings = \Illuminate\Support\Facades\Cache::remember('system_settings', 3600, function () {
-        $data = \App\Models\Setting::all()->pluck('value', 'key')->toArray();
-        if (isset($data['logo_path']) && !empty($data['logo_path'])) {
-            $val = (string) $data['logo_path'];
-            if (!str_starts_with($val, 'http') && !str_starts_with($val, 'data:image') && !str_starts_with($val, '/')) {
-                if (env('FILESYSTEM_DISK') === 's3') {
-                    try {
-                        $data['logo_path'] = \Illuminate\Support\Facades\Storage::disk('s3')->temporaryUrl($val, now()->addMinutes(120));
-                    } catch (\Exception $e) {
-                        $data['logo_path'] = url('storage/' . $val);
-                    }
-                } else {
-                    $data['logo_path'] = url('storage/' . $val);
-                }
-            } elseif (str_starts_with($val, '/')) {
-                $data['logo_path'] = url($val);
-            }
-        }
-        return $data;
+        return \App\Models\Setting::getResolved();
     });
 
     $departments = \Illuminate\Support\Facades\Cache::remember('system_departments', 3600, function () {
@@ -162,24 +145,7 @@ Route::middleware('auth:web')->group(function () {
 Route::get('/{any}', function (Illuminate\Http\Request $request) {
     // 1. Fetch Shared Resources (Cached)
     $settings = \Illuminate\Support\Facades\Cache::remember('system_settings', 3600, function () {
-        $data = \App\Models\Setting::all()->pluck('value', 'key')->toArray();
-        if (isset($data['logo_path']) && !empty($data['logo_path'])) {
-            $val = (string) $data['logo_path'];
-            if (!str_starts_with($val, 'http') && !str_starts_with($val, 'data:image') && !str_starts_with($val, '/')) {
-                if (env('FILESYSTEM_DISK') === 's3') {
-                    try {
-                        $data['logo_path'] = \Illuminate\Support\Facades\Storage::disk('s3')->temporaryUrl($val, now()->addMinutes(120));
-                    } catch (\Exception $e) {
-                        $data['logo_path'] = url('storage/' . $val);
-                    }
-                } else {
-                    $data['logo_path'] = url('storage/' . $val);
-                }
-            } elseif (str_starts_with($val, '/')) {
-                $data['logo_path'] = url($val);
-            }
-        }
-        return $data;
+        return \App\Models\Setting::getResolved();
     });
 
     $departments = \Illuminate\Support\Facades\Cache::remember('system_departments', 3600, function () {

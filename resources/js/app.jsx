@@ -8,9 +8,6 @@ import { RouterProvider } from 'react-router-dom';
 import router from './router';
 
 function App() {
-    console.log('[DEBUG-ROOT] app.jsx rendering. Path:', window.location.pathname);
-    const [loopError, setLoopError] = React.useState(null);
-    
     React.useEffect(() => {
         let navCount = 0;
         let lastNav = Date.now();
@@ -21,13 +18,10 @@ function App() {
             if (now - lastNav > 3000) navCount = 1;
             lastNav = now;
 
-            console.log(`[DEBUG-NAV] ${type}: count=${navCount}, to=${args?.[2] || 'popstate'}`);
-            
             if (navCount > 50) {
-                const msg = `CRITICAL: Navigation Loop Detected (${type}). Stopping app.`;
-                console.error(msg);
+                const msg = `CRITICAL: Persistent Navigation Loop detected. Stopping application to protect system resources.`;
                 setLoopError(msg);
-                throw new Error(msg); // Hard stop
+                throw new Error(msg);
             }
         };
 

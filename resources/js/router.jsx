@@ -52,7 +52,6 @@ const SafeNavigate = ({ to, ...props }) => {
     // ───────────────────────────────────────────────────────────
 
     if (current === target) {
-        console.warn(`[ROUTER] SafeNavigate: Targeted [${to}] while already there. Skipping.`);
         return null;
     }
     
@@ -83,7 +82,6 @@ const ProtectedRoute = ({ children }) => {
             return children;
         }
         
-        console.warn(`[ROUTER] ProtectedRoute: Unauthorized at [${location.pathname}], redirecting to /login`);
         return <SafeNavigate to="/login" state={{ from: location }} />;
     }
     return children;
@@ -101,7 +99,6 @@ const AlreadyAuthedRoute = ({ children }) => {
     if (user && user.role?.slug !== 'anonymous') {
         if (currentPath !== '/login') return children;
         
-        console.log(`[ROUTER] AlreadyAuthedRoute: Authenticated at [${location.pathname}], redirecting to /`);
         return <SafeNavigate to="/" />;
     }
     return children;
@@ -116,7 +113,6 @@ const RoleRoute = ({ children, allowedRoles }) => {
 
     if (!slug || !allowedRoles.includes(slug)) {
         if (currentPath === '/') return children;
-        console.warn(`[ROUTER] RoleRoute: Unauthorized role [${slug}] at [${location.pathname}], redirecting to /`);
         return <SafeNavigate to="/" />;
     }
     return children;

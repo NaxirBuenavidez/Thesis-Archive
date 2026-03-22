@@ -27,6 +27,7 @@ const STYLES = `
 // Static but rich gradient for performance
 .login-root {
   min-height: 100vh;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -35,6 +36,7 @@ const STYLES = `
   position: relative;
   overflow: hidden;
   background: radial-gradient(circle at 20% 20%, #1a2ca3 0%, #0a1045 40%, #000000 100%);
+  margin: 0;
 }
 
 .login-card {
@@ -174,7 +176,11 @@ const STYLES = `
   margin-bottom: 20px;
   display: flex;
   justify-content: center;
-  min-height: 65px;
+  min-height: 78px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
 .login-logo-img {
@@ -316,9 +322,17 @@ export default function Login() {
             <div className="login-card">
                 {/* ── Logo + Branding ── */}
                 <div style={{ textAlign: 'center', marginBottom: 28 }}>
-                    <div className="login-logo-wrap" style={{ background: logo_path ? 'rgba(255,255,255,0.15)' : primaryColor }}>
-                        {logo_path ? (
-                            <img src={logo_path} alt="System Logo" className="login-logo-img" />
+                    <div className="login-logo-wrap" style={{ background: (logo_path && logo_path.includes('/')) ? 'rgba(255,255,255,0.15)' : primaryColor }}>
+                        {(logo_path && logo_path.includes('/')) ? (
+                            <img 
+                                src={logo_path} 
+                                alt={appName} 
+                                className="login-logo-img" 
+                                onError={(e) => {
+                                    e.target.style.display = 'none';
+                                    e.target.parentElement.innerHTML = `<span style="color: #fff; font-size: 26px; font-weight: 800; letter-spacing: -1px;">${getInitials(appName)}</span>`;
+                                }}
+                            />
                         ) : (
                             <span style={{ color: '#fff', fontSize: 26, fontWeight: 800, letterSpacing: -1 }}>
                                 {getInitials(appName)}
@@ -441,6 +455,10 @@ export default function Login() {
                                 onChange={(val) => form.setFieldsValue({ captcha_token: val })}
                             />
                         </div>
+                        {/* 
+                          Note: If you see "Invalid key type", verify that your VITE_CAPTCHA_SITE_KEY 
+                          is for reCAPTCHA v2 (Checkbox), not v3.
+                        */}
                     </Form.Item>
 
                     <Form.Item style={{ marginBottom: 16 }}>

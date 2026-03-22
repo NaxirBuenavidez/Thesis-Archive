@@ -62,11 +62,7 @@ window.axios.interceptors.response.use(
             const currentPath = window.location.pathname.toLowerCase().replace(/\/$/, '') || '/';
             
             if (!publicPaths.includes(currentPath)) {
-
-                console.warn('[INTERCEPTOR] 401 Unauthorized at:', currentPath, '- Redirecting to /login');
                 window.location.href = '/login';
-            } else {
-                console.log('[INTERCEPTOR] 401 Unauthorized but already on public path:', currentPath);
             }
         }
         return Promise.reject(error);
