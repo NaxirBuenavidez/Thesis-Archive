@@ -28,12 +28,12 @@ const SafeNavigate = ({ to, ...props }) => {
     const target = getNormalizedPath(to);
     
     if (current === target) {
-        console.warn(`[ROUTER] SafeNavigate blocked loop to [${to}]`);
         return null;
     }
     
     return <Navigate to={to} replace {...props} />;
 };
+
 
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useAuth();
@@ -163,7 +163,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "*",
-                element: <SafeNavigate to="/" />,
+                element: <SafeNavigate to="/archive" />,
             }
         ]
     }

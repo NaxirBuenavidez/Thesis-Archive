@@ -12,6 +12,7 @@ window.axios.defaults.timeout = 30000;             // 30s global timeout to prev
 // This is more reliable for SPAs than the static meta tag, which can become stale.
 
 // Dispatch loading events so GlobalLoader shows/hides ONLY when explicitly requested via 'useLoader: true'
+
 window.axios.interceptors.request.use(
     config => {
         if (config.useLoader) {
@@ -57,10 +58,11 @@ window.axios.interceptors.response.use(
 
         if (error.response && error.response.status === 401) {
             const publicPaths = ['/login', '/archive'];
-            // Normalize path for comparison
-            const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+            // Normalize path (case-insensitive and trailing slash) for comparison
+            const currentPath = window.location.pathname.toLowerCase().replace(/\/$/, '') || '/';
             
             if (!publicPaths.includes(currentPath)) {
+
                 console.warn('[INTERCEPTOR] 401 Unauthorized at:', currentPath, '- Redirecting to /login');
                 window.location.href = '/login';
             } else {

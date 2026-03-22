@@ -228,11 +228,13 @@ function injectStyles() {
 
 export default function Login() {
     const { message } = App.useApp();
+    const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const recaptchaRef = React.useRef();
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
+
     const { checkAuth, user, loading: authLoading } = useAuth();
     const { site_title, site_description, logo_path, primary_color, primary_color_dark } = useSystemConfig();
 
@@ -242,36 +244,9 @@ export default function Login() {
     const appDesc       = site_description || 'PHILIPPINE ELECTRONICS & COMMUNICATION INSTITUTE OF TECHNOLOGY';
 
     injectStyles();
-
-    // Stabilize query param access
-    const glValue = searchParams.get('_gl');
-    const hasError = searchParams.has('error');
     
-    // Strict safeguard to prevent navigation loops
-    const initRef = React.useRef(false);
-
-    // Obfuscate / secure login URL visually without triggering loops
-    useEffect(() => {
-        // Only run this logic ONCE per mount
-        if (initRef.current) return;
-
-        if (!glValue) {
-            console.log('[LOGIN] Initializing secure query params...');
-            initRef.current = true;
-            
-            const newParams = new URLSearchParams(searchParams);
-            const r = (len) => Array.from({length: len}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.charAt(Math.floor(Math.random() * 62))).join('');
-            
-            // Format closely mimics the user's secure token pattern
-            const token = `1*${r(6)}*_gcl_au*${btoa(Date.now().toString() + r(10)).replace(/=/g, '')}.*_ga*${r(32)}*_ga_${r(8).toUpperCase()}*${btoa(r(60)).replace(/=/g, '')}`;
-            
-            newParams.set('_gl', token);
-            setSearchParams(newParams, { replace: true });
-        } else {
-            // Already has GL, lock the initialization so it never fires again
-            initRef.current = true;
-        }
-    }, [glValue, setSearchParams]);
+    // Check for error from URL params (e.g. Google OAuth fail)
+    const hasError = searchParams.has('error');
 
     // Redirect already-authenticated users away from login
     useEffect(() => {
@@ -285,6 +260,7 @@ export default function Login() {
     }, [user, authLoading, navigate]);
 
     // Show error from URL params (e.g. Google OAuth fail)
+
     useEffect(() => {
         if (hasError) {
             const errorMsg = searchParams.get('error');
