@@ -399,7 +399,7 @@ export default function PublicArchive() {
 
             <Footer logoPath={logo_path} primaryColor={primaryColor} primaryDark={primaryDark} appName={site_title} />
 
-            <ThesisModal thesis={viewThesis} onClose={() => setViewThesis(null)} />
+            <ThesisModal thesis={viewThesis} onClose={() => setViewThesis(null)} primaryColor={primaryColor} primaryDark={primaryDark} />
 
             <Drawer
                 title={<span style={{ color: primaryDark }}>Menu</span>}
