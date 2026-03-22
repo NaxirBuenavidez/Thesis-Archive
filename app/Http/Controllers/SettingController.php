@@ -17,7 +17,7 @@ class SettingController extends Controller
             if (!str_starts_with($val, 'http') && !str_starts_with($val, 'data:image') && !str_starts_with($val, '/')) {
                 // If the file exists in public/images, use that direct path (better for Vercel/Simple hosting)
                 if (file_exists(public_path('images/' . $val))) {
-                    $settings->put('logo_path', url('images/' . $val));
+                    $settings->put('logo_path', (string) url('images/' . $val));
                 } elseif (env('FILESYSTEM_DISK') === 's3') {
                     try {
                         $settings->put('logo_path', \Illuminate\Support\Facades\Storage::disk('s3')->temporaryUrl($val, now()->addMinutes(120)));

@@ -34,10 +34,10 @@ class EnsureSecurityHeaders
         $viteHost = config('app.vite_dev_server_url', env('VITE_DEV_SERVER_URL', ''));
         $isDev    = app()->environment('local', 'development');
 
-        $scriptSrc = "'self' 'unsafe-inline' 'unsafe-eval'";
+        $scriptSrc = "'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/";
         $styleSrc  = "'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.bunny.net";
         $fontSrc   = "'self' https://fonts.gstatic.com https://fonts.bunny.net data:";
-        $connectSrc = "'self' ws: wss:";
+        $connectSrc = "'self' ws: wss: https://www.google.com/recaptcha/";
 
         $host = request()->getHost();
         $scriptSrc  .= " http://localhost:* https://localhost:* http://127.0.0.1:* http://{$host}:* https://{$host}:*";
@@ -51,10 +51,10 @@ class EnsureSecurityHeaders
             "font-src {$fontSrc}",
             "img-src 'self' data: blob: https: http:",   // Allow logo uploads + Google avatars
             "connect-src {$connectSrc}",
-            "frame-src 'self' data: blob: https: http:",
+            "frame-src 'self' data: blob: https: http: https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/",
             "frame-ancestors 'self'",
             "base-uri 'self'",
-            "form-action 'self'",
+            "form-action 'self' https://www.google.com/recaptcha/",
         ]);
         $response->headers->set('Content-Security-Policy', $csp);
 
