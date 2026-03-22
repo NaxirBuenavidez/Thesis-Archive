@@ -418,7 +418,18 @@ export default function Login() {
                                 ref={recaptchaRef}
                                 sitekey={import.meta.env.VITE_CAPTCHA_SITE_KEY}
                                 theme="dark"
-                                onChange={(val) => form.setFieldsValue({ captcha_token: val })}
+                                onChange={(val) => {
+                                    console.log('[CAPTCHA] Value changed:', !!val);
+                                    form.setFieldsValue({ captcha_token: val });
+                                }}
+                                onErrored={() => {
+                                    console.error('[CAPTCHA] Error: Failed to load or validate. Check domain authorization and key type (v2 Checkbox).');
+                                    message.error('Security verification failed to initialize.');
+                                }}
+                                onExpired={() => {
+                                    console.warn('[CAPTCHA] Expired.');
+                                    form.setFieldsValue({ captcha_token: null });
+                                }}
                             />
                         </div>
                         {/* 
