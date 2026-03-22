@@ -55,14 +55,16 @@ window.axios.interceptors.response.use(
             // Optional: Dispatch a global timeout notification if needed
         }
 
-        if (error.response && (error.response.status === 401)) {
+        if (error.response && error.response.status === 401) {
             const publicPaths = ['/login', '/archive'];
-            const normalizedPath = window.location.pathname.replace(/\/$/, '') || '/';
-            const isPublic = publicPaths.includes(normalizedPath);
+            const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
             
-            if (!isPublic && normalizedPath !== '/login' && normalizedPath !== '/archive') {
-                console.warn('[INTERCEPTOR] Redirecting to /login due to 401 on:', originalRequest.url, 'from:', window.location.pathname);
+            // Only redirect if NOT on a public path
+            if (!publicPaths.includes(currentPath)) {
+                console.warn('[INTERCEPTOR] 401 Unauthorized at:', currentPath, '- Redirecting to /login');
                 window.location.href = '/login';
+            } else {
+                console.log('[INTERCEPTOR] 401 Unauthorized but already on public path:', currentPath);
             }
         }
         return Promise.reject(error);

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet, useLocation } from 'react-router-dom';
 import PublicLayout from './public/components/PublicLayout';
 import Dashboard from './public/pages/pageDashboard';
 import Users from './public/pages/pageUsers';
@@ -24,7 +24,7 @@ const getNormalizedPath = () => window.location.pathname.replace(/\/$/, '') || '
 
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useAuth();
-    const path = getNormalizedPath();
+    const location = useLocation();
     
     if (loading) return (
         <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#f0f2f5' }}>
@@ -39,9 +39,12 @@ const ProtectedRoute = ({ children }) => {
     );
 
     if (!user || user.role?.slug === 'anonymous') {
-        if (path === '/login') return children;
-        console.error(`[LOOP-PREVENTION] ProtectedRoute would redirect Guest from [${window.location.pathname}] to /login`);
-        return <div style={{ padding: 20, color: 'red' }}>[ACCESS DENIED] Please <a href="/login">Login</a></div>;
+        const path = location.pathname;
+        if (path === '/login' || path === '/archive') return children;
+        
+        console.warn(`[ROUTER] ProtectedRoute: Unauthorized access to [${path}], redirecting to /login`);
+        // Using Navigate component is the React Router way to handle redirects during render
+        return <Navigate to="/login" replace state={{ from: location }} />;
     }
     return children;
 };
@@ -49,14 +52,15 @@ const ProtectedRoute = ({ children }) => {
 // Redirect authenticated users away from /login
 const AlreadyAuthedRoute = ({ children }) => {
     const { user, loading } = useAuth();
-    const path = getNormalizedPath();
+    const location = useLocation();
 
     if (loading) return null;
 
     if (user && user.role?.slug !== 'anonymous') {
-        if (path === '/') return children;
-        console.error(`[LOOP-PREVENTION] AlreadyAuthedRoute would redirect User from [${window.location.pathname}] to /`);
-        return <div style={{ padding: 20, color: 'blue' }}>[ALREADY LOGGED IN] Go to <a href="/">Dashboard</a></div>;
+        if (location.pathname !== '/login') return children;
+        
+        console.log(`[ROUTER] AlreadyAuthedRoute: Authenticated user at /login, redirecting to /`);
+        return <Navigate to="/" replace />;
     }
     return children;
 };
@@ -97,7 +101,7 @@ const router = createBrowserRouter([
                 element: <ProtectedRoute><PublicLayout><Outlet /></PublicLayout></ProtectedRoute>,
                 children: [
                     {
-                        path: "/",
+                        index: true,
                         element: <Dashboard />,
                     },
                     {
@@ -140,12 +144,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "*",
-                element: window.location.pathname === '/' ? null : (
-                    (() => {
-                        console.warn('[ROUTER] Catch-all redirecting from:', window.location.pathname);
-                        return <Navigate to="/" replace />;
-                    })()
-                ),
+                element: <Navigate to="/" replace />,
             }
         ]
     }

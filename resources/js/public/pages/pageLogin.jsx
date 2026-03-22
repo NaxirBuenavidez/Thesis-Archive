@@ -243,10 +243,17 @@ export default function Login() {
 
     injectStyles();
 
-    // Obfuscate / secure login URL visually
+    // Stabilize query param access
+    const glValue = searchParams.get('_gl');
+    const hasError = searchParams.has('error');
+    const initialProcessRef = React.useRef(false);
+
+    // Obfuscate / secure login URL visually without triggering loops
     useEffect(() => {
-        const gl = searchParams.get('_gl');
-        if (!gl) {
+        if (initialProcessRef.current) return;
+        
+        if (!glValue) {
+            initialProcessRef.current = true;
             const newParams = new URLSearchParams(searchParams);
             const r = (len) => Array.from({length: len}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.charAt(Math.floor(Math.random() * 62))).join('');
             
@@ -256,20 +263,23 @@ export default function Login() {
             newParams.set('_gl', token);
             setSearchParams(newParams, { replace: true });
         }
-    }, [searchParams, setSearchParams]);
+    }, [glValue, setSearchParams]);
 
     // Redirect already-authenticated users away from login
     useEffect(() => {
         if (!authLoading && user && user.role?.slug !== 'anonymous') {
+            console.log('[LOGIN] Already authenticated, redirecting to /');
             navigate('/', { replace: true });
         }
     }, [user, authLoading, navigate]);
 
     // Show error from URL params (e.g. Google OAuth fail)
     useEffect(() => {
-        const error = searchParams.get('error');
-        if (error) message.error(error);
-    }, [searchParams, message]);
+        if (hasError) {
+            const errorMsg = searchParams.get('error');
+            if (errorMsg) message.error(errorMsg);
+        }
+    }, [hasError, message]);
 
     const getInitials = (name) =>
         name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
