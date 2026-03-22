@@ -85,10 +85,9 @@ const STYLES = `
 .login-card .ant-input-affix-wrapper {
   background: #fff !important;
   border: 1.5px solid rgba(0,0,0,0.1) !important;
-  border-radius: 14px !important;
-  color: #000 !important;
-  height: 52px !important;
-  padding: 4px 16px !important;
+  height: 46px !important;
+  padding: 4px 14px !important;
+  border-radius: 12px !important;
 }
 .login-card .ant-input-affix-wrapper input {
   color: #000 !important;
@@ -103,9 +102,9 @@ const STYLES = `
 
 /* Button enhancement */
 .login-btn {
-  height: 54px !important;
-  border-radius: 14px !important;
-  font-size: 16px !important;
+  height: 48px !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
   font-weight: 700 !important;
   box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
   background: #fff !important;
@@ -118,17 +117,17 @@ const STYLES = `
 }
 
 .login-google-btn {
-  height: 52px !important;
-  border-radius: 14px !important;
+  height: 46px !important;
+  border-radius: 12px !important;
   background: #fff !important;
   border: 1.5px solid rgba(0,0,0,0.1) !important;
   color: #000 !important;
 }
 
 .login-logo-wrap {
-  width: 80px;
-  height: 80px;
-  border-radius: 22px;
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
   margin: 0 auto 24px;
   display: flex;
   align-items: center;
@@ -360,7 +359,6 @@ export default function Login() {
                     form={form}
                     onFinish={onFinish}
                     layout="vertical"
-                    size="large"
                 >
                     <Form.Item
                         name="email"
