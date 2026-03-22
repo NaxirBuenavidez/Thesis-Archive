@@ -16,6 +16,7 @@ import { handleFormErrors } from '../../utils/formUtils';
 import { Feedback } from '../components/UI/SystemNotifications';
 import { useAuth } from '../../context/AuthContext';
 import { useSystemConfig } from '../../context/SystemConfigContext';
+import { sessionCache } from '../../utils/sessionCache';
 
 const { Title, Text } = Typography;
 const { useBreakpoint } = Grid;
@@ -29,8 +30,8 @@ export default function Users() {
 
 
     const { message } = App.useApp();
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState(sessionCache.get('users_list') || []);
+    const [loading, setLoading] = useState(!sessionCache.get('users_list'));
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [form] = Form.useForm();
     const [submitLoading, setSubmitLoading] = useState(false);
@@ -66,6 +67,7 @@ export default function Users() {
                     avatarUrl: user.profile?.avatar ? (user.profile.avatar.startsWith('http') || user.profile.avatar.startsWith('data:image') ? user.profile.avatar : `/storage/${user.profile.avatar}`) : null,
                 }));
                 setData(users);
+                sessionCache.set('users_list', users);
             }
         } catch (error) {
             console.error("Failed to fetch users", error);

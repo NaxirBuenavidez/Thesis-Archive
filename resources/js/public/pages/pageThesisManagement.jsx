@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Typography, Space, Button, Card, Input, Tooltip, Grid, theme, Tabs, App, Form, ConfigProvider, Table, Skeleton, Tag, Avatar } from 'antd';
+import { useAuth } from '../../context/AuthContext';
+import { useSystemConfig } from '../../context/SystemConfigContext';
+import thesesApi from '../../api/thesesApi';
+import { sessionCache } from '../../utils/sessionCache';
 
 const { Title, Text } = Typography;
 const { useBreakpoint } = Grid;
@@ -13,8 +17,8 @@ export default function ThesisManagement() {
     const primaryColor = token.colorPrimary;
     const { message, modal } = App.useApp();
 
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState(sessionCache.get('management_theses') || []);
+    const [loading, setLoading] = useState(!sessionCache.get('management_theses'));
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [form] = Form.useForm();
     const [submitLoading, setSubmitLoading] = useState(false);
@@ -55,6 +59,7 @@ export default function ThesisManagement() {
             }));
             
             setData(formattedTheses);
+            sessionCache.set('management_theses', formattedTheses);
             setSelectedRowKeys([]); // Reset selection on refresh
             setDepartments(bootDepts || []);
             setPrograms(bootProgs || []);

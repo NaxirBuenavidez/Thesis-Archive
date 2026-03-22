@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Typography, Table, Tag, Space, Button, Card, Input, Tooltip, Avatar, Grid, App, Divider, Row, Col, Drawer, Descriptions, Badge, Tabs, Skeleton, Empty, Select, theme, Checkbox, Radio, Pagination, Modal, Spin } from 'antd';
 import thesesApi from '../../api/thesesApi';
+import { useAuth } from '../../context/AuthContext';
+import { useSystemConfig } from '../../context/SystemConfigContext';
+import { sessionCache } from '../../utils/sessionCache';
 
 const { Title, Text, Paragraph } = Typography;
 const { useBreakpoint } = Grid;
@@ -14,8 +17,8 @@ export default function Repository() {
 
     const { message, modal } = App.useApp();
 
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState(sessionCache.get('repository_theses') || []);
+    const [loading, setLoading] = useState(!sessionCache.get('repository_theses'));
     const [submitLoading, setSubmitLoading] = useState(false);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [selectedThesis, setSelectedThesis] = useState(null);
@@ -75,6 +78,7 @@ export default function Repository() {
                         raw: thesis
                     }));
                 setData(theses);
+                sessionCache.set('repository_theses', theses);
             }
         } catch (error) {
             console.error('Failed to fetch theses for repository', error);

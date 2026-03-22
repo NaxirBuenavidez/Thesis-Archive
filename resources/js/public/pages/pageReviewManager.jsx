@@ -20,6 +20,7 @@ import { useTableSearch } from '../../hooks/useTableSearch';
 import { useAuth } from '../../context/AuthContext';
 import SignaturePad from '../components/UI/SignaturePad';
 import thesesApi from '../../api/thesesApi';
+import { sessionCache } from '../../utils/sessionCache';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -33,8 +34,8 @@ export default function ReviewManager() {
 
     const { message, modal } = App.useApp();
 
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState(sessionCache.get('review_theses') || []);
+    const [loading, setLoading] = useState(!sessionCache.get('review_theses'));
     const [reviewModal, setReviewModal] = useState({ open: false, thesis: null, action: null });
     const [form] = Form.useForm();
     const [drawerForm] = Form.useForm();
@@ -75,6 +76,7 @@ export default function ReviewManager() {
                         raw: thesis
                     }));
                 setData(theses);
+                sessionCache.set('review_theses', theses);
             }
         } catch (error) {
             console.error('Failed to fetch theses for review', error);

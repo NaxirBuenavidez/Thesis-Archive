@@ -24,6 +24,7 @@ import {
 } from 'recharts';
 import { useAuth } from '../../context/AuthContext';
 import { useSystemConfig } from '../../context/SystemConfigContext';
+import { sessionCache } from '../../utils/sessionCache';
 
 const { Title, Text } = Typography;
 
@@ -164,8 +165,8 @@ export default function Dashboard() {
     const { primary_color_dark, site_title } = useSystemConfig();
     const sidebarColor = primary_color_dark || '#1A2CA3';
 
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [data, setData] = useState(sessionCache.get('dashboard_analytics'));
+    const [loading, setLoading] = useState(!sessionCache.get('dashboard_analytics'));
 
     const CHART_COLORS = [
         token.colorPrimary,
@@ -206,8 +207,9 @@ export default function Dashboard() {
         try {
             const resp = await window.axios.get('/api/dashboard/analytics', { silent: true });
             setData(resp.data);
-        } catch {
-            // use empty defaults
+            sessionCache.set('dashboard_analytics', resp.data);
+        } catch (error) {
+            console.error(error);
         } finally {
             setLoading(false);
         }
