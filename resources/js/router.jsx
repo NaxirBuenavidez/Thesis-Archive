@@ -20,7 +20,20 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 
 import GlobalLoader from './public/components/GlobalLoader';
 
-const getNormalizedPath = () => window.location.pathname.replace(/\/$/, '') || '/';
+const getNormalizedPath = (path) => path.replace(/\/$/, '') || '/';
+
+const SafeNavigate = ({ to, ...props }) => {
+    const location = useLocation();
+    const current = getNormalizedPath(location.pathname);
+    const target = getNormalizedPath(to);
+    
+    if (current === target) {
+        console.warn(`[ROUTER] SafeNavigate blocked loop to [${to}]`);
+        return null;
+    }
+    
+    return <Navigate to={to} replace {...props} />;
+};
 
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useAuth();
@@ -38,16 +51,15 @@ const ProtectedRoute = ({ children }) => {
         </div>
     );
 
-    // Normalize path for comparison (remove trailing slash)
-    const currentPath = location.pathname.replace(/\/$/, '') || '/';
+    const currentPath = getNormalizedPath(location.pathname);
 
     if (!user || user.role?.slug === 'anonymous') {
         if (currentPath === '/login' || currentPath === '/archive') {
             return children;
         }
         
-        console.warn(`[ROUTER] ProtectedRoute: Unauthorized access to [${location.pathname}], redirecting to /login`);
-        return <Navigate to="/login" replace state={{ from: location }} />;
+        console.warn(`[ROUTER] ProtectedRoute: Unauthorized at [${location.pathname}], redirecting to /login`);
+        return <SafeNavigate to="/login" state={{ from: location }} />;
     }
     return children;
 };
@@ -59,14 +71,13 @@ const AlreadyAuthedRoute = ({ children }) => {
 
     if (loading) return null;
 
-    // Normalize path for comparison
-    const currentPath = location.pathname.replace(/\/$/, '') || '/';
+    const currentPath = getNormalizedPath(location.pathname);
 
     if (user && user.role?.slug !== 'anonymous') {
         if (currentPath !== '/login') return children;
         
-        console.log(`[ROUTER] AlreadyAuthedRoute: Authenticated user at [${location.pathname}], redirecting to /`);
-        return <Navigate to="/" replace />;
+        console.log(`[ROUTER] AlreadyAuthedRoute: Authenticated at [${location.pathname}], redirecting to /`);
+        return <SafeNavigate to="/" />;
     }
     return children;
 };
@@ -76,13 +87,12 @@ const RoleRoute = ({ children, allowedRoles }) => {
     const location = useLocation();
     const slug = user?.role?.slug;
 
-    // Normalize path
-    const currentPath = location.pathname.replace(/\/$/, '') || '/';
+    const currentPath = getNormalizedPath(location.pathname);
 
     if (!slug || !allowedRoles.includes(slug)) {
         if (currentPath === '/') return children;
         console.warn(`[ROUTER] RoleRoute: Unauthorized role [${slug}] at [${location.pathname}], redirecting to /`);
-        return <Navigate to="/" replace />;
+        return <SafeNavigate to="/" />;
     }
     return children;
 };
@@ -153,7 +163,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "*",
-                element: <Navigate to="/" replace />,
+                element: <SafeNavigate to="/" />,
             }
         ]
     }
