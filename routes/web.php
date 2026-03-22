@@ -96,6 +96,17 @@ Route::get('/debug-env', function () {
     ]);
 });
 
+Route::get('/debug-auth', function () {
+    $admin = \App\Models\User::where('email', 'admin@admin.com')->first();
+    return response()->json([
+        'admin_exists' => $admin ? true : false,
+        'admin_role' => $admin ? $admin->role?->slug : null,
+        'roles_count' => \App\Models\Role::count(),
+        'users_count' => \App\Models\User::count(),
+        'current_session_driver' => config('session.driver'),
+    ]);
+});
+
 Route::middleware('auth:web')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/api/user', function (Illuminate\Http\Request $request) {

