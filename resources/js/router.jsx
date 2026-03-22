@@ -36,6 +36,7 @@ const ProtectedRoute = ({ children }) => {
     if (!user || user.role?.slug === 'anonymous') {
         const path = window.location.pathname.replace(/\/$/, '') || '/';
         if (path === '/login') return children;
+        console.warn('[ROUTER] ProtectedRoute redirecting Guest from:', window.location.pathname);
         return <Navigate to="/login" replace />;
     }
     return children;
@@ -49,6 +50,7 @@ const AlreadyAuthedRoute = ({ children }) => {
     if (user && user.role?.slug !== 'anonymous') {
         const path = window.location.pathname.replace(/\/$/, '') || '/';
         if (path === '/' || path === '') return children;
+        console.warn('[ROUTER] AlreadyAuthedRoute redirecting User from:', window.location.pathname);
         return <Navigate to="/" replace />;
     }
     return children;
@@ -61,6 +63,7 @@ const RoleRoute = ({ children, allowedRoles }) => {
     if (!slug || !allowedRoles.includes(slug)) {
         const path = window.location.pathname.replace(/\/$/, '') || '/';
         if (path === '/' || path === '') return children;
+        console.warn('[ROUTER] RoleRoute redirecting unauthorized from:', window.location.pathname);
         return <Navigate to="/" replace />;
     }
     return children;
@@ -132,7 +135,12 @@ const router = createBrowserRouter([
             },
             {
                 path: "*",
-                element: window.location.pathname === '/' ? null : <Navigate to="/" replace />,
+                element: window.location.pathname === '/' ? null : (
+                    (() => {
+                        console.warn('[ROUTER] Catch-all redirecting from:', window.location.pathname);
+                        return <Navigate to="/" replace />;
+                    })()
+                ),
             }
         ]
     }

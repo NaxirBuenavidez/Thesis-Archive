@@ -61,6 +61,7 @@ window.axios.interceptors.response.use(
             const isPublic = publicPaths.some(p => p === currentPath || (currentPath === '' && p === '/'));
             
             if (!isPublic && currentPath !== '/login' && currentPath !== '/archive') {
+                console.warn('[INTERCEPTOR] Redirecting to /login due to 401 on:', originalRequest.url);
                 window.location.href = '/login';
             }
         }
