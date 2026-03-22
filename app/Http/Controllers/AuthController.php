@@ -21,7 +21,7 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'email'         => ['required', 'email'],
             'password'      => ['required'],
-            'captcha_token' => ['required', 'string'],
+            'captcha_token' => ['nullable', 'string'],
         ]);
 
         // ── Verify reCAPTCHA token ──────────────────────────────────────

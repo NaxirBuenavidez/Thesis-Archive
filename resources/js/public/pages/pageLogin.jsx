@@ -224,7 +224,7 @@ export default function Login() {
         setLoading(true);
         setSubmitted(true);
         const token = recaptchaRef.current?.getValue() || '';
-        const skipCaptcha = import.meta.env.VITE_SKIP_CAPTCHA === 'true' || import.meta.env.VITE_SKIP_CAPTCHA === true;
+        const skipCaptcha = true; // Temporary deactivation as requested by user // import.meta.env.VITE_SKIP_CAPTCHA === 'true' || import.meta.env.VITE_SKIP_CAPTCHA === true;
 
         if (!token && !skipCaptcha) {
             message.error('Please complete the security verification');
@@ -437,7 +437,7 @@ export default function Login() {
 
                     {/* CAPTCHA Widget */}
                     <Form.Item name="captcha_token" style={{ marginBottom: 20 }}>
-                        {!(import.meta.env.VITE_SKIP_CAPTCHA === 'true' || import.meta.env.VITE_SKIP_CAPTCHA === true) ? (
+                        {false ? ( // Force bypass for now
                             <div style={{ display: 'flex', justifyContent: 'center', transform: 'scale(0.9)', originX: 'center' }}>
                                 <ReCAPTCHA
                                     ref={recaptchaRef}
