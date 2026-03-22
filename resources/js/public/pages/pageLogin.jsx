@@ -238,8 +238,14 @@ export default function Login() {
         }
 
         try {
-            await loginArg({ ...values, captcha_token: token });
+            const response = await loginArg({ ...values, captcha_token: token });
             message.success('Login successful');
+            
+            // If the response contains the user, we can login immediately
+            if (response.data?.user) {
+                loginContext(response.data.user);
+            }
+            
             await checkAuth();
             navigate('/');
         } catch (error) {
@@ -431,29 +437,22 @@ export default function Login() {
 
                     {/* CAPTCHA Widget */}
                     <Form.Item name="captcha_token" style={{ marginBottom: 20 }}>
-                        <div className="login-captcha">
-                            <ReCAPTCHA
-                                ref={recaptchaRef}
-                                sitekey={import.meta.env.VITE_CAPTCHA_SITE_KEY}
-                                theme="dark"
-                                onChange={(val) => {
-                                    console.log('[CAPTCHA] Value changed:', !!val);
-                                    form.setFieldsValue({ captcha_token: val });
-                                }}
-                                onErrored={() => {
-                                    console.error('[CAPTCHA] Error: Failed to load or validate. Check domain authorization and key type (v2 Checkbox).');
-                                    message.error('Security verification failed to initialize.');
-                                }}
-                                onExpired={() => {
-                                    console.warn('[CAPTCHA] Expired.');
-                                    form.setFieldsValue({ captcha_token: null });
-                                }}
-                            />
-                        </div>
-                        {/* 
-                          Note: If you see "Invalid key type", verify that your VITE_CAPTCHA_SITE_KEY 
-                          is for reCAPTCHA v2 (Checkbox), not v3.
-                        */}
+                        {!(import.meta.env.VITE_SKIP_CAPTCHA === 'true' || import.meta.env.VITE_SKIP_CAPTCHA === true) ? (
+                            <div style={{ display: 'flex', justifyContent: 'center', transform: 'scale(0.9)', originX: 'center' }}>
+                                <ReCAPTCHA
+                                    ref={recaptchaRef}
+                                    sitekey={import.meta.env.VITE_CAPTCHA_SITE_KEY}
+                                    theme="light"
+                                    onChange={(val) => form.setFieldsValue({ captcha_token: val })}
+                                    onExpired={() => form.setFieldsValue({ captcha_token: null })}
+                                    onErrored={() => message.error('Security verification failed to load.')}
+                                />
+                            </div>
+                        ) : (
+                            <div style={{ textAlign: 'center', padding: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                                <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: '12px' }}>🔒 Security Verification Bypassed</Text>
+                            </div>
+                        )}
                     </Form.Item>
 
                     <Form.Item style={{ marginBottom: 16 }}>

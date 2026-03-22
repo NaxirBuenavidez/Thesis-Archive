@@ -18,35 +18,42 @@ class Setting extends Model
     {
         $settings = self::all()->pluck('value', 'key');
         
-        if (isset($settings['logo_path']) && !empty($settings['logo_path'])) {
-            $val = (string) $settings['logo_path'];
-            
-            // 1. If it's already a full URL or data URI, leave it
-            if (str_starts_with($val, 'http') || str_starts_with($val, 'data:image')) {
-                return $settings;
-            }
-
-            // 2. If it starts with /, it's an absolute web path (preferred)
-            if (str_starts_with($val, '/')) {
-                $settings->put('logo_path', (string) url($val));
-                return $settings;
-            }
-
-            // 3. Check for the file in public/images/ (Static fallback)
-            if (file_exists(public_path('images/' . $val))) {
-                $settings->put('logo_path', (string) url('images/' . $val));
-                return $settings;
-            }
-
-            // 4. Fallback to storage/ (User uploads)
-            if (config('filesystems.default') === 's3') {
-                try {
-                    $settings->put('logo_path', (string) \Illuminate\Support\Facades\Storage::disk('s3')->temporaryUrl($val, now()->addMinutes(120)));
-                } catch (\Exception $e) {
-                    $settings->put('logo_path', (string) url('storage/' . $val));
+        foreach ($settings as $key => $val) {
+            if (str_ends_with($key, '_path') && !empty($val)) {
+                $val = (string) $val;
+                
+                // 1. If it's already a full URL or data URI, leave it
+                if (str_starts_with($val, 'http') || str_starts_with($val, 'data:image')) {
+                    continue;
                 }
-            } else {
-                $settings->put('logo_path', (string) url('storage/' . $val));
+
+                // 2. If it starts with /, it's an absolute web path (preferred)
+                if (str_starts_with($val, '/')) {
+                    $settings[$key] = (string) url($val);
+                    continue;
+                }
+
+                // 3. Check for the file in public/images/ (Static fallback)
+                if (file_exists(public_path('images/' . $val))) {
+                    $settings[$key] = (string) url('images/' . $val);
+                    continue;
+                }
+
+                // 4. Fallback to storage/ (User uploads or S3)
+                if (config('filesystems.default') === 's3' || str_starts_with($val, 'system/')) {
+                    try {
+                        // Use temporaryUrl for S3 if it's an S3 path, otherwise just url
+                        if (str_starts_with($val, 'system/')) {
+                            $settings[$key] = (string) \Illuminate\Support\Facades\Storage::disk('s3')->url($val);
+                        } else {
+                            $settings[$key] = (string) url('storage/' . $val);
+                        }
+                    } catch (\Exception $e) {
+                        $settings[$key] = (string) url('storage/' . $val);
+                    }
+                } else {
+                    $settings[$key] = (string) url('storage/' . $val);
+                }
             }
         }
         

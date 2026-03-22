@@ -8,7 +8,10 @@ export function SystemConfigProvider({ children, initialData = null }) {
         primary_color_dark: import.meta.env.VITE_COLOR_PRIMARY_DARK || '#1A2CA3',
         site_title: 'THESIS ARCHIVE SYSTEM',
         site_description: 'PHILIPPINE ELECTRONICS & COMMUNICATION INSTITUTE OF TECHNOLOGY',
-        logo_path: null
+        logo_path: null,
+        user_manual_path: null,
+        research_policy_path: null,
+        submission_guide_path: null
     });
     const [departments, setDepartments] = useState([]);
     const [programs, setPrograms] = useState([]);
@@ -28,7 +31,10 @@ export function SystemConfigProvider({ children, initialData = null }) {
                 primary_color_dark: s.primary_color_dark || prev.primary_color_dark,
                 site_title: s.site_title || prev.site_title,
                 site_description: s.site_description || prev.site_description,
-                logo_path: s.logo_path || prev.logo_path
+                logo_path: s.logo_path || prev.logo_path,
+                user_manual_path: s.user_manual_path || prev.user_manual_path,
+                research_policy_path: s.research_policy_path || prev.research_policy_path,
+                submission_guide_path: s.submission_guide_path || prev.submission_guide_path
             }));
 
             if (d) setDepartments(d);
@@ -50,7 +56,10 @@ export function SystemConfigProvider({ children, initialData = null }) {
                 primary_color_dark: data.primary_color_dark || prev.primary_color_dark,
                 site_title: data.site_title || prev.site_title,
                 site_description: data.site_description || prev.site_description,
-                logo_path: data.logo_path || prev.logo_path
+                logo_path: data.logo_path || prev.logo_path,
+                user_manual_path: data.user_manual_path || prev.user_manual_path,
+                research_policy_path: data.research_policy_path || prev.research_policy_path,
+                submission_guide_path: data.submission_guide_path || prev.submission_guide_path
             }));
         } catch (error) {
             console.error('Failed to load system settings', error);

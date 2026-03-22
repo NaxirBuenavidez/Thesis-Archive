@@ -35,11 +35,11 @@ class AuthController extends Controller
                 'response' => $request->input('captcha_token'),
                 'remoteip' => $request->ip(),
             ]);
-            $captchaSuccess = $response->json('success');
+            $captchaSuccess = (bool) ($response['success'] ?? false);
         }
 
         if (!$captchaSuccess) {
-            $errorCodes = isset($response) ? $response->json('error-codes') : ['unknown'];
+            $errorCodes = isset($response) ? $response['error-codes'] : ['unknown'];
             $errorMsg = is_array($errorCodes) ? implode(', ', $errorCodes) : 'Security verification failed';
             
             throw ValidationException::withMessages([
