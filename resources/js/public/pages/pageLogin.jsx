@@ -190,7 +190,7 @@ export default function Login() {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const { checkAuth, user, loading: authLoading } = useAuth();
+    const { login, checkAuth, user, loading: authLoading } = useAuth();
     const { site_title, site_description, logo_path, primary_color, primary_color_dark } = useSystemConfig();
 
     const primaryColor = primary_color || '#2845D6';
@@ -243,7 +243,7 @@ export default function Login() {
             
             // If the response contains the user, we can login immediately
             if (response.data?.user) {
-                loginContext(response.data.user);
+                login(response.data.user);
             }
             
             await checkAuth();

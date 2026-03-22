@@ -26,7 +26,7 @@ class AuthController extends Controller
 
         // ── Verify reCAPTCHA token ──────────────────────────────────────
         // Bypass for debugging as requested by user
-        if (true || config('app.env') !== 'production' || env('SKIP_CAPTCHA') === true || env('SKIP_CAPTCHA') === 'true') {
+        if (true) { // Temporary deactivation as requested by user
             // Skip verification
             $captchaSuccess = true;
         } else {
