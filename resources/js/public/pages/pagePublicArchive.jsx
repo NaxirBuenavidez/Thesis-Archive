@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Layout, Row, Col, Pagination, Spin, Empty, Drawer, List, Space, Button } from 'antd';
+import { Layout, Row, Col, Pagination, Spin, Empty, Drawer, List, Space, Button, Typography } from 'antd';
 import { GlobalOutlined, SearchOutlined, BookOutlined, InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import Particles, { initParticlesEngine } from "@tsparticles/react";
@@ -17,6 +17,7 @@ import 'placeholder-loading/dist/css/placeholder-loading.min.css';
 import '../../../css/public-archive.scss';
 
 const { Content } = Layout;
+const { Text, Title, Paragraph } = Typography;
 
 const STYLES = `
 @keyframes fadeInUp {
