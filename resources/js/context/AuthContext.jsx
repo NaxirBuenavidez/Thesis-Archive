@@ -5,8 +5,17 @@ import { getUserArg, logoutArg } from '../private/api/auth';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children, initialUser = undefined }) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [user, _setUser] = useState(null);
+    const [loading, _setLoading] = useState(true);
+
+    const setUser = (val) => {
+        console.log('[DEBUG-AUTH-STATE] setUser called with:', val?.role?.slug || 'Guest');
+        _setUser(val);
+    };
+    const setLoading = (val) => {
+        console.log('[DEBUG-AUTH-STATE] setLoading:', val);
+        _setLoading(val);
+    };
 
     const checkAuth = async (initialUser = undefined) => {
         console.log('[DEBUG-AUTH] checkAuth called. initialUser:', !!initialUser);
