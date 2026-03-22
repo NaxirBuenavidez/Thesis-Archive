@@ -42,9 +42,9 @@ class Setting extends Model
                 // 4. Fallback to storage/ (User uploads or S3)
                 if (config('filesystems.default') === 's3' || str_starts_with($val, 'system/')) {
                     try {
-                        // Use temporaryUrl for S3 if it's an S3 path, otherwise just url
+                        // Use temporaryUrl for S3 to ensure access via R2 API endpoint
                         if (str_starts_with($val, 'system/')) {
-                            $settings[$key] = (string) \Illuminate\Support\Facades\Storage::disk('s3')->url($val);
+                            $settings[$key] = (string) \Illuminate\Support\Facades\Storage::disk('s3')->temporaryUrl($val, now()->addHours(24));
                         } else {
                             $settings[$key] = (string) url('storage/' . $val);
                         }
