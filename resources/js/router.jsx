@@ -34,7 +34,8 @@ const ProtectedRoute = ({ children }) => {
         </div>
     );
     if (!user || user.role?.slug === 'anonymous') {
-        if (window.location.pathname === '/login') return children;
+        const path = window.location.pathname.replace(/\/$/, '') || '/';
+        if (path === '/login') return children;
         return <Navigate to="/login" replace />;
     }
     return children;
@@ -46,7 +47,8 @@ const AlreadyAuthedRoute = ({ children }) => {
     if (loading) return null;
     // Only redirect if a real user exists (not 'anonymous' guest)
     if (user && user.role?.slug !== 'anonymous') {
-        if (window.location.pathname === '/' || window.location.pathname === '') return children;
+        const path = window.location.pathname.replace(/\/$/, '') || '/';
+        if (path === '/' || path === '') return children;
         return <Navigate to="/" replace />;
     }
     return children;
@@ -56,7 +58,11 @@ const AlreadyAuthedRoute = ({ children }) => {
 const RoleRoute = ({ children, allowedRoles }) => {
     const { user } = useAuth();
     const slug = user?.role?.slug;
-    if (!slug || !allowedRoles.includes(slug)) return <Navigate to="/" replace />;
+    if (!slug || !allowedRoles.includes(slug)) {
+        const path = window.location.pathname.replace(/\/$/, '') || '/';
+        if (path === '/' || path === '') return children;
+        return <Navigate to="/" replace />;
+    }
     return children;
 };
 
