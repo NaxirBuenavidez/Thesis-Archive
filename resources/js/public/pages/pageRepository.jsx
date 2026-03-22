@@ -1,27 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Typography, Table, Tag, Space, Button, Card, Input, Tooltip, Avatar, Grid, App, Divider, Row, Col, Drawer, Descriptions, Badge, Tabs, Skeleton, Empty, Select, theme, Checkbox, Radio, Pagination, Modal } from 'antd';
-import {
-    SearchOutlined,
-    ReloadOutlined,
-    EyeOutlined,
-    FilePdfOutlined,
-    LinkOutlined,
-    FileTextOutlined,
-    UploadOutlined,
-    LockOutlined,
-    UnlockOutlined,
-    CheckCircleOutlined,
-    FilterOutlined,
-    SortAscendingOutlined,
-    CloseOutlined,
-    CloudDownloadOutlined,
-    UserOutlined
-} from '@ant-design/icons';
-import { BookOpen, Clock, Calendar, Globe, Lock } from 'lucide-react';
-import { Earth20Filled, LockClosed20Filled } from '@fluentui/react-icons';
-import { useAuth } from '../../context/AuthContext';
-import { Spin } from 'antd';
+import { Typography, Table, Tag, Space, Button, Card, Input, Tooltip, Avatar, Grid, App, Divider, Row, Col, Drawer, Descriptions, Badge, Tabs, Skeleton, Empty, Select, theme, Checkbox, Radio, Pagination, Modal, Spin } from 'antd';
 import thesesApi from '../../api/thesesApi';
 
 const { Title, Text, Paragraph } = Typography;

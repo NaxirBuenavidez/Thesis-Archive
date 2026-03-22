@@ -1,23 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Typography, Space, Button, Card, Input, Tooltip, Grid, theme, Tabs, App, Form, ConfigProvider, Table } from 'antd';
-import { PlusOutlined, SearchOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Eye20Filled, Edit20Filled, Delete20Filled } from '@fluentui/react-icons';
-import { useTableSearch } from '../../hooks/useTableSearch';
-import { useAuth } from '../../context/AuthContext';
-import { useSystemConfig } from '../../context/SystemConfigContext';
-import dayjs from 'dayjs';
-import thesesApi from '../../api/thesesApi';
-import systemApi from '../../api/systemApi';
-import { handleFormErrors } from '../../utils/formUtils';
-import { CustomNotification, Feedback } from '../components/UI/SystemNotifications';
-import tableThesis from './Management/components/tableThesis';
-import modalThesisForm from './Management/components/modalThesisForm';
-import drawerThesisPreview from './Management/components/drawerThesisPreview';
-import '../../../css/thesis-management.scss';
-import { FilePdfOutlined } from '@ant-design/icons';
-import { Calendar, Clock } from 'lucide-react';
-import { Tag, Avatar } from 'antd';
+import { Typography, Space, Button, Card, Input, Tooltip, Grid, theme, Tabs, App, Form, ConfigProvider, Table, Skeleton, Tag, Avatar } from 'antd';
 
 const { Title, Text } = Typography;
 const { useBreakpoint } = Grid;
