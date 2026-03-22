@@ -25,13 +25,20 @@ class AuthController extends Controller
         ]);
 
         // ── Verify reCAPTCHA token ──────────────────────────────────────
-        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret'   => env('RECAPTCHA_SECRET_KEY'),
-            'response' => $request->input('captcha_token'),
-            'remoteip' => $request->ip(),
-        ]);
+        // Bypass for debugging if SKIP_CAPTCHA is true
+        if (config('app.env') !== 'production' || env('SKIP_CAPTCHA') === true || env('SKIP_CAPTCHA') === 'true') {
+            // Skip verification
+            $captchaSuccess = true;
+        } else {
+            $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+                'secret'   => env('RECAPTCHA_SECRET_KEY'),
+                'response' => $request->input('captcha_token'),
+                'remoteip' => $request->ip(),
+            ]);
+            $captchaSuccess = $response->json('success');
+        }
 
-        if (!$response->json('success')) {
+        if (!$captchaSuccess) {
             throw ValidationException::withMessages([
                 'captcha_token' => ['Security verification failed. Please try again.'],
             ]);

@@ -204,12 +204,18 @@ export default function Login() {
 
     const onFinish = async (values) => {
         if (submitted) return;
-        const token = recaptchaRef.current.getValue();
-        if (!token) {
+        const token = recaptchaRef.current?.getValue() || '';
+        const skipCaptcha = import.meta.env.VITE_SKIP_CAPTCHA === 'true' || import.meta.env.VITE_SKIP_CAPTCHA === true;
+
+        if (!token && !skipCaptcha) {
             message.error('Please complete the security verification');
             setLoading(false);
             setSubmitted(false);
             return;
+        }
+
+        if (skipCaptcha && !token) {
+            console.warn('[AUTH] Bypassing reCAPTCHA check as VITE_SKIP_CAPTCHA is enabled.');
         }
 
         try {
@@ -232,7 +238,7 @@ export default function Login() {
             setSubmitted(false);
         } finally {
             setLoading(false);
-            if (!submitted) recaptchaRef.current.reset();
+            if (!submitted && recaptchaRef.current) recaptchaRef.current.reset();
         }
     };
 
