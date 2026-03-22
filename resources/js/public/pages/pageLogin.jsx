@@ -343,12 +343,17 @@ export default function Login() {
             <div className="login-card">
                 {/* ── Logo + Branding ── */}
                 <div style={{ textAlign: 'center', marginBottom: 28 }}>
-                    <div className="login-logo-wrap" style={{ background: 'rgba(255,255,255,0.15)' }}>
-                        <img
-                            src="/images/pecit-logo.png"
+                    <div className="login-logo-wrap" style={{ background: 'rgba(255,255,255,0.15)', cursor: 'pointer', transition: 'all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)' }}>
+                        <a href="https://pecit.edu.ph/" target="_blank" rel="noopener noreferrer">
+                            <img
+                                src="/images/pecit-logo.png"
                                 alt={appName}
                                 className="login-logo-img"
+                                style={{ transition: 'transform 0.3s' }}
+                                onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'}
+                                onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
                             />
+                        </a>
                     </div>
 
                     <Title
