@@ -57,9 +57,9 @@ window.axios.interceptors.response.use(
 
         if (error.response && error.response.status === 401) {
             const publicPaths = ['/login', '/archive'];
+            // Normalize path for comparison
             const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
             
-            // Only redirect if NOT on a public path
             if (!publicPaths.includes(currentPath)) {
                 console.warn('[INTERCEPTOR] 401 Unauthorized at:', currentPath, '- Redirecting to /login');
                 window.location.href = '/login';

@@ -246,14 +246,19 @@ export default function Login() {
     // Stabilize query param access
     const glValue = searchParams.get('_gl');
     const hasError = searchParams.has('error');
-    const initialProcessRef = React.useRef(false);
+    
+    // Strict safeguard to prevent navigation loops
+    const initRef = React.useRef(false);
 
     // Obfuscate / secure login URL visually without triggering loops
     useEffect(() => {
-        if (initialProcessRef.current) return;
-        
+        // Only run this logic ONCE per mount
+        if (initRef.current) return;
+
         if (!glValue) {
-            initialProcessRef.current = true;
+            console.log('[LOGIN] Initializing secure query params...');
+            initRef.current = true;
+            
             const newParams = new URLSearchParams(searchParams);
             const r = (len) => Array.from({length: len}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.charAt(Math.floor(Math.random() * 62))).join('');
             
@@ -262,14 +267,20 @@ export default function Login() {
             
             newParams.set('_gl', token);
             setSearchParams(newParams, { replace: true });
+        } else {
+            // Already has GL, lock the initialization so it never fires again
+            initRef.current = true;
         }
     }, [glValue, setSearchParams]);
 
     // Redirect already-authenticated users away from login
     useEffect(() => {
         if (!authLoading && user && user.role?.slug !== 'anonymous') {
-            console.log('[LOGIN] Already authenticated, redirecting to /');
-            navigate('/', { replace: true });
+            const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+            if (currentPath === '/login') {
+                console.log('[LOGIN] Already authenticated, redirecting to /');
+                navigate('/', { replace: true });
+            }
         }
     }, [user, authLoading, navigate]);
 
@@ -277,7 +288,10 @@ export default function Login() {
     useEffect(() => {
         if (hasError) {
             const errorMsg = searchParams.get('error');
-            if (errorMsg) message.error(errorMsg);
+            if (errorMsg) {
+                console.warn('[LOGIN] Authentication error detected:', errorMsg);
+                message.error(errorMsg);
+            }
         }
     }, [hasError, message]);
 

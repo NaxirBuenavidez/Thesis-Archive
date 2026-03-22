@@ -38,12 +38,15 @@ const ProtectedRoute = ({ children }) => {
         </div>
     );
 
+    // Normalize path for comparison (remove trailing slash)
+    const currentPath = location.pathname.replace(/\/$/, '') || '/';
+
     if (!user || user.role?.slug === 'anonymous') {
-        const path = location.pathname;
-        if (path === '/login' || path === '/archive') return children;
+        if (currentPath === '/login' || currentPath === '/archive') {
+            return children;
+        }
         
-        console.warn(`[ROUTER] ProtectedRoute: Unauthorized access to [${path}], redirecting to /login`);
-        // Using Navigate component is the React Router way to handle redirects during render
+        console.warn(`[ROUTER] ProtectedRoute: Unauthorized access to [${location.pathname}], redirecting to /login`);
         return <Navigate to="/login" replace state={{ from: location }} />;
     }
     return children;
@@ -56,10 +59,13 @@ const AlreadyAuthedRoute = ({ children }) => {
 
     if (loading) return null;
 
+    // Normalize path for comparison
+    const currentPath = location.pathname.replace(/\/$/, '') || '/';
+
     if (user && user.role?.slug !== 'anonymous') {
-        if (location.pathname !== '/login') return children;
+        if (currentPath !== '/login') return children;
         
-        console.log(`[ROUTER] AlreadyAuthedRoute: Authenticated user at /login, redirecting to /`);
+        console.log(`[ROUTER] AlreadyAuthedRoute: Authenticated user at [${location.pathname}], redirecting to /`);
         return <Navigate to="/" replace />;
     }
     return children;
@@ -67,12 +73,15 @@ const AlreadyAuthedRoute = ({ children }) => {
 
 const RoleRoute = ({ children, allowedRoles }) => {
     const { user } = useAuth();
+    const location = useLocation();
     const slug = user?.role?.slug;
-    const path = getNormalizedPath();
+
+    // Normalize path
+    const currentPath = location.pathname.replace(/\/$/, '') || '/';
 
     if (!slug || !allowedRoles.includes(slug)) {
-        if (path === '/') return children;
-        console.warn(`[ROUTER] RoleRoute: Redirecting unauthorized from [${window.location.pathname}] to /`);
+        if (currentPath === '/') return children;
+        console.warn(`[ROUTER] RoleRoute: Unauthorized role [${slug}] at [${location.pathname}], redirecting to /`);
         return <Navigate to="/" replace />;
     }
     return children;
