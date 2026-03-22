@@ -80,6 +80,73 @@ const SectionSkeleton = ({ cards = 3 }) => (
     </Row>
 );
 
+const GuidesSection = ({ primaryColor, primaryDark }) => {
+    const { user_manual_path, research_policy_path, submission_guide_path } = useSystemConfig();
+    const [isLoading, setIsLoading] = useState(true);
+    
+    useEffect(() => {
+        const timer = setTimeout(() => setIsLoading(false), 2000);
+        return () => clearTimeout(timer);
+    }, []);
+
+    const guides = [
+        { title: 'User Manual', desc: 'Step-by-step navigation guide.', icon: user_manual_path || '/images/user-manual.png' },
+        { title: 'Research Policy', desc: 'Intellectual property rules.', icon: research_policy_path || '/images/research-policy.png' },
+        { title: 'Submission Guide', desc: "Archive preparation guidelines.", icon: submission_guide_path || '/images/submission-guide.png' }
+    ];
+
+    return (
+        <div id="guides" style={{ padding: '100px 5%', background: '#fff', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+            <div style={{ maxWidth: 1400, margin: '0 auto' }}>
+                <SectionHeading 
+                    icon={<BookOutlined />} 
+                    title="Manual & Guides" 
+                    subtitle="Premium documentation and policies for our digital thesis archive."
+                    primaryColor={primaryColor}
+                />
+                
+                {isLoading ? (
+                    <SectionSkeleton cards={3} />
+                ) : (
+                    <Row gutter={[48, 48]} justify="center">
+                        {guides.map((g, i) => (
+                            <Col xs={24} md={8} key={i}>
+                                <div className="guide-card" style={{ 
+                                    padding: 48, 
+                                    background: '#f8fafc', 
+                                    borderRadius: 32, 
+                                    height: '100%', 
+                                    border: '1px solid rgba(0,0,0,0.02)', 
+                                    textAlign: 'center',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    transition: 'transform 0.3s ease'
+                                }}>
+                                    <div style={{ 
+                                        width: '100%', 
+                                        maxWidth: 280, 
+                                        aspectRatio: '1/1', 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        justifyContent: 'center', 
+                                        marginBottom: 32 
+                                    }} className="entry-animate">
+                                        <img src={g.icon} alt={g.title} style={{ width: '120%', height: '120%', objectFit: 'contain', filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.1))' }} />
+                                    </div>
+                                    <h3 style={{ fontSize: 28, fontWeight: 800, marginBottom: 16, color: primaryDark }}>{g.title}</h3>
+                                    <p style={{ color: '#666', fontSize: 16, lineHeight: 1.6, margin: 0, maxWidth: 300 }}>{g.desc}</p>
+                                </div>
+                            </Col>
+                        ))}
+                    </Row>
+                )}
+            </div>
+        </div>
+    );
+};
+
 const PrivacySection = ({ primaryColor, primaryDark }) => {
     return (
         <div id="privacy" style={{ padding: '80px 5%', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
@@ -190,6 +257,7 @@ export default function PublicArchive() {
         { label: 'Home', id: 'home', icon: <GlobalOutlined /> },
         { label: 'Search', id: 'search', icon: <SearchOutlined /> },
         { label: 'Research Categories', id: 'categories', icon: <BookOutlined /> },
+        { label: 'Manual & Guides', id: 'guides', icon: <BookOutlined /> },
         { label: 'Privacy & Compliance', id: 'privacy', icon: <InfoCircleOutlined /> },
     ], []);
 
@@ -324,6 +392,7 @@ export default function PublicArchive() {
                     </div>
                 </div>
 
+                <GuidesSection primaryColor={primaryColor} primaryDark={primaryDark} />
                 <PrivacySection primaryColor={primaryColor} primaryDark={primaryDark} />
             </Content>
 
