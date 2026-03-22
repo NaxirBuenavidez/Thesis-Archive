@@ -26,18 +26,18 @@ class EnsureSecurityHeaders
         // Force HTTPS for 1 year (only meaningful over HTTPS, safe to include)
         $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
 
-        // Disable sensitive browser features
-        $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
+        // Disable sensitive browser features and allow reCAPTCHA tokens
+        $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), private-state-token-redemption=(self "https://www.google.com"), private-state-token-issuance=(self "https://www.google.com")');
 
         // Content Security Policy
         // In local dev, also allow the Vite dev server host so HMR and assets aren't blocked.
         $viteHost = config('app.vite_dev_server_url', env('VITE_DEV_SERVER_URL', ''));
         $isDev    = app()->environment('local', 'development');
 
-        $scriptSrc = "'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/";
-        $styleSrc  = "'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.bunny.net";
+        $scriptSrc = "'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.gstatic.com/";
+        $styleSrc  = "'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.bunny.net https://www.gstatic.com/";
         $fontSrc   = "'self' https://fonts.gstatic.com https://fonts.bunny.net data:";
-        $connectSrc = "'self' ws: wss: https://www.google.com/recaptcha/";
+        $connectSrc = "'self' ws: wss: https://www.google.com/recaptcha/ https://www.gstatic.com/";
 
         $host = request()->getHost();
         $scriptSrc  .= " http://localhost:* https://localhost:* http://127.0.0.1:* http://{$host}:* https://{$host}:*";
@@ -49,9 +49,9 @@ class EnsureSecurityHeaders
             "script-src {$scriptSrc}",
             "style-src {$styleSrc}",
             "font-src {$fontSrc}",
-            "img-src 'self' data: blob: https: http:",   // Allow logo uploads + Google avatars
+            "img-src 'self' data: blob: https: http: https://www.gstatic.com/",   // Allow logo uploads + Google avatars
             "connect-src {$connectSrc}",
-            "frame-src 'self' data: blob: https: http: https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/",
+            "frame-src 'self' data: blob: https: http: https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/ https://www.gstatic.com/recaptcha/",
             "frame-ancestors 'self'",
             "base-uri 'self'",
             "form-action 'self' https://www.google.com/recaptcha/",
