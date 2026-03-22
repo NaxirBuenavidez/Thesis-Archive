@@ -57,11 +57,11 @@ window.axios.interceptors.response.use(
 
         if (error.response && (error.response.status === 401)) {
             const publicPaths = ['/login', '/archive'];
-            const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
-            const isPublic = publicPaths.some(p => p === currentPath || (currentPath === '' && p === '/'));
+            const normalizedPath = window.location.pathname.replace(/\/$/, '') || '/';
+            const isPublic = publicPaths.includes(normalizedPath);
             
-            if (!isPublic && currentPath !== '/login' && currentPath !== '/archive') {
-                console.warn('[INTERCEPTOR] Redirecting to /login due to 401 on:', originalRequest.url);
+            if (!isPublic && normalizedPath !== '/login' && normalizedPath !== '/archive') {
+                console.warn('[INTERCEPTOR] Redirecting to /login due to 401 on:', originalRequest.url, 'from:', window.location.pathname);
                 window.location.href = '/login';
             }
         }

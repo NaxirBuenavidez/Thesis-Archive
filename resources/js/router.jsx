@@ -20,8 +20,12 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 
 import GlobalLoader from './public/components/GlobalLoader';
 
+const getNormalizedPath = () => window.location.pathname.replace(/\/$/, '') || '/';
+
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useAuth();
+    const path = getNormalizedPath();
+    
     if (loading) return (
         <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#f0f2f5' }}>
             <div style={{
@@ -33,10 +37,10 @@ const ProtectedRoute = ({ children }) => {
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
     );
+
     if (!user || user.role?.slug === 'anonymous') {
-        const path = window.location.pathname.replace(/\/$/, '') || '/';
         if (path === '/login') return children;
-        console.warn('[ROUTER] ProtectedRoute redirecting Guest from:', window.location.pathname);
+        console.warn(`[ROUTER] ProtectedRoute: Redirecting Guest from [${window.location.pathname}] to /login`);
         return <Navigate to="/login" replace />;
     }
     return children;
@@ -45,25 +49,26 @@ const ProtectedRoute = ({ children }) => {
 // Redirect authenticated users away from /login
 const AlreadyAuthedRoute = ({ children }) => {
     const { user, loading } = useAuth();
+    const path = getNormalizedPath();
+
     if (loading) return null;
-    // Only redirect if a real user exists (not 'anonymous' guest)
+
     if (user && user.role?.slug !== 'anonymous') {
-        const path = window.location.pathname.replace(/\/$/, '') || '/';
-        if (path === '/' || path === '') return children;
-        console.warn('[ROUTER] AlreadyAuthedRoute redirecting User from:', window.location.pathname);
+        if (path === '/') return children;
+        console.warn(`[ROUTER] AlreadyAuthedRoute: Redirecting User from [${window.location.pathname}] to /`);
         return <Navigate to="/" replace />;
     }
     return children;
 };
 
-// Restrict a route to specific role slugs — redirects to / if not allowed
 const RoleRoute = ({ children, allowedRoles }) => {
     const { user } = useAuth();
     const slug = user?.role?.slug;
+    const path = getNormalizedPath();
+
     if (!slug || !allowedRoles.includes(slug)) {
-        const path = window.location.pathname.replace(/\/$/, '') || '/';
-        if (path === '/' || path === '') return children;
-        console.warn('[ROUTER] RoleRoute redirecting unauthorized from:', window.location.pathname);
+        if (path === '/') return children;
+        console.warn(`[ROUTER] RoleRoute: Redirecting unauthorized from [${window.location.pathname}] to /`);
         return <Navigate to="/" replace />;
     }
     return children;
