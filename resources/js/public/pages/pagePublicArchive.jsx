@@ -37,6 +37,80 @@ const SkeletonCard = () => (
     </div>
 );
 
+const SectionHeading = ({ icon, title, subtitle, primaryColor }) => (
+    <div style={{ textAlign: 'center', marginBottom: 48 }}>
+        <div style={{ fontSize: 32, color: primaryColor, marginBottom: 16 }}>{icon}</div>
+        <h2 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, color: '#1a202c', margin: '0 0 8px 0' }}>{title}</h2>
+        <p style={{ color: '#4a5568', fontSize: 16, maxWidth: 600, margin: '0 auto' }}>{subtitle}</p>
+    </div>
+);
+
+const GuidesSection = ({ primaryColor, primaryDark }) => {
+    const guides = [
+        { title: 'User Manual', desc: 'Step-by-step guide on how to navigate and use the archive portal features effectively.', icon: <BookOutlined /> },
+        { title: 'Research Policy', desc: 'Understand the rules and regulations regarding the use of public research data and intellectual property.', icon: <InfoCircleOutlined /> },
+        { title: 'Submission Guide', desc: "Guidelines for students and faculty on how to prepare their thesis for public archiving.", icon: <GlobalOutlined /> }
+    ];
+
+    return (
+        <div id="guides" style={{ padding: '80px 5%', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+            <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+                <SectionHeading 
+                    icon={<BookOutlined style={{ fontSize: 40 }} />} 
+                    title="Manual & Guides" 
+                    subtitle="Everything you need to know about using our digital thesis archive and submission policies."
+                    primaryColor={primaryColor}
+                />
+                <Row gutter={[32, 32]}>
+                    {guides.map((g, i) => (
+                        <Col xs={24} md={8} key={i}>
+                            <div className="guide-card" style={{ padding: 32, background: '#fff', borderRadius: 16, height: '100%', border: '1px solid rgba(0,0,0,0.03)', transition: 'all 0.3s' }}>
+                                <div style={{ background: `${primaryColor}10`, width: 56, height: 56, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, color: primaryColor, marginBottom: 24 }}>
+                                    {g.icon}
+                                </div>
+                                <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12, color: '#2d3748' }}>{g.title}</h3>
+                                <p style={{ color: '#718096', lineHeight: 1.6, margin: 0 }}>{g.desc}</p>
+                            </div>
+                        </Col>
+                    ))}
+                </Row>
+            </div>
+        </div>
+    );
+};
+
+const FAQSection = ({ primaryColor, primaryDark }) => {
+    const faqs = [
+        { q: 'Is the archive open to the public?', a: 'Yes, the archive is designed for public access to promote academic transparency and resource sharing.' },
+        { q: 'How can I request a full copy?', a: 'Full copies can be requested through the official PECIT library portal or by visiting the campus in person.' },
+        { q: 'Who can submit research?', a: 'Currently, only verified students and faculty of PECIT can submit their research outputs to the archive.' },
+        { q: 'Are there any usage fees?', a: 'No, accessing and searching the digital archive is completely free for all users.' }
+    ];
+
+    return (
+        <div id="faq" style={{ padding: '80px 5%', background: '#fff' }}>
+            <div style={{ maxWidth: 900, margin: '0 auto' }}>
+                <SectionHeading 
+                    icon={<QuestionCircleOutlined style={{ fontSize: 40 }} />} 
+                    title="Frequently Asked Questions" 
+                    subtitle="Find answers to common questions about access, submissions, and usage policies."
+                    primaryColor={primaryColor}
+                />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                    {faqs.map((f, i) => (
+                        <div key={i} style={{ padding: 24, borderRadius: 12, background: '#f8fafc', border: '1px solid rgba(0,0,0,0.03)' }}>
+                            <h4 style={{ fontSize: 18, fontWeight: 700, color: primaryDark, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
+                                <QuestionCircleOutlined size={20} /> {f.q}
+                            </h4>
+                            <p style={{ color: '#4a5568', margin: 0, paddingLeft: 32, lineHeight: 1.6 }}>{f.a}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+};
+
 export default function PublicArchive() {
     const { primary_color, primary_color_dark, site_title, logo_path } = useSystemConfig();
     const primaryColor = primary_color || '#2845D6';
@@ -235,6 +309,9 @@ export default function PublicArchive() {
                         )}
                     </div>
                 </div>
+
+                <GuidesSection primaryColor={primaryColor} primaryDark={primaryDark} />
+                <FAQSection primaryColor={primaryColor} primaryDark={primaryDark} />
             </Content>
 
             <Footer logoPath={logo_path} primaryColor={primaryColor} primaryDark={primaryDark} appName={site_title} />
