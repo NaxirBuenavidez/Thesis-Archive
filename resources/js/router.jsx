@@ -27,7 +27,32 @@ const SafeNavigate = ({ to, ...props }) => {
     const current = getNormalizedPath(location.pathname);
     const target = getNormalizedPath(to);
     
+    // ───────────────────────────────────────────────────────────
+    // CIRCUIT BREAKER: Definitive loop prevention
+    // ───────────────────────────────────────────────────────────
+    const navKey = `ptas_nav_${to}_${Date.now().toString().slice(0, -3)}`; // Per-second bucket
+    const currentNavs = parseInt(sessionStorage.getItem(navKey) || '0');
+    
+    if (currentNavs > 5) {
+        console.error('[FATAL-LOOP] SafeNavigate: Navigation loop detected for', to, '- HALTING APP');
+        return (
+            <div style={{ padding: 20, background: '#fff1f0', border: '1px solid #ffa39e', borderRadius: 8, margin: 20 }}>
+                <h3 style={{ color: '#cf1322', margin: 0 }}>Navigation Loop Detected</h3>
+                <p style={{ margin: '8px 0 0 0' }}>The system has prevented an infinite redirect loop to <code>{to}</code>.</p>
+                <button 
+                    onClick={() => { sessionStorage.clear(); window.location.href = '/login'; }} 
+                    style={{ marginTop: 12, padding: '4px 12px', cursor: 'pointer' }}
+                >
+                    Reset & Sign In
+                </button>
+            </div>
+        );
+    }
+    sessionStorage.setItem(navKey, (currentNavs + 1).toString());
+    // ───────────────────────────────────────────────────────────
+
     if (current === target) {
+        console.warn(`[ROUTER] SafeNavigate: Targeted [${to}] while already there. Skipping.`);
         return null;
     }
     

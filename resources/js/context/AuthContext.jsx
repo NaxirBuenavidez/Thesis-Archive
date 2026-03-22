@@ -49,9 +49,17 @@ export const AuthProvider = ({ children, initialUser = undefined }) => {
     };
 
 
+    const lastInitialUserRef = useRef(null);
+
     useEffect(() => {
+        const currentUserStr = JSON.stringify(initialUser);
+        if (currentUserStr === lastInitialUserRef.current) {
+            console.log('[DEBUG-AUTH] initialUser unchanged, skipping checkAuth');
+            return;
+        }
+        lastInitialUserRef.current = currentUserStr;
         checkAuth(initialUser);
-    }, [initialUser]);
+    }, [initialUser, checkAuth]);
 
     const login = React.useCallback((userData) => {
         setUser(userData);
