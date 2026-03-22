@@ -343,22 +343,12 @@ export default function Login() {
             <div className="login-card">
                 {/* ── Logo + Branding ── */}
                 <div style={{ textAlign: 'center', marginBottom: 28 }}>
-                    <div className="login-logo-wrap" style={{ background: (logo_path && logo_path.includes('/')) ? 'rgba(255,255,255,0.15)' : primaryColor }}>
-                        {(logo_path && logo_path.includes('/')) ? (
-                            <img
-                                src={logo_path}
+                    <div className="login-logo-wrap" style={{ background: 'rgba(255,255,255,0.15)' }}>
+                        <img
+                            src="/images/pecit-logo.png"
                                 alt={appName}
                                 className="login-logo-img"
-                                onError={(e) => {
-                                    e.target.style.display = 'none';
-                                    e.target.parentElement.innerHTML = `<span style="color: #fff; font-size: 26px; font-weight: 800; letter-spacing: -1px;">${getInitials(appName)}</span>`;
-                                }}
                             />
-                        ) : (
-                            <span style={{ color: '#fff', fontSize: 26, fontWeight: 800, letterSpacing: -1 }}>
-                                {getInitials(appName)}
-                            </span>
-                        )}
                     </div>
 
                     <Title

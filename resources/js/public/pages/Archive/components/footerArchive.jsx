@@ -20,7 +20,7 @@ const footerArchive = React.memo(({ logoPath, primaryColor, primaryDark, appName
                             </a>
                             <div style={{ width: 1, height: 60, background: '#ccc', opacity: 0.5 }} />
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                                <img src="/images/ptas-logo.png" alt="PTAS Logo" style={{ height: 100, objectFit: 'contain' }} />
+                                <img src="/images/ptas.png" alt="PTAS Logo" style={{ height: 100, objectFit: 'contain' }} />
                                 <Text strong style={{ color: primaryDark, fontSize: 14, lineHeight: 1.2 }}>PTAS</Text>
                             </div>
                         </div>
