@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Checkbox, App, Typography } from 'antd';
+import ReCAPTCHA from "react-google-recaptcha";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -28,7 +29,7 @@ const STYLES = `
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
   position: relative;
   overflow: hidden;
   background: #000; /* Dark base for particles */
