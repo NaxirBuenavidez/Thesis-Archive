@@ -26,9 +26,6 @@ class EnsureSecurityHeaders
         // Force HTTPS for 1 year (only meaningful over HTTPS, safe to include)
         $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
 
-        // Disable sensitive browser features
-        $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
-
         // Content Security Policy
         // In local dev, also allow the Vite dev server host so HMR and assets aren't blocked.
         $viteHost = config('app.vite_dev_server_url', env('VITE_DEV_SERVER_URL', ''));
