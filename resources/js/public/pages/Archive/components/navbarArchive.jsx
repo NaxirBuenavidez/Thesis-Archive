@@ -25,13 +25,6 @@ const navbarArchive = React.memo(({
             padding: '0 5%'
         }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }} onClick={() => scrollToSection('home')}>
-                {logoPath ? (
-                    <img src={logoPath} alt="Logo" style={{ height: 40 }} />
-                ) : (
-                    <div style={{ width: 40, height: 40, background: primaryColor, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 'bold' }}>
-                        {siteTitle ? siteTitle.substring(0, 2).toUpperCase() : 'DA'}
-                    </div>
-                )}
                 <img src="/images/ptas.png" alt="PTAS Logo" style={{ height: 40 }} />
                 <AntTitle level={4} style={{ margin: 0, color: primaryDark, letterSpacing: 0.5 }}>{appName}</AntTitle>
             </div>
