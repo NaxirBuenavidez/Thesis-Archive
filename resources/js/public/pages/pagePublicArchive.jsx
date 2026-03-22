@@ -13,9 +13,29 @@ import cardThesis from './Archive/components/cardThesis';
 import listThesis from './Archive/components/listThesis';
 import modalThesis from './Archive/components/modalThesis';
 import footerArchive from './Archive/components/footerArchive';
+import 'placeholder-loading/dist/css/placeholder-loading.min.css';
 import '../../../css/public-archive.scss';
 
 const { Content } = Layout;
+
+const SkeletonCard = () => (
+    <div className="ph-item" style={{ borderRadius: 12, border: 'none', background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(10px)', marginBottom: 0, padding: 16 }}>
+        <div className="ph-col-12" style={{ padding: 0 }}>
+            <div className="ph-picture" style={{ height: 180, marginBottom: 16, borderRadius: 8 }}></div>
+            <div className="ph-row">
+                <div className="ph-col-12 big"></div>
+                <div className="ph-col-8"></div>
+                <div className="ph-col-4 empty"></div>
+                <div className="ph-col-6"></div>
+                <div className="ph-col-6 empty"></div>
+            </div>
+            <div className="ph-row" style={{ marginTop: 24 }}>
+                <div className="ph-col-2" style={{ height: 28, borderRadius: 14 }}></div>
+                <div className="ph-col-10 empty"></div>
+            </div>
+        </div>
+    </div>
+);
 
 export default function PublicArchive() {
     const { primary_color, primary_color_dark, site_title, logo_path } = useSystemConfig();
@@ -182,28 +202,38 @@ export default function PublicArchive() {
                 />
 
                 <div style={{ padding: '0 5% 60px', maxWidth: 1400, margin: '0 auto' }}>
-                    {selectedCategory === 'All' ? (
-                        <div style={{ minHeight: 400, position: 'relative', opacity: loading ? 0.6 : 1, transition: 'opacity 0.3s ease' }}>
-                            {filteredTheses.length === 0 && !loading ? (
-                                <Empty description="No public records match your search criteria." style={{ margin: '60px 0' }} />
-                            ) : (
-                                <>
-                                    <Row gutter={[24, 24]}>
-                                        {filteredTheses.slice((currentPage - 1) * pageSize, currentPage * pageSize).map(item => (
-                                            <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={6} key={item.id}>
-                                                <ThesisCardComp item={item} primaryColor={primaryColor} primaryDark={primaryDark} onClick={setViewThesis} />
-                                            </Col>
-                                        ))}
-                                    </Row>
-                                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: 40 }}>
-                                        <Pagination current={currentPage} pageSize={pageSize} total={filteredTheses.length} onChange={setCurrentPage} showSizeChanger={false} />
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                    ) : (
-                        <ThesisListComp selectedCategory={selectedCategory} filteredTheses={filteredTheses} onSelect={setViewThesis} primaryColor={primaryColor} />
-                    )}
+                    <div style={{ minHeight: 400, position: 'relative', transition: 'opacity 0.3s ease' }}>
+                        {loading ? (
+                            <Row gutter={[24, 24]}>
+                                {[...Array(8)].map((_, i) => (
+                                    <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={6} key={i}>
+                                        <SkeletonCard />
+                                    </Col>
+                                ))}
+                            </Row>
+                        ) : selectedCategory === 'All' ? (
+                            <>
+                                {filteredTheses.length === 0 ? (
+                                    <Empty description="No public records match your search criteria." style={{ margin: '60px 0' }} />
+                                ) : (
+                                    <>
+                                        <Row gutter={[24, 24]}>
+                                            {filteredTheses.slice((currentPage - 1) * pageSize, currentPage * pageSize).map(item => (
+                                                <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={6} key={item.id}>
+                                                    <ThesisCardComp item={item} primaryColor={primaryColor} primaryDark={primaryDark} onClick={setViewThesis} />
+                                                </Col>
+                                            ))}
+                                        </Row>
+                                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 40 }}>
+                                            <Pagination current={currentPage} pageSize={pageSize} total={filteredTheses.length} onChange={setCurrentPage} showSizeChanger={false} />
+                                        </div>
+                                    </>
+                                )}
+                            </>
+                        ) : (
+                            <ThesisListComp selectedCategory={selectedCategory} filteredTheses={filteredTheses} onSelect={setViewThesis} primaryColor={primaryColor} />
+                        )}
+                    </div>
                 </div>
             </Content>
 
