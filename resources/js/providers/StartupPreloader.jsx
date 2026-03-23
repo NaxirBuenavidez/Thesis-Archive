@@ -39,14 +39,29 @@ const StartupPreloader = () => {
                     
                     // Theses (Management & Review)
                     thesesApi.getAll(config).then(res => {
-                        sessionCache.set('management_theses', res);
-                        sessionCache.set('review_theses', res);
+                        const formatted = (res.data?.data || res.data || []).map(thesis => ({
+                            ...thesis,
+                            key: thesis.id,
+                            hasPdf: !!thesis.pdf_path,
+                            pdfName: thesis.pdf_original_name,
+                            pdfUrl: thesis.pdf_url || (thesis.pdf_path ? `/storage/${thesis.pdf_path}` : null),
+                        }));
+                        sessionCache.set('management_theses', formatted);
+                        sessionCache.set('review_theses', formatted);
                     }),
                     
                     // Public Repository Theses
                     publicApi.getTheses(true, config).then(res => {
-                        sessionCache.set('repository_theses', res);
-                        sessionCache.set('public_theses', res);
+                        const formatted = (res.data?.data || res.data || []).map(thesis => ({
+                            ...thesis,
+                            key: thesis.id,
+                            hasPdf: !!thesis.pdf_path,
+                            pdfName: thesis.pdf_original_name,
+                            pdfUrl: thesis.pdf_url || (thesis.pdf_path ? `/storage/${thesis.pdf_path}` : null),
+                            submissionDate: thesis.created_at,
+                        }));
+                        sessionCache.set('repository_theses', formatted);
+                        sessionCache.set('public_theses', formatted);
                     }),
                     
                     // Users and Roles
