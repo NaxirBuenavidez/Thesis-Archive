@@ -32,6 +32,8 @@ class ThesisResource extends JsonResource
             'embargo_until' => $this->embargo_until,
             'is_confidential' => (bool) $this->is_confidential,
             'doi' => $this->doi,
+            'pdf_url' => $this->pdf_url,
+            'docx_url' => $this->docx_url,
             'panelists' => $this->panelists,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

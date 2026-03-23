@@ -42,7 +42,7 @@ const StartupPreloader = () => {
                         const formatted = (res.data?.data || res.data || []).map(thesis => ({
                             ...thesis,
                             key: thesis.id,
-                            hasPdf: !!thesis.pdf_path,
+                            hasPdf: !!(thesis.pdf_path || thesis.pdf_url),
                             pdfName: thesis.pdf_original_name,
                             pdfUrl: thesis.pdf_url || (thesis.pdf_path ? `/storage/${thesis.pdf_path}` : null),
                         }));
@@ -55,7 +55,7 @@ const StartupPreloader = () => {
                         const formatted = (res.data?.data || res.data || []).map(thesis => ({
                             ...thesis,
                             key: thesis.id,
-                            hasPdf: !!thesis.pdf_path,
+                            hasPdf: !!(thesis.pdf_path || thesis.pdf_url),
                             pdfName: thesis.pdf_original_name,
                             pdfUrl: thesis.pdf_url || (thesis.pdf_path ? `/storage/${thesis.pdf_path}` : null),
                             submissionDate: thesis.created_at,
