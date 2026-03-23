@@ -16,7 +16,7 @@ import {
     LinkOutlined, 
     FileTextOutlined 
 } from '@ant-design/icons';
-import { Clock, Calendar } from 'lucide-react';
+import { Clock, Calendar, BookOpen } from 'lucide-react';
 import { Earth20Filled, LockClosed20Filled } from '@fluentui/react-icons';
 import thesesApi from '../../api/thesesApi';
 import { useAuth } from '../../context/AuthContext';
