@@ -1,10 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Typography, Space, Button, Card, Input, Tooltip, Grid, theme, Tabs, App, Form, ConfigProvider, Table, Skeleton, Tag, Avatar } from 'antd';
+import { 
+    SearchOutlined, 
+    ReloadOutlined, 
+    PlusOutlined, 
+    FilePdfOutlined 
+} from '@ant-design/icons';
+import { 
+    Edit20Filled, 
+    Delete20Filled, 
+    Eye20Filled 
+} from '@fluentui/react-icons';
+import { Clock, Calendar } from 'lucide-react';
+import dayjs from 'dayjs';
 import { useAuth } from '../../context/AuthContext';
 import { useSystemConfig } from '../../context/SystemConfigContext';
+import { useTableSearch } from '../../hooks/useTableSearch';
+import { handleFormErrors } from '../../utils/formUtils';
+import { Feedback } from '../components/UI/SystemNotifications';
 import thesesApi from '../../api/thesesApi';
 import { sessionCache } from '../../utils/sessionCache';
+
+// Import local components
+import tableThesis from './Management/components/tableThesis';
+import modalThesisForm from './Management/components/modalThesisForm';
+import drawerThesisPreview from './Management/components/drawerThesisPreview';
 
 const { Title, Text } = Typography;
 const { useBreakpoint } = Grid;

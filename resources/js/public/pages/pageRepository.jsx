@@ -1,6 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Typography, Table, Tag, Space, Button, Card, Input, Tooltip, Avatar, Grid, App, Divider, Row, Col, Drawer, Descriptions, Badge, Tabs, Skeleton, Empty, Select, theme, Checkbox, Radio, Pagination, Modal, Spin } from 'antd';
+import { 
+    SearchOutlined, 
+    FilterOutlined, 
+    ReloadOutlined, 
+    SortAscendingOutlined, 
+    FilePdfOutlined, 
+    LockOutlined, 
+    EyeOutlined, 
+    CloudDownloadOutlined, 
+    UploadOutlined, 
+    UnlockOutlined, 
+    CheckCircleOutlined, 
+    LinkOutlined, 
+    FileTextOutlined 
+} from '@ant-design/icons';
+import { Clock, Calendar } from 'lucide-react';
+import { Earth20Filled, LockClosed20Filled } from '@fluentui/react-icons';
 import thesesApi from '../../api/thesesApi';
 import { useAuth } from '../../context/AuthContext';
 import { useSystemConfig } from '../../context/SystemConfigContext';
