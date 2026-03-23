@@ -93,7 +93,7 @@ export default function ReviewManager() {
 
     useEffect(() => {
         fetchTheses(true);
-    }, [data.length]);
+    }, []);
 
     const openReviewModal = (thesis, action) => {
         form.resetFields();

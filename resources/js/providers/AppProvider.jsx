@@ -1,13 +1,23 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
+import { ToastComponent } from '@syncfusion/ej2-react-notifications';
 import { ConfigProvider, App as AntApp } from 'antd';
 import 'antd/dist/reset.css';
 import '../public/components/UI/SystemNotifications';
 import { SystemConfigProvider, useSystemConfig } from '../context/SystemConfigContext';
 import { AuthProvider } from '../context/AuthContext';
-import DataPreloader from '../public/components/UI/DataPreloader';
+import StartupPreloader from './StartupPreloader';
 
 function ThemedApp({ children }) {
     const { primary_color, primary_color_dark } = useSystemConfig();
+
+    React.useEffect(() => {
+        if (primary_color) {
+            document.documentElement.style.setProperty('--color-primary', primary_color);
+        }
+        if (primary_color_dark) {
+            document.documentElement.style.setProperty('--color-primary-dark', primary_color_dark);
+        }
+    }, [primary_color, primary_color_dark]);
 
     return (
         <ConfigProvider
@@ -79,6 +89,18 @@ export function AppProvider({ children }) {
         boot();
     }, []);
 
+    const toastRef = useRef(null);
+
+    useEffect(() => {
+        const handleToast = (e) => {
+            if (toastRef.current) {
+                toastRef.current.show(e.detail);
+            }
+        };
+        window.addEventListener('show-system-toast', handleToast);
+        return () => window.removeEventListener('show-system-toast', handleToast);
+    }, []);
+
     if (booting) {
         const logo = window.__boot_data?.settings?.logo_path || null;
         const primaryColor = window.__boot_data?.settings?.primary_color || '#2845D6';
@@ -127,7 +149,13 @@ export function AppProvider({ children }) {
         <SystemConfigProvider initialData={bootData}>
             <ThemedApp>
                 <AuthProvider initialUser={bootData?.user}>
-                    <DataPreloader />
+                    <StartupPreloader />
+                    <ToastComponent 
+                        ref={toastRef}
+                        position={{ X: 'Right', Y: 'Top' }}
+                        timeOut={4000}
+                        showCloseButton={true}
+                    />
                     {children}
                 </AuthProvider>
             </ThemedApp>

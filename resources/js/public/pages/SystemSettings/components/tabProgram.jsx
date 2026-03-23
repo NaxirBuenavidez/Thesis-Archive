@@ -3,14 +3,17 @@ import { Table, Button, Space, Modal, Form, Input, Select, Popconfirm, Typograph
 import { PlusOutlined, DeleteOutlined, ReloadOutlined, SearchOutlined, MoreOutlined, EditOutlined } from '@ant-design/icons';
 import { handleFormErrors } from '../../../../utils/formUtils';
 
+import { sessionCache } from '../../../../utils/sessionCache';
+
 const { Text } = Typography;
 const { Option } = Select;
 
 export default function tabProgram({ apiEndpoint = '/api/programs', isSeniorHigh = false }) {
     const { message } = App.useApp();
-    const [data, setData] = useState([]);
-    const [departments, setDepartments] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const cacheKey = isSeniorHigh ? 'system_shs_programs' : 'system_programs';
+    const [data, setData] = useState(sessionCache.get(cacheKey) || []);
+    const [departments, setDepartments] = useState(sessionCache.get('system_departments') || []);
+    const [loading, setLoading] = useState(!sessionCache.get(cacheKey));
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [form] = Form.useForm();
     const [submitLoading, setSubmitLoading] = useState(false);
@@ -18,11 +21,18 @@ export default function tabProgram({ apiEndpoint = '/api/programs', isSeniorHigh
 
     const [editingId, setEditingId] = useState(null);
 
-    const fetchPrograms = async () => {
+    const fetchPrograms = async (isInitial = false) => {
+        // Skip initial fetch if data was pre-loaded
+        if (isInitial && data.length > 0) {
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
         try {
             const response = await window.axios.get(apiEndpoint, { silent: true });
             setData(response.data);
+            sessionCache.set(cacheKey, response.data);
         } catch (error) {
             message.error('Failed to fetch programs');
         } finally {
@@ -31,8 +41,20 @@ export default function tabProgram({ apiEndpoint = '/api/programs', isSeniorHigh
     };
 
     const fetchDepartments = async () => {
+        // Check cache first
+        const cachedDepts = sessionCache.get('system_departments');
+        if (cachedDepts) {
+            if (isSeniorHigh) {
+                setDepartments(cachedDepts.filter(d => d.name === 'SENIOR HIGH SCHOOL'));
+            } else {
+                setDepartments(cachedDepts);
+            }
+            return;
+        }
+
         try {
             const response = await window.axios.get('/api/departments', { silent: true });
+            sessionCache.set('system_departments', response.data);
             if (isSeniorHigh) {
                 const shsDept = response.data.filter(d => d.name === 'SENIOR HIGH SCHOOL');
                 setDepartments(shsDept);
@@ -45,8 +67,8 @@ export default function tabProgram({ apiEndpoint = '/api/programs', isSeniorHigh
     };
 
     useEffect(() => {
-        fetchPrograms();
-    }, [isSeniorHigh]);
+        fetchPrograms(true);
+    }, [isSeniorHigh, cacheKey]);
 
     useEffect(() => {
         if (isModalOpen) {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Badge, Popover, Typography, Button, Spin, Empty, theme, Drawer, notification, ConfigProvider } from 'antd';
+import { Badge, Popover, Typography, Button, Spin, Empty, theme, Drawer, ConfigProvider } from 'antd';
 import { AlertFilled, AlertUrgentFilled } from '@fluentui/react-icons';
 import { CustomNotification } from './UI/SystemNotifications';
 
@@ -56,13 +56,7 @@ export default function NotificationBell({ isMobile, onClickMobile }) {
             const newLatest = data.notifications.length > 0 ? data.notifications[0].id : null;
             if (!initialLoad && latestId && newLatest && newLatest > latestId) {
                 // Determine how many new
-                notification.open({
-                    message: <Text strong style={{ color: '#ff4d4f' }}>New Alert</Text>,
-                    description: data.notifications[0].title,
-                    icon: <AlertUrgentFilled style={{ color: '#ff4d4f', fontSize: 24 }} />,
-                    placement: 'topLeft',
-                    style: { borderLeft: '4px solid #ff4d4f' }
-                });
+                CustomNotification.warning('New Alert', data.notifications[0].title);
             }
             if (newLatest && newLatest > (latestId || 0)) {
                 setLatestId(newLatest);

@@ -8,19 +8,28 @@ import ModalDept from './departments/modalDept';
 
 
 
+import { sessionCache } from '../../../utils/sessionCache';
+
 export default function tabDept() {
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState(sessionCache.get('system_departments') || []);
+    const [loading, setLoading] = useState(!sessionCache.get('system_departments'));
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [submitLoading, setSubmitLoading] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [editingId, setEditingId] = useState(null);
 
-    const fetchDepartments = async () => {
+    const fetchDepartments = async (isInitial = false) => {
+        // Skip initial fetch if data was pre-loaded
+        if (isInitial && data.length > 0) {
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
         try {
             const response = await window.axios.get('/api/departments', { silent: true });
             setData(response.data);
+            sessionCache.set('system_departments', response.data);
         } catch (error) {
             Feedback.error('Failed to fetch departments');
         } finally {
@@ -29,7 +38,7 @@ export default function tabDept() {
     };
 
     useEffect(() => {
-        fetchDepartments();
+        fetchDepartments(true);
     }, []);
 
     const handleCreateOrUpdate = async (values) => {

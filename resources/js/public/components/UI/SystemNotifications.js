@@ -1,22 +1,23 @@
-import { notification } from 'antd';
-
-// Configure global notification settings
-notification.config({
-    placement: 'topRight',
-    top: 50,
-    duration: 3,
-});
-
 /**
  * Standardized Feedback, Alert, and Notification functions
- * positioned at the upper top-left of the screen.
+ * using Syncfusion Toast via global event dispatch.
  */
 
+const dispatchToast = (type, title, content) => {
+    const detail = {
+        title: title || (type.charAt(0).toUpperCase() + type.slice(1)),
+        content: content || '',
+        cssClass: `e-toast-${type}`
+    };
+
+    window.dispatchEvent(new CustomEvent('show-system-toast', { detail }));
+};
+
 export const Feedback = {
-    success: (msg, desc = '') => notification.success({ message: msg, description: desc }),
-    error: (msg, desc = '') => notification.error({ message: msg, description: desc }),
-    info: (msg, desc = '') => notification.info({ message: msg, description: desc }),
-    warning: (msg, desc = '') => notification.warning({ message: msg, description: desc }),
+    success: (msg, desc = '') => dispatchToast('success', msg, desc),
+    error: (msg, desc = '') => dispatchToast('error', msg, desc),
+    info: (msg, desc = '') => dispatchToast('info', msg, desc),
+    warning: (msg, desc = '') => dispatchToast('warning', msg, desc),
 };
 
 export const CustomAlert = { ...Feedback };

@@ -101,7 +101,7 @@ export default function ThesisManagement() {
 
     useEffect(() => {
         fetchInitialData(true);
-    }, [data.length]);
+    }, []);
 
     const handleBulkDelete = () => {
         modal.confirm({

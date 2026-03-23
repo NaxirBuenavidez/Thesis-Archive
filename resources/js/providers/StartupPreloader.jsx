@@ -1,15 +1,15 @@
 import React, { useEffect, useRef } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { sessionCache } from '../../utils/sessionCache';
-import publicApi from '../../api/publicApi';
-import thesesApi from '../../api/thesesApi';
+import { useAuth } from '../context/AuthContext.jsx';
+import { sessionCache } from '../utils/sessionCache.js';
+import publicApi from '../api/publicApi.js';
+import thesesApi from '../api/thesesApi.js';
 
 /**
- * DataPreloader proactively fetches all essential application data once 
+ * StartupPreloader proactively fetches all essential application data once 
  * the user is authenticated, storing it in the sessionCache for immediate 
  * access by all modules.
  */
-const DataPreloader = () => {
+const StartupPreloader = () => {
     const { user } = useAuth();
     const hasPreloaded = useRef(false);
 
@@ -27,6 +27,8 @@ const DataPreloader = () => {
             hasPreloaded.current = true;
             try {
                 const config = { silent: true };
+                
+                console.log('[SYSTEM] Starting data pre-loading sequence...');
                 
                 // Fetch all data in parallel
                 await Promise.allSettled([
@@ -54,6 +56,19 @@ const DataPreloader = () => {
                     
                     window.axios.get('/api/roles', config).then(res => {
                         sessionCache.set('users_roles', res.data.data || res.data);
+                    }),
+                    
+                    // Departments & Programs (for System Manager)
+                    window.axios.get('/api/departments', config).then(res => {
+                        sessionCache.set('system_departments', res.data);
+                    }),
+                    
+                    window.axios.get('/api/programs', config).then(res => {
+                        sessionCache.set('system_programs', res.data);
+                    }),
+                    
+                    window.axios.get('/api/senior-high-programs', config).then(res => {
+                        sessionCache.set('system_shs_programs', res.data);
                     })
                 ]);
                 
@@ -70,4 +85,4 @@ const DataPreloader = () => {
     return null;
 };
 
-export default DataPreloader;
+export default StartupPreloader;
