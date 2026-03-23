@@ -14,7 +14,8 @@ import {
     UnlockOutlined, 
     CheckCircleOutlined, 
     LinkOutlined, 
-    FileTextOutlined 
+    FileTextOutlined,
+    UserOutlined
 } from '@ant-design/icons';
 import { Clock, Calendar, BookOpen } from 'lucide-react';
 import { Earth20Filled, LockClosed20Filled } from '@fluentui/react-icons';
