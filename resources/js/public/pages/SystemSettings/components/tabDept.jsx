@@ -8,7 +8,7 @@ import ModalDept from './departments/modalDept';
 
 
 
-import { sessionCache } from '../../../utils/sessionCache';
+import { sessionCache } from '../../../../utils/sessionCache';
 
 export default function tabDept() {
     const [data, setData] = useState(sessionCache.get('system_departments') || []);
