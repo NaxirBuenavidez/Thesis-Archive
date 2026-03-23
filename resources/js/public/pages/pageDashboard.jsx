@@ -349,110 +349,117 @@ export default function Dashboard() {
                             subtitle="Submissions vs accepted — last 12 months"
                             loading={loading}
                         />
-                        <ResponsiveContainer width="100%" height={220}>
-                            <AreaChart data={monthlyTrend} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-                                <defs>
-                                    <linearGradient id="gradSubmit" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="0%" stopColor={token.colorPrimary} stopOpacity={0.28} />
-                                        <stop offset="100%" stopColor={token.colorPrimary} stopOpacity={0.02} />
-                                    </linearGradient>
-                                    <linearGradient id="gradAccept" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="0%" stopColor="#10b981" stopOpacity={0.22} />
-                                        <stop offset="100%" stopColor="#10b981" stopOpacity={0.02} />
-                                    </linearGradient>
-                                    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                                        <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
-                                        <feMerge><feMergeNode in="coloredBlur" /><feMergeNode in="SourceGraphic" /></feMerge>
-                                    </filter>
-                                </defs>
-                                <CartesianGrid strokeDasharray="4 4" stroke={token.colorBorderSecondary} vertical={false} />
-                                <XAxis dataKey="month" tick={{ fontSize: 11, fill: token.colorTextTertiary }} axisLine={false} tickLine={false} dy={6} />
-                                <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: token.colorTextTertiary }} axisLine={false} tickLine={false} />
-                                <Tooltip
-                                    contentStyle={tooltipStyle}
-                                    cursor={{ stroke: token.colorBorderSecondary, strokeWidth: 1, strokeDasharray: '5 3' }}
-                                />
-                                <Legend
-                                    iconType="circle" iconSize={8}
-                                    wrapperStyle={{ fontSize: 11, paddingTop: 8, color: token.colorTextSecondary }}
-                                />
-                                <Area
-                                    type="monotone"
-                                    dataKey="submissions"
-                                    name="Submissions"
-                                    stroke={token.colorPrimary}
-                                    strokeWidth={2.5}
-                                    fill="url(#gradSubmit)"
-                                    dot={false}
-                                    activeDot={{ r: 5, fill: token.colorPrimary, stroke: '#fff', strokeWidth: 2, filter: 'url(#glow)' }}
-                                />
-                                <Area
-                                    type="monotone"
-                                    dataKey="accepted"
-                                    name="Accepted"
-                                    stroke="#10b981"
-                                    strokeWidth={2}
-                                    strokeDasharray="5 3"
-                                    fill="url(#gradAccept)"
-                                    dot={false}
-                                    activeDot={{ r: 4, fill: '#10b981', stroke: '#fff', strokeWidth: 2 }}
-                                />
-                            </AreaChart>
-                        </ResponsiveContainer>
+                        {loading ? (
+                            <Skeleton.Button active block style={{ height: 220 }} />
+                        ) : (
+                            <ResponsiveContainer width="100%" height={220}>
+                                <AreaChart data={monthlyTrend} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
+                                    <defs>
+                                        <linearGradient id="gradSubmit" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0%" stopColor={token.colorPrimary} stopOpacity={0.28} />
+                                            <stop offset="100%" stopColor={token.colorPrimary} stopOpacity={0.02} />
+                                        </linearGradient>
+                                        <linearGradient id="gradAccept" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0%" stopColor="#10b981" stopOpacity={0.22} />
+                                            <stop offset="100%" stopColor="#10b981" stopOpacity={0.02} />
+                                        </linearGradient>
+                                        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                                            <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
+                                            <feMerge><feMergeNode in="coloredBlur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                                        </filter>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="4 4" stroke={token.colorBorderSecondary} vertical={false} />
+                                    <XAxis dataKey="month" tick={{ fontSize: 11, fill: token.colorTextTertiary }} axisLine={false} tickLine={false} dy={6} />
+                                    <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: token.colorTextTertiary }} axisLine={false} tickLine={false} />
+                                    <Tooltip
+                                        contentStyle={tooltipStyle}
+                                        cursor={{ stroke: token.colorBorderSecondary, strokeWidth: 1, strokeDasharray: '5 3' }}
+                                    />
+                                    <Legend
+                                        iconType="circle" iconSize={8}
+                                        wrapperStyle={{ fontSize: 11, paddingTop: 8, color: token.colorTextSecondary }}
+                                    />
+                                    <Area
+                                        type="monotone"
+                                        dataKey="submissions"
+                                        name="Submissions"
+                                        stroke={token.colorPrimary}
+                                        strokeWidth={2.5}
+                                        fill="url(#gradSubmit)"
+                                        dot={false}
+                                        activeDot={{ r: 5, fill: token.colorPrimary, stroke: '#fff', strokeWidth: 2, filter: 'url(#glow)' }}
+                                    />
+                                    <Area
+                                        type="monotone"
+                                        dataKey="accepted"
+                                        name="Accepted"
+                                        stroke="#10b981"
+                                        strokeWidth={2}
+                                        strokeDasharray="5 3"
+                                        fill="url(#gradAccept)"
+                                        dot={false}
+                                        activeDot={{ r: 4, fill: '#10b981', stroke: '#fff', strokeWidth: 2 }}
+                                    />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        )}
                     </Card>
                 </Col>
                 <Col xs={24} lg={9}>
                     <Card style={{ ...cardStyle, height: '100%' }} styles={{ body: { padding: isMobile ? '16px' : '22px' } }}>
                         <SectionHeader icon={<DocumentTextFilled />} title="By Status" subtitle="Current distribution" loading={loading} />
                         {/* Donut with center total label */}
-                        <div style={{ position: 'relative' }}>
-                            <ResponsiveContainer width="100%" height={210}>
-                                <PieChart>
-                                    <defs>
-                                        {byStatus.map((_, i) => {
-                                            const c = STATUS_COLOR_MAP[_.name] || CHART_COLORS[i % CHART_COLORS.length];
-                                            return (
-                                                <linearGradient key={i} id={`pieGrad${i}`} x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="0%" stopColor={c} stopOpacity={1} />
-                                                    <stop offset="100%" stopColor={c} stopOpacity={0.72} />
-                                                </linearGradient>
-                                            );
-                                        })}
-                                    </defs>
-                                    <Pie
-                                        data={byStatus}
-                                        cx="50%" cy="48%"
-                                        innerRadius={54} outerRadius={82}
-                                        paddingAngle={2}
-                                        dataKey="value" nameKey="name"
-                                        stroke="none"
-                                    >
-                                        {byStatus.map((entry, i) => (
-                                            <Cell key={i} fill={`url(#pieGrad${i})`} />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip
-                                        contentStyle={tooltipStyle}
-                                        formatter={(val, name) => [`${val} theses`, name]}
-                                    />
-                                    <Legend
-                                        iconType="circle" iconSize={7}
-                                        wrapperStyle={{ fontSize: 11, color: token.colorTextSecondary }}
-                                    />
-                                </PieChart>
-                            </ResponsiveContainer>
-                            {/* Center label overlay */}
-                            <div style={{
-                                position: 'absolute', top: 0, left: 0, right: 0, height: 175,
-                                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                                pointerEvents: 'none',
-                            }}>
-                                <Text style={{ fontSize: 26, fontWeight: 800, color: token.colorText, lineHeight: 1 }}>
-                                    {byStatus.reduce((a, b) => a + (b.value || 0), 0)}
-                                </Text>
-                                <Text type="secondary" style={{ fontSize: 11 }}>total</Text>
+                        {loading ? (
+                            <Skeleton.Avatar active shape="circle" size={180} style={{ margin: '0 auto', display: 'block' }} />
+                        ) : (
+                            <div style={{ position: 'relative' }}>
+                                <ResponsiveContainer width="100%" height={210}>
+                                    <PieChart>
+                                        <defs>
+                                            {byStatus.map((_, i) => {
+                                                const c = STATUS_COLOR_MAP[_.name] || CHART_COLORS[i % CHART_COLORS.length];
+                                                return (
+                                                    <linearGradient key={i} id={`pieGrad${i}`} x1="0" y1="0" x2="0" y2="1">
+                                                        <stop offset="0%" stopColor={c} stopOpacity={1} />
+                                                        <stop offset="100%" stopColor={c} stopOpacity={0.72} />
+                                                    </linearGradient>
+                                                );
+                                            })}
+                                        </defs>
+                                        <Pie
+                                            data={byStatus}
+                                            cx="50%" cy="48%"
+                                            innerRadius={54} outerRadius={82}
+                                            paddingAngle={2}
+                                            dataKey="value" nameKey="name"
+                                            stroke="none"
+                                        >
+                                            {byStatus.map((entry, i) => (
+                                                <Cell key={i} fill={`url(#pieGrad${i})`} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip
+                                            contentStyle={tooltipStyle}
+                                            formatter={(val, name) => [`${val} theses`, name]}
+                                        />
+                                        <Legend
+                                            iconType="circle" iconSize={7}
+                                            wrapperStyle={{ fontSize: 11, color: token.colorTextSecondary }}
+                                        />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                                <div style={{
+                                    position: 'absolute', top: 0, left: 0, right: 0, height: 175,
+                                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                                    pointerEvents: 'none',
+                                }}>
+                                    <Text style={{ fontSize: 26, fontWeight: 800, color: token.colorText, lineHeight: 1 }}>
+                                        {byStatus.reduce((a, b) => a + (b.value || 0), 0)}
+                                    </Text>
+                                    <Text type="secondary" style={{ fontSize: 11 }}>total</Text>
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </Card>
                 </Col>
             </Row>
@@ -462,45 +469,49 @@ export default function Dashboard() {
                 <Col xs={24} lg={15}>
                     <Card style={cardStyle} styles={{ body: { padding: isMobile ? '16px 16px 10px' : '22px 22px 12px' } }}>
                         <SectionHeader icon={<BookFilled />} title="Theses by Department" subtitle="Sorted by submission count" loading={loading} />
-                        <ResponsiveContainer width="100%" height={Math.max(200, byDept.length * 36)}>
-                            <BarChart data={byDept} layout="vertical" margin={{ top: 0, right: 40, left: 0, bottom: 0 }}>
-                                <defs>
-                                    {byDept.map((_, i) => (
-                                        <linearGradient key={i} id={`barGrad${i}`} x1="0" y1="0" x2="1" y2="0">
-                                            <stop offset="0%" stopColor={token.colorPrimary} stopOpacity={0.85} />
-                                            <stop offset="100%" stopColor="#6366f1" stopOpacity={0.9} />
-                                        </linearGradient>
-                                    ))}
-                                </defs>
-                                <CartesianGrid strokeDasharray="4 4" stroke={token.colorBorderSecondary} horizontal={false} />
-                                <XAxis
-                                    type="number" allowDecimals={false}
-                                    tick={{ fontSize: 11, fill: token.colorTextTertiary }}
-                                    axisLine={false} tickLine={false}
-                                />
-                                <YAxis
-                                    type="category" dataKey="name" width={130}
-                                    tick={{ fontSize: 11, fill: token.colorTextSecondary }}
-                                    axisLine={false} tickLine={false}
-                                />
-                                <Tooltip
-                                    contentStyle={tooltipStyle}
-                                    cursor={{ fill: token.colorFillAlter }}
-                                    formatter={(v) => [`${v} theses`, 'Count']}
-                                />
-                                <Bar
-                                    dataKey="count"
-                                    radius={[0, 8, 8, 0]}
-                                    maxBarSize={20}
-                                    background={{ fill: token.colorFillTertiary, radius: [0, 8, 8, 0] }}
-                                    label={{ position: 'right', fontSize: 11, fill: token.colorTextTertiary }}
-                                >
-                                    {byDept.map((_, i) => (
-                                        <BarCell key={i} fill={`url(#barGrad${i})`} />
-                                    ))}
-                                </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
+                        {loading ? (
+                            <Skeleton active paragraph={{ rows: 6 }} />
+                        ) : (
+                            <ResponsiveContainer width="100%" height={Math.max(200, byDept.length * 36)}>
+                                <BarChart data={byDept} layout="vertical" margin={{ top: 0, right: 40, left: 0, bottom: 0 }}>
+                                    <defs>
+                                        {byDept.map((_, i) => (
+                                            <linearGradient key={i} id={`barGrad${i}`} x1="0" y1="0" x2="1" y2="0">
+                                                <stop offset="0%" stopColor={token.colorPrimary} stopOpacity={0.85} />
+                                                <stop offset="100%" stopColor="#6366f1" stopOpacity={0.9} />
+                                            </linearGradient>
+                                        ))}
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="4 4" stroke={token.colorBorderSecondary} horizontal={false} />
+                                    <XAxis
+                                        type="number" allowDecimals={false}
+                                        tick={{ fontSize: 11, fill: token.colorTextTertiary }}
+                                        axisLine={false} tickLine={false}
+                                    />
+                                    <YAxis
+                                        type="category" dataKey="name" width={130}
+                                        tick={{ fontSize: 11, fill: token.colorTextSecondary }}
+                                        axisLine={false} tickLine={false}
+                                    />
+                                    <Tooltip
+                                        contentStyle={tooltipStyle}
+                                        cursor={{ fill: token.colorFillAlter }}
+                                        formatter={(v) => [`${v} theses`, 'Count']}
+                                    />
+                                    <Bar
+                                        dataKey="count"
+                                        radius={[0, 8, 8, 0]}
+                                        maxBarSize={20}
+                                        background={{ fill: token.colorFillTertiary, radius: [0, 8, 8, 0] }}
+                                        label={{ position: 'right', fontSize: 11, fill: token.colorTextTertiary }}
+                                    >
+                                        {byDept.map((_, i) => (
+                                            <BarCell key={i} fill={`url(#barGrad${i})`} />
+                                        ))}
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
+                        )}
                     </Card>
                 </Col>
                 <Col xs={24} lg={9}>
@@ -558,7 +569,9 @@ export default function Dashboard() {
             {/* ── Recent Activity ── */}
             <Card style={{ ...cardStyle, marginBottom: 14 }} styles={{ body: { padding: isMobile ? '16px' : '22px' } }}>
                 <SectionHeader icon={<ClockFilled />} title="Recent Activity" subtitle="Latest thesis submissions and updates" loading={loading} />
-                {isMobile ? (
+                {loading ? (
+                    <Skeleton active paragraph={{ rows: 6 }} />
+                ) : isMobile ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                         {recentActivity.length === 0 ? (
                             <Text type="secondary" style={{ textAlign: 'center', padding: 24, display: 'block' }}>No recent activity</Text>
@@ -587,30 +600,41 @@ export default function Dashboard() {
             </Card>
 
             {/* ── Top Departments ── */}
-            {topDept.length > 0 && (
+            {(loading || topDept.length > 0) && (
                 <Card style={cardStyle} styles={{ body: { padding: isMobile ? '16px' : '22px' } }}>
-                    <SectionHeader icon={<CheckmarkCircleFilled />} title="Top Published Departments" subtitle="Ranked by number of published theses" />
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                        {topDept.slice(0, 6).map((item, i) => {
-                            const maxCount = topDept[0]?.published || 1;
-                            const pct = Math.round((item.published / maxCount) * 100);
-                            const barColor = CHART_COLORS[i % CHART_COLORS.length];
-                            return (
-                                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                                    <Text style={{ fontSize: 12, fontWeight: 700, color: token.colorTextTertiary, width: 18, textAlign: 'right', flexShrink: 0 }}>#{i + 1}</Text>
-                                    <div style={{ flex: 1, minWidth: 0 }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                                            <Text strong style={{ fontSize: 13 }} ellipsis>{item.department}</Text>
-                                            <Text type="secondary" style={{ fontSize: 12, flexShrink: 0, marginLeft: 8 }}>{item.published} published</Text>
-                                        </div>
-                                        <div style={{ height: 5, borderRadius: 3, background: token.colorFillTertiary, overflow: 'hidden' }}>
-                                            <div style={{ height: '100%', width: `${pct}%`, background: barColor, borderRadius: 3, transition: 'width 0.6s ease' }} />
+                    <SectionHeader 
+                        icon={<CheckmarkCircleFilled />} 
+                        title="Top Published Departments" 
+                        subtitle="Ranked by number of published theses" 
+                        loading={loading}
+                    />
+                    {loading ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                            {[1, 2, 3].map(i => <Skeleton key={i} active title={{ width: '40%' }} paragraph={{ rows: 1 }} />)}
+                        </div>
+                    ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                            {topDept.slice(0, 6).map((item, i) => {
+                                const maxCount = topDept[0]?.published || 1;
+                                const pct = Math.round((item.published / maxCount) * 100);
+                                const barColor = CHART_COLORS[i % CHART_COLORS.length];
+                                return (
+                                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                                        <Text style={{ fontSize: 12, fontWeight: 700, color: token.colorTextTertiary, width: 18, textAlign: 'right', flexShrink: 0 }}>#{i + 1}</Text>
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                                                <Text strong style={{ fontSize: 13 }} ellipsis>{item.department}</Text>
+                                                <Text type="secondary" style={{ fontSize: 12, flexShrink: 0, marginLeft: 8 }}>{item.published} published</Text>
+                                            </div>
+                                            <div style={{ height: 5, borderRadius: 3, background: token.colorFillTertiary, overflow: 'hidden' }}>
+                                                <div style={{ height: '100%', width: `${pct}%`, background: barColor, borderRadius: 3, transition: 'width 0.6s ease' }} />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            );
-                        })}
-                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
                 </Card>
             )}
         </div>
