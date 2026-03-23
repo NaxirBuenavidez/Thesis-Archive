@@ -6,9 +6,11 @@ import { AppProvider } from './providers/AppProvider';
 
 import { RouterProvider } from 'react-router-dom';
 import router from './router';
+import NetworkError from './public/components/UI/NetworkError';
 
 function App() {
     const [loopError, setLoopError] = React.useState(null);
+    const [connectionError, setConnectionError] = React.useState(null); // 'timeout' | 'offline' | null
 
     React.useEffect(() => {
         let navCount = 0;
@@ -40,6 +42,23 @@ function App() {
             logNav('REPLACE', arguments);
             return originalReplace.apply(window.history, arguments);
         };
+
+        // Network Connectivity Handlers
+        const handleOffline = () => setConnectionError('offline');
+        const handleOnline = () => setConnectionError(null);
+        const handleSystemConnectionError = (e) => setConnectionError(e.detail.type);
+
+        window.addEventListener('offline', handleOffline);
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('system-connection-error', handleSystemConnectionError);
+
+        if (!navigator.onLine) setConnectionError('offline');
+
+        return () => {
+            window.removeEventListener('offline', handleOffline);
+            window.removeEventListener('online', handleOnline);
+            window.removeEventListener('system-connection-error', handleSystemConnectionError);
+        };
     }, []);
 
     if (loopError) {
@@ -51,6 +70,10 @@ function App() {
                 <button onClick={() => window.location.reload()}>Try Refresh</button>
             </div>
         );
+    }
+
+    if (connectionError) {
+        return <NetworkError type={connectionError} onRetry={() => setConnectionError(null)} />;
     }
 
     const isPrivate = window.location.pathname.startsWith('/admin');

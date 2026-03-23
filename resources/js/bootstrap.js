@@ -52,8 +52,11 @@ window.axios.interceptors.response.use(
         }
 
         if (error.code === 'ECONNABORTED' && error.message.includes('timeout')) {
-            console.error('Network Request Timeout: The server took too long to respond.');
-            // Optional: Dispatch a global timeout notification if needed
+            window.dispatchEvent(new CustomEvent('system-connection-error', { detail: { type: 'timeout' } }));
+        }
+
+        if (!error.response && error.code === 'ERR_NETWORK') {
+            window.dispatchEvent(new CustomEvent('system-connection-error', { detail: { type: 'offline' } }));
         }
 
         if (error.response && error.response.status === 401) {
