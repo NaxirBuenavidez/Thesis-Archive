@@ -7,6 +7,7 @@ import { AppProvider } from './providers/AppProvider';
 import { RouterProvider } from 'react-router-dom';
 import router from './router';
 import NetworkError from './public/components/UI/NetworkError';
+import DataPreloader from './public/components/UI/DataPreloader';
 
 function App() {
     const [loopError, setLoopError] = React.useState(null);

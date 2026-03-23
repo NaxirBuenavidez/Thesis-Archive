@@ -57,7 +57,15 @@ export default function ThesisManagement() {
     const activeTab = searchParams.get('tab') || 'preview';
     const setActiveTab = (key) => setSearchParams({ tab: key }, { replace: true });
 
-    const fetchInitialData = async () => {
+    const fetchInitialData = async (isInitial = false) => {
+        // Skip initial fetch if data was pre-loaded
+        if (isInitial && data.length > 0) {
+            setLoading(false);
+            setDepartments(bootDepts || []);
+            setPrograms(bootProgs || []);
+            return;
+        }
+
         try {
             const thesesRes = await thesesApi.getAll({ silent: true });
             
@@ -92,8 +100,8 @@ export default function ThesisManagement() {
     };
 
     useEffect(() => {
-        fetchInitialData();
-    }, []);
+        fetchInitialData(true);
+    }, [data.length]);
 
     const handleBulkDelete = () => {
         modal.confirm({

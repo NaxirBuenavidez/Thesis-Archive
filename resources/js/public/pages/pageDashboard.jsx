@@ -203,7 +203,13 @@ export default function Dashboard() {
         background: token.colorBgContainer,
     };
 
-    const fetchAnalytics = useCallback(async () => {
+    const fetchAnalytics = useCallback(async (isInitial = false) => {
+        // Skip initial fetch if data was pre-loaded
+        if (isInitial && data) {
+            setLoading(false);
+            return;
+        }
+
         try {
             const resp = await window.axios.get('/api/dashboard/analytics', { silent: true });
             setData(resp.data);
@@ -213,12 +219,12 @@ export default function Dashboard() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [data]);
 
     useEffect(() => {
-        fetchAnalytics();
+        fetchAnalytics(true);
         
-        const interval = setInterval(fetchAnalytics, 60000);
+        const interval = setInterval(() => fetchAnalytics(false), 60000);
         return () => clearInterval(interval);
     }, [fetchAnalytics]);
 

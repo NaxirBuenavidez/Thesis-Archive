@@ -65,7 +65,13 @@ export default function Repository() {
     const [downloadPassword, setDownloadPassword] = useState('');
     const [downloadFormat, setDownloadFormat] = useState('pdf');
 
-    const fetchTheses = async () => {
+    const fetchTheses = async (isInitial = false) => {
+        // Skip initial fetch if data was pre-loaded
+        if (isInitial && data.length > 0) {
+            setLoading(false);
+            return;
+        }
+
         try {
             const response = await thesesApi.getAll({ silent: true });
             if (response) {
@@ -106,8 +112,8 @@ export default function Repository() {
     };
 
     useEffect(() => {
-        fetchTheses();
-    }, []);
+        fetchTheses(true);
+    }, [data.length]);
 
     // Reset page to 1 on filter changes
     useEffect(() => {

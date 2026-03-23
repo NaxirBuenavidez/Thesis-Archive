@@ -52,7 +52,13 @@ export default function Users() {
         }
     }, [bootRoles]);
 
-    const fetchUsers = async () => {
+    const fetchUsers = async (isInitial = false) => {
+        // Skip initial fetch if data was pre-loaded
+        if (isInitial && data.length > 0) {
+            setLoading(false);
+            return;
+        }
+
         try {
             const response = await window.axios.get('/api/users', { silent: true });
             if (response.data) {
@@ -80,7 +86,7 @@ export default function Users() {
     useEffect(() => {
         const loadSequentially = async () => {
             await fetchRoles();
-            await fetchUsers();
+            await fetchUsers(true);
         };
         loadSequentially();
     }, [fetchRoles]);

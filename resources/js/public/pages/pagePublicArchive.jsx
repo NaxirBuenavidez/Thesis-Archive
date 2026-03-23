@@ -220,6 +220,12 @@ export default function PublicArchive() {
 
     useEffect(() => {
         const load = async () => {
+            // Skip initial fetch if data was pre-loaded
+            if (theses.length > 0) {
+                setLoading(false);
+                return;
+            }
+
             try {
                 const data = await publicApi.getTheses(false, { silent: true });
                 setTheses(data);
@@ -229,7 +235,7 @@ export default function PublicArchive() {
             }
         };
         load();
-    }, []);
+    }, [theses.length]);
 
     const categories = useMemo(() => {
         const cats = new Set(theses.map(t => t.department || 'General'));

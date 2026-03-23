@@ -47,7 +47,13 @@ export default function ReviewManager() {
     const activeTab = searchParams.get('tab') || 'public';
     const setActiveTab = (key) => setSearchParams({ tab: key }, { replace: true });
 
-    const fetchTheses = async () => {
+    const fetchTheses = async (isInitial = false) => {
+        // Skip initial fetch if data was pre-loaded
+        if (isInitial && data.length > 0) {
+            setLoading(false);
+            return;
+        }
+
         try {
             const response = await thesesApi.getAll({ silent: true });
             if (response) {
@@ -86,8 +92,8 @@ export default function ReviewManager() {
     };
 
     useEffect(() => {
-        fetchTheses();
-    }, []);
+        fetchTheses(true);
+    }, [data.length]);
 
     const openReviewModal = (thesis, action) => {
         form.resetFields();

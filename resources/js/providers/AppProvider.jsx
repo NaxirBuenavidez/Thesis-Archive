@@ -4,6 +4,7 @@ import 'antd/dist/reset.css';
 import '../public/components/UI/SystemNotifications';
 import { SystemConfigProvider, useSystemConfig } from '../context/SystemConfigContext';
 import { AuthProvider } from '../context/AuthContext';
+import DataPreloader from '../public/components/UI/DataPreloader';
 
 function ThemedApp({ children }) {
     const { primary_color, primary_color_dark } = useSystemConfig();
@@ -126,6 +127,7 @@ export function AppProvider({ children }) {
         <SystemConfigProvider initialData={bootData}>
             <ThemedApp>
                 <AuthProvider initialUser={bootData?.user}>
+                    <DataPreloader />
                     {children}
                 </AuthProvider>
             </ThemedApp>
