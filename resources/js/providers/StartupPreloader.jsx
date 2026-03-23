@@ -51,7 +51,16 @@ const StartupPreloader = () => {
                     
                     // Users and Roles
                     window.axios.get('/api/users', config).then(res => {
-                        sessionCache.set('users_list', res.data.data || res.data);
+                        const usersList = res.data.data || (Array.isArray(res.data) ? res.data : []);
+                        const formattedUsers = usersList.map(u => ({
+                            key: u.id,
+                            username: u.name,
+                            email: u.email,
+                            role: u.role ? (typeof u.role === 'string' ? u.role : (u.role.name || u.role.slug)) : 'viewer',
+                            createdAt: u.created_at,
+                            avatarUrl: u.profile?.avatar ? (u.profile.avatar.startsWith('http') || u.profile.avatar.startsWith('data:image') ? u.profile.avatar : `/storage/${u.profile.avatar}`) : null,
+                        }));
+                        sessionCache.set('users_list', formattedUsers);
                     }),
                     
                     window.axios.get('/api/roles', config).then(res => {

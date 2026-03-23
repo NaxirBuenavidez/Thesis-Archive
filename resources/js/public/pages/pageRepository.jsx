@@ -490,7 +490,7 @@ export default function Repository() {
                                                         <Space wrap size={[4, 8]}>
                                                             <Tag color={thesis.status === 'published' ? 'success' : 'processing'} style={{ borderRadius: 20, margin: 0, fontSize: 10, border: 'none', fontWeight: 600, color: thesis.status === 'published' ? token?.colorSuccessText : token?.colorPrimaryText }}>
                                                                 {thesis.status === 'published' ? <CheckCircleOutlined style={{ marginRight: 4 }} /> : <Clock size={10} style={{ marginRight: 4, verticalAlign: 'middle' }} />}
-                                                                {thesis.status.toUpperCase()}
+                                                                {(thesis.status || '').toUpperCase()}
                                                             </Tag>
                                                         </Space>
                                                     </div>
@@ -652,12 +652,12 @@ export default function Repository() {
                                             }}
                                             style={{ borderRadius: 8, overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', marginBottom: 24 }}
                                         >
-                                            <Descriptions.Item label="Reference ID"><Text code>{selectedThesis.key.split('-')[0].toUpperCase()}</Text></Descriptions.Item>
+                                            <Descriptions.Item label="Reference ID"><Text code>{(selectedThesis?.key || '').split('-')[0].toUpperCase()}</Text></Descriptions.Item>
                                             <Descriptions.Item label="Submission Date">{selectedThesis.submissionDate ? new Date(selectedThesis.submissionDate).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</Descriptions.Item>
                                             
                                             <Descriptions.Item label="Status">
                                                 <Tag color={selectedThesis.status === 'published' ? 'success' : 'processing'} style={{ borderRadius: 12, margin: 0 }}>
-                                                    {selectedThesis.status.toUpperCase()}
+                                                    {(selectedThesis?.status || '').toUpperCase()}
                                                 </Tag>
                                             </Descriptions.Item>
                                             <Descriptions.Item label="Visibility">

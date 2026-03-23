@@ -151,7 +151,7 @@ export default function Users() {
                 { text: 'Editor', value: 'editor' },
                 { text: 'Viewer', value: 'viewer' },
             ],
-            onFilter: (value, record) => record.role.toLowerCase() === value.toLowerCase(),
+            onFilter: (value, record) => (record.role || '').toLowerCase() === (value || '').toLowerCase(),
             render: (role) => {
                 let color = role === 'admin' ? 'blue' : 'green';
                 let icon = <Shield size={14} style={{ marginRight: 4, verticalAlign: 'middle' }} />;
@@ -175,7 +175,7 @@ export default function Users() {
                         }}
                     >
                         {icon}
-                        {role.toUpperCase()}
+                        {(role || '').toUpperCase()}
                     </Tag>
                 );
             },
@@ -255,7 +255,7 @@ export default function Users() {
                                     <Text strong style={{ fontSize: 14, display: 'block' }} ellipsis>{record.username}</Text>
                                     <Text type="secondary" style={{ fontSize: 12 }} ellipsis>{record.email}</Text>
                                     <div style={{ marginTop: 4 }}>
-                                        <Tag color={record.role === 'admin' ? 'blue' : record.role === 'viewer' ? 'default' : 'green'} style={{ borderRadius: 20, fontSize: 11, border: 'none' }}>{record.role.toUpperCase()}</Tag>
+                                        <Tag color={record.role === 'admin' ? 'blue' : record.role === 'viewer' ? 'default' : 'green'} style={{ borderRadius: 20, fontSize: 11, border: 'none' }}>{(record.role || '').toUpperCase()}</Tag>
                                     </div>
                                 </div>
                             </div>

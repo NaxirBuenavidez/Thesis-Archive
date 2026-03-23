@@ -597,7 +597,7 @@ export default function ReviewManager() {
                                             <Col xs={24} lg={12}>
                                                 <Card size="small" variant="borderless" style={{ background: token.colorFillAlter, borderRadius: 12, height: '100%' }}>
                                                     <Descriptions title={<Space><FileTextOutlined style={{ fontSize: 16 }} /> <Text strong>Submission Details</Text></Space>} column={1} size="small" styles={{ label: { color: token.colorTextSecondary } }} layout={isMobile ? 'vertical' : 'horizontal'}>
-                                                        <Descriptions.Item label="Reference ID"><Text code>{selectedThesis.key.split('-')[0].toUpperCase()}</Text></Descriptions.Item>
+                                                        <Descriptions.Item label="Reference ID"><Text code>{(selectedThesis?.key || '').split('-')[0].toUpperCase()}</Text></Descriptions.Item>
                                                         <Descriptions.Item label="Submission Date">
                                                             <Space size={4}>
                                                                 <Calendar size={14} />

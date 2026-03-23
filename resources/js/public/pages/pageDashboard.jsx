@@ -257,7 +257,7 @@ export default function Dashboard() {
                     color={statusTagColor(s)}
                     style={{ borderRadius: 20, fontSize: 11, fontWeight: 600, border: 'none', padding: '2px 10px' }}
                 >
-                    {s?.replace('_', ' ').toUpperCase()}
+                    {(s || '').replace('_', ' ').toUpperCase()}
                 </Tag>
             )
         },
@@ -585,7 +585,7 @@ export default function Dashboard() {
                             <div key={item.id} style={{ padding: '12px 14px', borderRadius: 10, background: token.colorFillAlter, border: `1px solid ${token.colorBorderSecondary}` }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
                                     <Text strong style={{ fontSize: 13, flex: 1 }} ellipsis={{ tooltip: item.title }}>{item.title}</Text>
-                                    <Tag color={statusTagColor(item.status)} style={{ margin: 0, flexShrink: 0, fontSize: 11, borderRadius: 20, border: 'none' }}>{item.status?.replace('_', ' ').toUpperCase()}</Tag>
+                                    <Tag color={statusTagColor(item.status)} style={{ margin: 0, flexShrink: 0, fontSize: 11, borderRadius: 20, border: 'none' }}>{(item.status || '').replace('_', ' ').toUpperCase()}</Tag>
                                 </div>
                                 <Text type="secondary" style={{ fontSize: 12, display: 'block', marginTop: 4 }}>{item.author} · {item.updated_at}</Text>
                             </div>
