@@ -28,7 +28,6 @@ const StartupPreloader = () => {
             try {
                 const config = { silent: true };
                 
-                console.log('[SYSTEM] Starting data pre-loading sequence...');
                 
                 // Fetch all data in parallel
                 await Promise.allSettled([
@@ -96,7 +95,6 @@ const StartupPreloader = () => {
                     })
                 ]);
                 
-                console.log('[SYSTEM] Initial data pre-loaded successfully.');
             } catch (err) {
                 console.error('[SYSTEM] Data preloading error:', err);
                 hasPreloaded.current = false; // Allow retry on failure
