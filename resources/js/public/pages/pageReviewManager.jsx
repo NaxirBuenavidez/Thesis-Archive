@@ -48,7 +48,6 @@ export default function ReviewManager() {
     const setActiveTab = (key) => setSearchParams({ tab: key }, { replace: true });
 
     const fetchTheses = async () => {
-        setLoading(true);
         try {
             const response = await thesesApi.getAll({ silent: true });
             if (response) {

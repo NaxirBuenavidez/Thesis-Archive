@@ -66,7 +66,6 @@ export default function Repository() {
     const [downloadFormat, setDownloadFormat] = useState('pdf');
 
     const fetchTheses = async () => {
-        setLoading(true);
         try {
             const response = await thesesApi.getAll({ silent: true });
             if (response) {

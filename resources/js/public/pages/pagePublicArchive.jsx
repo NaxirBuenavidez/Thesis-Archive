@@ -6,6 +6,7 @@ import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import publicApi from '../../api/publicApi';
 import { useSystemConfig } from '../../context/SystemConfigContext';
+import { sessionCache } from '../../utils/sessionCache';
 import navbarArchive from './Archive/components/navbarArchive';
 import heroArchive from './Archive/components/heroArchive';
 import filtersArchive from './Archive/components/filtersArchive';
@@ -198,8 +199,8 @@ export default function PublicArchive() {
     const primaryColor = primary_color || '#2845D6';
     const primaryDark = primary_color_dark || '#1A2CA3';
     
-    const [theses, setTheses] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [theses, setTheses] = useState(sessionCache.get('public_theses') || []);
+    const [loading, setLoading] = useState(!sessionCache.get('public_theses'));
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [viewThesis, setViewThesis] = useState(null);
@@ -222,6 +223,7 @@ export default function PublicArchive() {
             try {
                 const data = await publicApi.getTheses(false, { silent: true });
                 setTheses(data);
+                sessionCache.set('public_theses', data);
             } finally {
                 setLoading(false);
             }

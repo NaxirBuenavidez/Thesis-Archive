@@ -79,7 +79,6 @@ export default function Users() {
 
     useEffect(() => {
         const loadSequentially = async () => {
-            setLoading(true);
             await fetchRoles();
             await fetchUsers();
         };

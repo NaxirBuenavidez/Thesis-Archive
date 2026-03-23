@@ -58,7 +58,6 @@ export default function ThesisManagement() {
     const setActiveTab = (key) => setSearchParams({ tab: key }, { replace: true });
 
     const fetchInitialData = async () => {
-        setLoading(true);
         try {
             const thesesRes = await thesesApi.getAll({ silent: true });
             
