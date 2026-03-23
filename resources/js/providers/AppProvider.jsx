@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react';
-import { ToastComponent } from '@syncfusion/ej2-react-notifications';
 import { ConfigProvider, App as AntApp } from 'antd';
 import 'antd/dist/reset.css';
 import '../public/components/UI/SystemNotifications';
@@ -89,17 +88,6 @@ export function AppProvider({ children }) {
         boot();
     }, []);
 
-    const toastRef = useRef(null);
-
-    useEffect(() => {
-        const handleToast = (e) => {
-            if (toastRef.current) {
-                toastRef.current.show(e.detail);
-            }
-        };
-        window.addEventListener('show-system-toast', handleToast);
-        return () => window.removeEventListener('show-system-toast', handleToast);
-    }, []);
 
     if (booting) {
         const logo = window.__boot_data?.settings?.logo_path || null;
@@ -150,12 +138,6 @@ export function AppProvider({ children }) {
             <ThemedApp>
                 <AuthProvider initialUser={bootData?.user}>
                     <StartupPreloader />
-                    <ToastComponent 
-                        ref={toastRef}
-                        position={{ X: 'Right', Y: 'Top' }}
-                        timeOut={4000}
-                        showCloseButton={true}
-                    />
                     {children}
                 </AuthProvider>
             </ThemedApp>

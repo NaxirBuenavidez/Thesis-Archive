@@ -18,8 +18,6 @@
     "dependencies": {
         "@ant-design/icons": "^6.1.0",
         "@fluentui/react-icons": "^2.0.321",
-        "@syncfusion/ej2-base": "^33.1.44",
-        "@syncfusion/ej2-react-notifications": "^33.1.44",
         "@tsparticles/react": "^3.0.0",
         "@tsparticles/slim": "^3.9.1",
         "@vitejs/plugin-react": "^5.1.2",
