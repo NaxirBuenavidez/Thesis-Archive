@@ -130,6 +130,14 @@ const RoleRoute = ({ children, allowedRoles }) => {
 };
 
 
+const IndexRedirect = () => {
+    const { user } = useAuth();
+    if (user?.role?.slug === 'client') {
+        return <SafeNavigate to="/my-thesis" />;
+    }
+    return <Dashboard />;
+};
+
 const router = createBrowserRouter([
     {
         element: (
@@ -159,7 +167,7 @@ const router = createBrowserRouter([
                 children: [
                     {
                         index: true,
-                        element: user?.role?.slug === 'client' ? <SafeNavigate to="/my-thesis" /> : <Dashboard />,
+                        element: <IndexRedirect />,
                     },
                     {
                         path: "/users",
