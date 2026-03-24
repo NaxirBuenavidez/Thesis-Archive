@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography, Card, Space, Button, Alert } from 'antd';
-import { UserOutlined, LockOutlined, MailOutlined, WarningOutlined } from '@ant-design/icons';
+import { SolutionOutlined, KeyOutlined, MailOutlined, WarningOutlined } from '@ant-design/icons';
 import SubPageLayout from '../components/SubPageLayout';
 
 const { Title, Paragraph, Text } = Typography;
@@ -20,7 +20,7 @@ const AccountHelp = () => {
                 style={{ marginBottom: 40, borderRadius: 12 }}
             />
 
-            <Title level={3}><UserOutlined /> Managing Your Account</Title>
+            <Title level={3}><SolutionOutlined /> Managing Your Account</Title>
             <Paragraph>
                 Institutional accounts are automatically provisioned. If you are a new student or faculty member, your 
                 account details will be provided by your department head or the registrar's office.
@@ -29,7 +29,7 @@ const AccountHelp = () => {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, marginBottom: 40 }}>
                 <Card hoverable style={{ borderRadius: 16 }}>
                     <Space direction="vertical" size="middle">
-                        <LockOutlined style={{ fontSize: 28, color: '#ff4d4f' }} />
+                        <KeyOutlined style={{ fontSize: 28, color: '#ff4d4f' }} />
                         <Title level={4} style={{ margin: 0 }}>Forgotten Password</Title>
                         <Paragraph type="secondary" style={{ margin: 0 }}>
                             If you've forgotten your password, please use the "Forgot Password" link on the login page. 
@@ -65,7 +65,6 @@ const AccountHelp = () => {
             </Paragraph>
             
             <Space style={{ marginTop: 16 }}>
-                <Button type="primary" size="large" style={{ borderRadius: 8 }}>Submit Support Ticket</Button>
                 <Button size="large" style={{ borderRadius: 8 }}>View System Status</Button>
             </Space>
         </SubPageLayout>

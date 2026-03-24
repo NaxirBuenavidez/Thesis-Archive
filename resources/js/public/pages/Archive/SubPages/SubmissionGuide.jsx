@@ -52,7 +52,7 @@ const SubmissionGuide = () => {
             />
 
             <Card style={{ marginTop: 40, borderRadius: 16, borderLeft: '6px solid #52c41a' }}>
-                <Title level={4}><CheckCircleOutlined style={{ color: '#52c41a' }} /> Quality Assurance</Title>
+                <Title level={4}><SafetyCertificateOutlined style={{ color: '#52c41a' }} /> Quality Assurance</Title>
                 <Paragraph>
                     All submissions undergo a metadata verification process. Ensure that your spelling, casing, 
                     and author details are accurate before final submission. Incorrect metadata may delay the 
@@ -60,7 +60,7 @@ const SubmissionGuide = () => {
                 </Paragraph>
             </Card>
 
-            <Title level={3} style={{ marginTop: 40 }}><UploadOutlined /> Where to Submit?</Title>
+            <Title level={3} style={{ marginTop: 40 }}><CloudUploadOutlined /> Where to Submit?</Title>
             <Paragraph>
                 Undergraduate students should coordinate with their respective department coordinators for the 
                 submission link. Faculty research is submitted directly through the Admin / Client Portal.

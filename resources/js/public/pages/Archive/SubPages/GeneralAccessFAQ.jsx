@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography, Collapse, Card, Space } from 'antd';
-import { QuestionCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { MessageOutlined, BulbOutlined } from '@ant-design/icons';
 import SubPageLayout from '../components/SubPageLayout';
 
 const { Title, Paragraph, Text } = Typography;
@@ -40,7 +40,7 @@ const GeneralAccessFAQ = () => {
             title="General Access FAQ" 
             subtitle="Frequently asked questions about browsing and accessing the public archive."
         >
-            <Title level={3}><QuestionCircleOutlined /> Common Questions</Title>
+            <Title level={3}><MessageOutlined /> Common Questions</Title>
             <Paragraph>
                 Find answers to the most common questions about how the public archive works and what information is available to visitors.
             </Paragraph>
@@ -64,7 +64,7 @@ const GeneralAccessFAQ = () => {
 
             <Card style={{ borderRadius: 16, background: '#e6f7ff', border: 'none' }}>
                 <Space>
-                    <InfoCircleOutlined style={{ fontSize: 24, color: '#1890ff' }} />
+                    <BulbOutlined style={{ fontSize: 24, color: '#1890ff' }} />
                     <Paragraph style={{ margin: 0 }}>
                         If your question isn't answered here, please feel free to reach out to the <strong>IT Support</strong> or the <strong>Research Department</strong> using the contact details in the footer.
                     </Paragraph>

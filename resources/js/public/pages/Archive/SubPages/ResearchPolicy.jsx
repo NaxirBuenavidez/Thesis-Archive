@@ -30,7 +30,7 @@ const ResearchPolicy = () => {
                 without explicit permission from the authors and the institution is strictly prohibited.
             </Paragraph>
 
-            <Title level={3}><LockOutlined /> Data Privacy (RA 10173)</Title>
+            <Title level={3}><FileProtectOutlined /> Data Privacy (RA 10173)</Title>
             <Paragraph>
                 In compliance with the <strong>National Privacy Commission (NPC)</strong> and the <strong>Data Privacy Act of 2012 (RA 10173)</strong>, 
                 we ensure that all personal information of authors and faculty is handled with strict confidentiality.
@@ -44,7 +44,7 @@ const ResearchPolicy = () => {
                 </Paragraph>
             </Card>
 
-            <Title level={3}><EyeOutlined /> Usage & Access Guidelines</Title>
+            <Title level={3}><AuditOutlined /> Usage & Access Guidelines</Title>
             <Table 
                 dataSource={dataUsage} 
                 columns={columns} 

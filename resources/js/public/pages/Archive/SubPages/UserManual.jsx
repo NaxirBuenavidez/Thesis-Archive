@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography, List, Card, Space } from 'antd';
-import { SearchOutlined, FilterOutlined, BookOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { CompassOutlined, ControlOutlined, ReadOutlined, NodeIndexOutlined } from '@ant-design/icons';
 import SubPageLayout from '../components/SubPageLayout';
 
 const { Title, Paragraph, Text } = Typography;
@@ -10,22 +10,22 @@ const UserManual = () => {
         {
             title: 'Searching for Theses',
             desc: 'Use the global search bar on the home page to find research by titles, keywords, or authors. Just enter your query and press "Search Archive".',
-            icon: <SearchOutlined style={{ fontSize: 24, color: '#1890ff' }} />
+            icon: <CompassOutlined style={{ fontSize: 24, color: '#1890ff' }} />
         },
         {
             title: 'Using Filters',
             desc: 'Refine your results by selecting specific "Research Categories" (Departments). This helps you narrow down to a specific field of study.',
-            icon: <FilterOutlined style={{ fontSize: 24, color: '#52c41a' }} />
+            icon: <ControlOutlined style={{ fontSize: 24, color: '#52c41a' }} />
         },
         {
             title: 'Viewing Thesis Details',
             desc: 'Click on a thesis card to open the preview modal. You can read the abstract, view metadata (authors, year, department), and check keywords.',
-            icon: <BookOutlined style={{ fontSize: 24, color: '#722ed1' }} />
+            icon: <ReadOutlined style={{ fontSize: 24, color: '#722ed1' }} />
         },
         {
             title: 'Navigating the Archive',
             desc: 'Use the navigation bar to jump between home, search, categories, and guides sections easily on the landing page.',
-            icon: <InfoCircleOutlined style={{ fontSize: 24, color: '#faad14' }} />
+            icon: <NodeIndexOutlined style={{ fontSize: 24, color: '#faad14' }} />
         }
     ];
 

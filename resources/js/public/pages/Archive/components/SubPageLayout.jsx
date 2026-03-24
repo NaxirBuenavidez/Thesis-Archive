@@ -83,18 +83,6 @@ const SubPageLayout = ({ children, title, subtitle }) => {
                         
                         {children}
                         
-                        <Divider style={{ margin: '60px 0 40px' }} />
-                        
-                        <div style={{ textAlign: 'center' }}>
-                            <Space direction="vertical" size="small">
-                                <Text strong style={{ color: primaryDark }}>Still need help?</Text>
-                                <Link to="/archive#footer-faq">
-                                    <Button type="primary" style={{ background: primaryColor, borderRadius: 8, height: 40 }}>
-                                        Contact Support
-                                    </Button>
-                                </Link>
-                            </Space>
-                        </div>
                     </div>
                 </div>
             </Content>

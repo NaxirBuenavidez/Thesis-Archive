@@ -40,7 +40,7 @@ const SubmissionFAQ = () => {
             title="Submission FAQ" 
             subtitle="Guidance for researchers and students regarding the archive submission process."
         >
-            <Title level={3}><UploadOutlined /> Submission Queries</Title>
+            <Title level={3}><CloudUploadOutlined /> Submission Queries</Title>
             <Paragraph>
                 Everything you need to know about preparing your research for the digital archive and the lifecycle of a submission.
             </Paragraph>
@@ -65,7 +65,7 @@ const SubmissionFAQ = () => {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
                 <Card style={{ borderRadius: 16, borderTop: '4px solid #1890ff' }}>
                     <Space direction="vertical">
-                        <FileSearchOutlined style={{ fontSize: 24, color: '#1890ff' }} />
+                        <ExperimentOutlined style={{ fontSize: 24, color: '#1890ff' }} />
                         <Title level={5} style={{ margin: 0 }}>Review Process</Title>
                         <Paragraph style={{ fontSize: 13, color: '#666', margin: 0 }}>Every submission is manually verified to ensure high-quality metadata and proper categorization.</Paragraph>
                         <Tag color="processing">In Review</Tag>
@@ -73,7 +73,7 @@ const SubmissionFAQ = () => {
                 </Card>
                 <Card style={{ borderRadius: 16, borderTop: '4px solid #52c41a' }}>
                     <Space direction="vertical">
-                        <CheckCircleOutlined style={{ fontSize: 24, color: '#52c41a' }} />
+                        <SafetyOutlined style={{ fontSize: 24, color: '#52c41a' }} />
                         <Title level={5} style={{ margin: 0 }}>Final Publication</Title>
                         <Paragraph style={{ fontSize: 13, color: '#666', margin: 0 }}>Once approved, your study will be indexed and searchable by scholars and fellow students.</Paragraph>
                         <Tag color="success">Published</Tag>
