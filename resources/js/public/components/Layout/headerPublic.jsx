@@ -1,6 +1,7 @@
 import React from 'react';
 import { Layout, Button, Typography, theme } from 'antd';
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 import NotificationBell from '../NotificationBell';
 
 const { Header } = Layout;
@@ -34,7 +35,7 @@ const headerPublic = ({
             </div>
 
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden', padding: '0 8px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
+                <Link to="/archive" style={{ display: 'flex', alignItems: 'center', overflow: 'hidden', textDecoration: 'none', color: 'inherit' }}>
                     {logoPath ? (
                         <img src={logoPath} alt="System Logo" style={{ height: isMobile ? 32 : 40, width: 'auto', marginRight: 10, objectFit: 'contain', flexShrink: 0 }} />
                     ) : (
@@ -63,7 +64,7 @@ const headerPublic = ({
                             </Text>
                         )}
                     </div>
-                </div>
+                </Link>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', zIndex: 1, flexShrink: 0, minWidth: isMobile ? 44 : 60, justifyContent: 'flex-end' }}>

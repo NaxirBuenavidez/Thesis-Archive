@@ -316,7 +316,6 @@ export default function PublicArchive() {
 
     const scrollToSection = React.useCallback((id) => {
         isManualScroll.current = true;
-        setActiveSection(id);
         const element = document.getElementById(id);
         if (element) {
             const headerOffset = 85; 
