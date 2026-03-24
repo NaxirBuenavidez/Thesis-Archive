@@ -36,8 +36,10 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // Add the custom CHECK constraint for title char length
-        \Illuminate\Support\Facades\DB::statement('ALTER TABLE theses ADD CONSTRAINT chk_title_not_empty CHECK (char_length(title) > 0)');
+        // Add the custom CHECK constraint for title char length (Skipped for SQLite during tests)
+        if (config('database.default') !== 'sqlite') {
+            \Illuminate\Support\Facades\DB::statement('ALTER TABLE theses ADD CONSTRAINT chk_title_not_empty CHECK (char_length(title) > 0)');
+        }
     }
 
     /**

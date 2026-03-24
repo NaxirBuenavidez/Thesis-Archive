@@ -48,6 +48,7 @@ export default function PublicLayout({ children }) {
         '/users': 'Users',
         '/repository': 'Repository',
         '/thesis-management': 'Thesis Management',
+        '/my-thesis': 'My Thesis',
         '/review-manager': 'Review Manager',
         '/system-settings': 'System Settings',
         '/system-settings/permissions': 'Permissions',
@@ -87,11 +88,14 @@ export default function PublicLayout({ children }) {
     const isGuest = user?.role?.slug === 'anonymous';
 
     const desktopMainMenuItems = [
-        { key: '/', icon: <DashboardOutlined />, label: 'Dashboard' },
-        { key: '/users', icon: <UsergroupAddOutlined />, label: 'Users' },
+        ...(user?.role?.slug !== 'client' ? [{ key: '/', icon: <DashboardOutlined />, label: 'Dashboard' }] : []),
+        ...(user?.role?.slug !== 'client' ? [{ key: '/users', icon: <UsergroupAddOutlined />, label: 'Users' }] : []),
         { key: '/repository', icon: <BookOutlined />, label: 'Repository' },
-        { key: '/thesis-management', icon: <FileTextOutlined />, label: 'Thesis Management' },
-        { key: '/review-manager', icon: <AuditOutlined />, label: 'Review Manager' },
+        ...(user?.role?.slug === 'client' 
+            ? [{ key: '/my-thesis', icon: <FileTextOutlined />, label: 'My Thesis' }]
+            : [{ key: '/thesis-management', icon: <FileTextOutlined />, label: 'Thesis Management' }]
+        ),
+        ...(user?.role?.slug !== 'client' ? [{ key: '/review-manager', icon: <AuditOutlined />, label: 'Review Manager' }] : []),
         {
             key: 'system-settings',
             icon: <SettingOutlined />,
@@ -105,7 +109,7 @@ export default function PublicLayout({ children }) {
     ];
 
     const mobileMainMenuItems = [
-        { key: '/users', icon: <UsergroupAddOutlined />, label: 'Users' },
+        ...(user?.role?.slug !== 'client' ? [{ key: '/users', icon: <UsergroupAddOutlined />, label: 'Users' }] : []),
         {
             key: 'system-settings',
             icon: <SettingOutlined />,
@@ -176,9 +180,13 @@ export default function PublicLayout({ children }) {
                 {isMobile && (
                     <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 60, backgroundColor: colorBgContainer, borderTop: `1px solid ${token.colorBorderSecondary}`, display: 'flex', justifyContent: 'space-around', alignItems: 'stretch', zIndex: 1000, paddingBottom: 'env(safe-area-inset-bottom)', boxShadow: '0 -2px 12px rgba(0,0,0,0.07)' }}>
                         {[
-                            { key: '/', icon: <DashboardOutlined />, label: 'Home' },
+                            ...(user?.role?.slug !== 'client' ? [{ key: '/', icon: <DashboardOutlined />, label: 'Home' }] : []),
                             { key: '/repository', icon: <BookOutlined />, label: 'Library' },
-                            { key: '/thesis-management', icon: <FileTextOutlined />, label: 'Manage' },
+                            { 
+                                key: user?.role?.slug === 'client' ? '/my-thesis' : '/thesis-management', 
+                                icon: <FileTextOutlined />, 
+                                label: user?.role?.slug === 'client' ? 'My Thesis' : 'Manage' 
+                            },
                             { key: '/review-manager', icon: <AuditOutlined />, label: 'Review' },
                             { key: 'more', icon: <MenuOutlined />, label: 'Menu', isAction: true }
                         ].map(item => {

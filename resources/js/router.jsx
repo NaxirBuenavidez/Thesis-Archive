@@ -12,6 +12,7 @@ import Permissions from './public/pages/SystemSettings/pagePermissions';
 import ActivityLog from './public/pages/SystemSettings/pageActivityLog';
 import SystemManager from './public/pages/SystemSettings/pageSystemManager';
 import Reports from './public/pages/SystemSettings/pageReports';
+import ClientThesisManagement from './public/pages/pageClientThesisManagement';
 import Login from './public/pages/pageLogin';
 import PublicArchive from './public/pages/pagePublicArchive';
 import UserManual from './public/pages/Archive/SubPages/UserManual';
@@ -105,6 +106,10 @@ const AlreadyAuthedRoute = ({ children }) => {
     if (user && user.role?.slug !== 'anonymous') {
         if (currentPath !== '/login') return children;
         
+        // Custom redirection based on role
+        if (user.role?.slug === 'client') {
+            return <SafeNavigate to="/my-thesis" />;
+        }
         return <SafeNavigate to="/" />;
     }
     return children;
@@ -170,7 +175,11 @@ const router = createBrowserRouter([
                     },
                     {
                         path: "/thesis-management",
-                        element: <ThesisManagement />,
+                        element: <RoleRoute allowedRoles={['spadmin', 'admin']}><ThesisManagement /></RoleRoute>,
+                    },
+                    {
+                        path: "/my-thesis",
+                        element: <RoleRoute allowedRoles={['client']}><ClientThesisManagement /></RoleRoute>,
                     },
                     {
                         path: "/review-manager",

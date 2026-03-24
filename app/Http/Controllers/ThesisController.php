@@ -16,10 +16,17 @@ use Illuminate\Support\Facades\Hash;
 
 class ThesisController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $theses = Thesis::with(['owner.profile', 'primarySupervisor'])->latest()->get();
-        return ThesisResource::collection($theses);
+        $user = $request->user();
+        $query = Thesis::with(['owner.profile', 'primarySupervisor'])->latest();
+
+        // Clients should only see their own theses in the management list
+        if ($user && $user->role && $user->role->slug === 'client') {
+            $query->where('owner_id', $user->id);
+        }
+
+        return ThesisResource::collection($query->get());
     }
 
     public function publicIndex(Request $request)
@@ -36,7 +43,7 @@ class ThesisController extends Controller
 
     public function store(StoreThesisRequest $request)
     {
-        $validated = $request->validated();
+        $validated = $this->sanitizeThesisData($request->validated());
         $validated['owner_id'] = $request->user()->id;
 
         if ($request->hasFile('pdf_file')) {
@@ -65,7 +72,7 @@ class ThesisController extends Controller
 
     public function update(UpdateThesisRequest $request, Thesis $thesis)
     {
-        $validated = $request->validated();
+        $validated = $this->sanitizeThesisData($request->validated());
 
         if ($request->hasFile('pdf_file')) {
             if ($thesis->pdf_path) {
@@ -203,6 +210,28 @@ class ThesisController extends Controller
         }
 
         return response()->json(['message' => 'Invalid format requested.'], 400);
+    }
+
+    /**
+     * Sanitize thesis data by stripping HTML tags from string fields.
+     */
+    private function sanitizeThesisData(array $data): array
+    {
+        $textFields = [
+            'title', 'author', 'subtitle', 'abstract', 'discipline', 
+            'institution', 'department', 'degree_type', 'co_author', 
+            'panelists', 'recommended_by', 'archived_by'
+        ];
+        
+        foreach ($textFields as $field) {
+            if (isset($data[$field]) && is_string($data[$field])) {
+                $data[$field] = strip_tags($data[$field]);
+                $data[$field] = preg_replace('/\s+/', ' ', $data[$field]);
+                $data[$field] = trim($data[$field]);
+            }
+        }
+
+        return $data;
     }
 }
 
