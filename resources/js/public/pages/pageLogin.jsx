@@ -29,7 +29,7 @@ const STYLES = `
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif !important;
   position: relative;
   overflow: hidden;
   background: #f8fafc; /* Clean light background */
