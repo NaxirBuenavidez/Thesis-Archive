@@ -183,9 +183,9 @@ const GuidesSection = ({ primaryColor, primaryDark }) => {
     );
 };
 
-const PrivacySection = ({ primaryColor, primaryDark }) => {
+const ComplianceSection = ({ primaryColor, primaryDark }) => {
     return (
-        <div id="privacy" style={{ padding: '80px 5%', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+        <div id="compliance" style={{ padding: '80px 5%', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
             <div style={{ maxWidth: 1000, margin: '0 auto' }}>
                 <SectionHeading 
                     icon="/images/npc-logo.png" 
@@ -266,8 +266,12 @@ export default function PublicArchive() {
         { label: 'Search', id: 'search', icon: <SearchOutlined /> },
         { label: 'Research Categories', id: 'categories', icon: <BookOutlined /> },
         { label: 'Manual & Guides', id: 'guides', icon: <ReadOutlined /> },
-        { label: 'Privacy & Compliance', id: 'privacy', icon: <SafetyCertificateOutlined /> },
+        { label: 'Compliance & Privacy', id: 'compliance', icon: <SafetyCertificateOutlined /> },
     ], []);
+
+    useEffect(() => {
+        console.log('[DEBUG] Active Section Changed:', activeSection);
+    }, [activeSection]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -298,10 +302,13 @@ export default function PublicArchive() {
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });
-        // Initial check
-        handleScroll();
+        // Initial check with a small delay to ensure DOM is ready
+        const timer = setTimeout(handleScroll, 100);
         
-        return () => window.removeEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            clearTimeout(timer);
+        };
     }, [navItems, activeSection]);
 
     useEffect(() => {
@@ -500,7 +507,7 @@ export default function PublicArchive() {
                 </div>
 
                 <GuidesSection primaryColor={primaryColor} primaryDark={primaryDark} />
-                <PrivacySection primaryColor={primaryColor} primaryDark={primaryDark} />
+                <ComplianceSection primaryColor={primaryColor} primaryDark={primaryDark} />
             </Content>
 
             <Footer logoPath={logo_path} primaryColor={primaryColor} primaryDark={primaryDark} appName={site_title} />
