@@ -30,6 +30,14 @@ function App() {
         };
 
         window.addEventListener('popstate', () => logNav('POPSTATE'));
+
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('[CRITICAL-PROMISE] Unhandled Rejection:', event.reason);
+        });
+
+        window.addEventListener('error', (event) => {
+            console.error('[CRITICAL-ERROR] Browser Error:', event.message, event.filename, event.lineno);
+        });
         
         const originalPush = window.history.pushState;
         const originalReplace = window.history.replaceState;

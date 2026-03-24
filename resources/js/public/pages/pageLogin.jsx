@@ -343,10 +343,9 @@ export default function Login() {
             }}
         >
             {init && (
-                <Particles
-                    id="tsparticles"
-                    options={particlesConfig}
-                />
+                {/* {init && (
+                    <Particles id="tsparticles" options={particlesConfig} />
+                )} */}
             )}
 
             <div className="login-card">
