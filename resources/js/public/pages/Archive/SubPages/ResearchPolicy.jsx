@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography, Card, Table, Tag } from 'antd';
-import { SafetyCertificateOutlined, LockOutlined, EyeOutlined } from '@ant-design/icons';
+import { SafetyCertificateOutlined, LockOutlined, EyeOutlined, FileProtectOutlined, AuditOutlined } from '@ant-design/icons';
 import SubPageLayout from '../components/SubPageLayout';
 
 const { Title, Paragraph, Text } = Typography;

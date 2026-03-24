@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography, Steps, Alert, Card, List } from 'antd';
-import { FilePdfOutlined, CheckCircleOutlined, UploadOutlined } from '@ant-design/icons';
+import { FilePdfOutlined, CheckCircleOutlined, UploadOutlined, SafetyCertificateOutlined, CloudUploadOutlined } from '@ant-design/icons';
 import SubPageLayout from '../components/SubPageLayout';
 
 const { Title, Paragraph, Text } = Typography;
