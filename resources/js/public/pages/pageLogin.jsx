@@ -247,7 +247,8 @@ export default function Login() {
             }
             
             await checkAuth();
-            navigate('/');
+            const target = response.data?.user?.role?.slug === 'client' ? '/my-thesis' : '/';
+            navigate(target);
         } catch (error) {
             if (!handleFormErrors(error, form)) {
                 if (error.response?.status === 429) {

@@ -159,7 +159,7 @@ const router = createBrowserRouter([
                 children: [
                     {
                         index: true,
-                        element: <Dashboard />,
+                        element: user?.role?.slug === 'client' ? <SafeNavigate to="/my-thesis" /> : <Dashboard />,
                     },
                     {
                         path: "/users",

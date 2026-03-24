@@ -31,10 +31,13 @@ const StartupPreloader = () => {
                 
                 // Fetch all data in parallel
                 await Promise.allSettled([
-                    // Dashboard Analytics
-                    window.axios.get('/api/dashboard/analytics', config).then(res => {
-                        sessionCache.set('dashboard_analytics', res.data);
-                    }),
+                    // Dashboard Analytics (Admin/Program Head only)
+                    ...(['spadmin', 'program_head', 'admin'].includes(user.role?.slug) 
+                        ? [window.axios.get('/api/dashboard/analytics', config).then(res => {
+                            sessionCache.set('dashboard_analytics', res.data);
+                          })]
+                        : []
+                    ),
                     
                     // Theses (Management & Review)
                     thesesApi.getAll(config).then(res => {
@@ -63,23 +66,27 @@ const StartupPreloader = () => {
                         sessionCache.set('public_theses', formatted);
                     }),
                     
-                    // Users and Roles
-                    window.axios.get('/api/users', config).then(res => {
-                        const usersList = res.data.data || (Array.isArray(res.data) ? res.data : []);
-                        const formattedUsers = usersList.map(u => ({
-                            key: u.id,
-                            username: u.name,
-                            email: u.email,
-                            role: u.role ? (typeof u.role === 'string' ? u.role : (u.role.name || u.role.slug)) : 'viewer',
-                            createdAt: u.created_at,
-                            avatarUrl: u.profile?.avatar ? (u.profile.avatar.startsWith('http') || u.profile.avatar.startsWith('data:image') ? u.profile.avatar : `/storage/${u.profile.avatar}`) : null,
-                        }));
-                        sessionCache.set('users_list', formattedUsers);
-                    }),
-                    
-                    window.axios.get('/api/roles', config).then(res => {
-                        sessionCache.set('users_roles', res.data.data || res.data);
-                    }),
+                    // Users and Roles (Admin/SPAdmin only)
+                    ...(['spadmin', 'admin'].includes(user.role?.slug)
+                        ? [
+                            window.axios.get('/api/users', config).then(res => {
+                                const usersList = res.data.data || (Array.isArray(res.data) ? res.data : []);
+                                const formattedUsers = usersList.map(u => ({
+                                    key: u.id,
+                                    username: u.name,
+                                    email: u.email,
+                                    role: u.role ? (typeof u.role === 'string' ? u.role : (u.role.name || u.role.slug)) : 'viewer',
+                                    createdAt: u.created_at,
+                                    avatarUrl: u.profile?.avatar ? (u.profile.avatar.startsWith('http') || u.profile.avatar.startsWith('data:image') ? u.profile.avatar : `/storage/${u.profile.avatar}`) : null,
+                                }));
+                                sessionCache.set('users_list', formattedUsers);
+                            }),
+                            window.axios.get('/api/roles', config).then(res => {
+                                sessionCache.set('users_roles', res.data.data || res.data);
+                            })
+                        ]
+                        : []
+                    ),
                     
                     // Departments & Programs (for System Manager)
                     window.axios.get('/api/departments', config).then(res => {
