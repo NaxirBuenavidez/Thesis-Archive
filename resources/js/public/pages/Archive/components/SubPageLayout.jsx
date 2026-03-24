@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Layout, Button, Typography, Space, Divider } from 'antd';
 import { ArrowLeftOutlined, HomeOutlined } from '@ant-design/icons';
 import { useNavigate, Link } from 'react-router-dom';
-import { useSystemConfig } from '../../../context/SystemConfigContext';
+import { useSystemConfig } from '../../../../context/SystemConfigContext';
 import Navbar from './navbarArchive';
 import Footer from './footerArchive';
 
