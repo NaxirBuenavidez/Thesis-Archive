@@ -37,7 +37,7 @@ const heroArchive = React.memo(({
                         enterButton={<Button type="primary" style={{ background: '#222', borderColor: '#222', padding: '0 32px' }}>Search Archive</Button>}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        onSearch={() => scrollToSection('search')}
+                        onSearch={() => scrollToSection('sec_search')}
                         style={{ borderRadius: 8 }}
                     />
                 </div>

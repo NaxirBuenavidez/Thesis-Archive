@@ -33,12 +33,12 @@ const navbarArchive = React.memo(({
                 {navItems.map(item => (
                     <div key={item.id} 
                         onClick={() => scrollToSection(item.id)}
-                        className={`nav-item ${activeSection === item.id ? 'active' : ''}`}
+                        className={`nav-item ${String(activeSection) === String(item.id) ? 'active' : ''}`}
                         style={{ 
                             cursor: 'pointer', 
-                            fontWeight: activeSection === item.id ? 700 : 500,
-                            color: activeSection === item.id ? primaryColor : '#555',
-                            borderBottom: activeSection === item.id ? `2px solid ${primaryColor}` : '2px solid transparent',
+                            fontWeight: String(activeSection) === String(item.id) ? 700 : 500,
+                            color: String(activeSection) === String(item.id) ? primaryColor : '#555',
+                            borderBottom: String(activeSection) === String(item.id) ? `2px solid ${primaryColor}` : '2px solid transparent',
                             padding: '20px 0',
                             fontSize: '14.5px',
                             letterSpacing: '0.2px'
