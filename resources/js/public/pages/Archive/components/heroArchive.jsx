@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography, Input, Button } from 'antd';
 import { motion } from 'framer-motion';
 
-const { Title, Paragraph } = Typography;
+const { Title, Paragraph, Text } = Typography;
 
 const heroArchive = React.memo(({
     primaryColor,
