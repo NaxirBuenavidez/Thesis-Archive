@@ -15,7 +15,7 @@ const heroArchive = React.memo(({
 
     useEffect(() => {
         const img = new Image();
-        img.src = '/images/hero-cover.png?v=2';
+        img.src = '/images/hero-cover.png?v=3';
         img.onload = () => setImageLoaded(true);
     }, []);
 
@@ -57,7 +57,7 @@ const heroArchive = React.memo(({
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.8 }}
                     style={{
-                        backgroundImage: `linear-gradient(rgba(13, 26, 112, 0.75), rgba(13, 26, 112, 0.75)), url(/images/hero-cover.png?v=2)`,
+                        backgroundImage: `linear-gradient(rgba(13, 26, 112, 0.75), rgba(13, 26, 112, 0.75)), url(/images/hero-cover.png?v=3)`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         padding: 'clamp(80px, 12vw, 140px) 5%',
