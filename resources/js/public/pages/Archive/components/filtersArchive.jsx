@@ -15,9 +15,9 @@ const filtersArchive = ({
 }) => {
     return (
         <div style={{ padding: 'clamp(40px, 6vw, 60px) 5%', maxWidth: 1400, margin: '0 auto' }}>
-            <div id="search" style={{ position: 'relative', top: -100 }} />
-            <div id="categories" style={{ marginBottom: 40 }}>
-                <Title level={3} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
+            <div id="search" style={{ position: 'absolute', top: 0 }} />
+            <div style={{ marginBottom: 40 }}>
+                <Title id="categories" level={3} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24, scrollMarginTop: 120 }}>
                     <BookOutlined style={{ color: primaryColor }} /> Research Categories
                 </Title>
                 <Space wrap size={[12, 16]}>

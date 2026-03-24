@@ -259,7 +259,6 @@ export default function PublicArchive() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [particlesInitState, setParticlesInitState] = useState(false);
     const isManualScroll = useRef(false);
-    const visibleSections = useRef(new Set());
     const pageSize = 12;
 
     const navItems = React.useMemo(() => [
@@ -271,40 +270,39 @@ export default function PublicArchive() {
     ], []);
 
     useEffect(() => {
-        const observer = new IntersectionObserver((entries) => {
+        const handleScroll = () => {
             if (isManualScroll.current) return;
             
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    visibleSections.current.add(entry.target.id);
-                } else {
-                    visibleSections.current.delete(entry.target.id);
+            const scrollPos = window.scrollY + 120; // 120px offset for header + buffer
+            
+            // Map navItems to their actual DOM offsets
+            const offsets = navItems.map(item => {
+                const el = document.getElementById(item.id);
+                if (!el) return null;
+                const rect = el.getBoundingClientRect();
+                return { id: item.id, offset: rect.top + window.scrollY };
+            }).filter(Boolean);
+
+            // Find the active section (the one we've scrolled past)
+            // Sort by offset descending so the first match is the current one
+            offsets.sort((a, b) => b.offset - a.offset);
+            const current = offsets.find(s => s.offset <= scrollPos);
+
+            if (current) {
+                if (current.id !== activeSection) {
+                    setActiveSection(current.id);
                 }
-            });
-
-            const visible = Array.from(visibleSections.current);
-            if (visible.length > 0) {
-                const elements = visible.map(id => {
-                    const el = document.getElementById(id);
-                    return el ? { id, rect: el.getBoundingClientRect() } : null;
-                }).filter(Boolean);
-
-                elements.sort((a, b) => a.rect.top - b.rect.top);
-                const best = elements[0].id;
-                
-                setActiveSection(prev => prev !== best ? best : prev);
-            } else if (window.scrollY < 200) {
+            } else if (window.scrollY < 200 && activeSection !== 'home') {
                 setActiveSection('home');
             }
-        }, { threshold: [0, 0.1], rootMargin: '-85px 0px -60% 0px' });
+        };
 
-        navItems.forEach(item => {
-            const el = document.getElementById(item.id);
-            if (el) observer.observe(el);
-        });
-
-        return () => observer.disconnect();
-    }, [navItems]);
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        // Initial check
+        handleScroll();
+        
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [navItems, activeSection]);
 
     useEffect(() => {
         initParticlesEngine(async (engine) => {
