@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Layout, Row, Col, Pagination, Spin, Empty, Drawer, List, Space, Button, Typography, Carousel } from 'antd';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { Layout, Row, Col, Pagination, Spin, Empty, Drawer, List, Space, Button, Typography, Carousel, FloatButton } from 'antd';
 import { GlobalOutlined, SearchOutlined, BookOutlined, InfoCircleOutlined, QuestionCircleOutlined, ReadOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import Particles, { initParticlesEngine } from "@tsparticles/react";
@@ -258,6 +258,7 @@ export default function PublicArchive() {
     const [currentPage, setCurrentPage] = useState(1);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [particlesInitState, setParticlesInitState] = useState(false);
+    const isManualScroll = useRef(false);
     const pageSize = 12;
 
     const navItems = React.useMemo(() => [
@@ -270,12 +271,14 @@ export default function PublicArchive() {
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
+            if (isManualScroll.current) return;
+            
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     setActiveSection(entry.target.id);
                 }
             });
-        }, { threshold: 0.2, rootMargin: '-80px 0px -50% 0px' });
+        }, { threshold: 0.2, rootMargin: '-85px 0px -50% 0px' });
 
         navItems.forEach(item => {
             const el = document.getElementById(item.id);
@@ -330,6 +333,7 @@ export default function PublicArchive() {
     }, [theses, searchQuery, selectedCategory]);
 
     const scrollToSection = React.useCallback((id) => {
+        isManualScroll.current = true;
         setActiveSection(id);
         const element = document.getElementById(id);
         if (element) {
@@ -341,6 +345,10 @@ export default function PublicArchive() {
                 top: offsetPosition,
                 behavior: 'smooth'
             });
+
+            setTimeout(() => {
+                isManualScroll.current = false;
+            }, 1000);
         }
     }, []);
 
@@ -515,6 +523,12 @@ export default function PublicArchive() {
                     </Link>
                 </div>
             </Drawer>
+
+            <FloatButton.BackTop 
+                type="primary" 
+                style={{ right: 24, bottom: 24, background: primaryColor }} 
+                visibilityHeight={400} 
+            />
         </Layout>
     );
 }
