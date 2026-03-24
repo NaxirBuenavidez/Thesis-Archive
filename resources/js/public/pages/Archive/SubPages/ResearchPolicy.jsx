@@ -36,13 +36,30 @@ const ResearchPolicy = () => {
                 we ensure that all personal information of authors and faculty is handled with strict confidentiality.
             </Paragraph>
 
-            <Card style={{ borderRadius: 16, background: '#f0f5ff', border: 'none', marginBottom: 40 }}>
-                <Title level={4}>Data Handling Commitment</Title>
-                <Paragraph>
-                    This digital archive serves the student and faculty research output of our institution. 
-                    Personal data is used solely for academic referencing and system administration.
-                </Paragraph>
-            </Card>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, marginBottom: 40 }}>
+                <Card title="Data Subject Rights" bordered={false} style={{ background: '#f6ffed', borderRadius: 16 }}>
+                    <ul style={{ paddingLeft: 20 }}>
+                        <li><Text strong>Right to be Informed</Text>: Clear notices on data collection.</li>
+                        <li><Text strong>Right to Access</Text>: Authors can view their archived records.</li>
+                        <li><Text strong>Right to Object</Text>: Control over public visibility of research.</li>
+                        <li><Text strong>Right to Erasure</Text>: Process for removing outdated data.</li>
+                    </ul>
+                </Card>
+                <Card title="Security Measures" bordered={false} style={{ background: '#fff7e6', borderRadius: 16 }}>
+                    <ul style={{ paddingLeft: 20 }}>
+                        <li><Text strong>Organizational</Text>: Strict internal access protocols.</li>
+                        <li><Text strong>Physical</Text>: Secure server environment (Cloud-based).</li>
+                        <li><Text strong>Technical</Text>: Data encryption & session security.</li>
+                    </ul>
+                </Card>
+            </div>
+
+            <Title level={4}>Data Retention & Disposal</Title>
+            <Paragraph>
+                Research records are maintained as part of the institution's permanent academic history. 
+                However, personal identifiers of graduated students are periodically reviewed. 
+                De-identified data may be kept indefinitely for longitudinal research analysis.
+            </Paragraph>
 
             <Title level={3}><AuditOutlined /> Usage & Access Guidelines</Title>
             <Table 

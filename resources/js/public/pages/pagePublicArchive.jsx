@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Layout, Row, Col, Pagination, Spin, Empty, Drawer, List, Space, Button, Typography } from 'antd';
-import { GlobalOutlined, SearchOutlined, BookOutlined, InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { GlobalOutlined, SearchOutlined, BookOutlined, InfoCircleOutlined, QuestionCircleOutlined, ReadOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
@@ -266,8 +266,8 @@ export default function PublicArchive() {
         { label: 'Home', id: 'home', icon: <GlobalOutlined /> },
         { label: 'Search', id: 'search', icon: <SearchOutlined /> },
         { label: 'Research Categories', id: 'categories', icon: <BookOutlined /> },
-        { label: 'Manual & Guides', id: 'guides', icon: <BookOutlined /> },
-        { label: 'Privacy & Compliance', id: 'privacy', icon: <InfoCircleOutlined /> },
+        { label: 'Manual & Guides', id: 'guides', icon: <ReadOutlined /> },
+        { label: 'Privacy & Compliance', id: 'privacy', icon: <SafetyCertificateOutlined /> },
     ], []);
 
     const svgHex = primaryColor.replace('#', '%23');

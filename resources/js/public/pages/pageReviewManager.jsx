@@ -514,241 +514,189 @@ export default function ReviewManager() {
                     drawerForm.resetFields();
                 }}
                 open={isDetailOpen}
-                size="large"
+                width={screens.xl ? 1200 : screens.lg ? 900 : '100%'}
                 styles={{
-                    wrapper: { width: screens.md ? 720 : '100%' },
+                    wrapper: { width: 'auto' },
                     header: { borderBottom: `1px solid ${token.colorBorderSecondary}`, padding: '16px 24px' },
-                    body: { padding: 0 }
+                    body: { padding: 0, overflow: 'hidden' }
                 }}
                 extra={
-                    !isMobile && (
-                        <Space>
-                            <Button 
-                                type="primary" 
-                                danger
-                                onClick={() => {
-                                    setIsDetailOpen(false);
-                                    openReviewModal(selectedThesis, 'reject');
-                                }}
-                                icon={<CloseOutlined />}
-                                style={{ borderRadius: 6 }}
-                            >
-                                Reject
-                            </Button>
-                            <Button 
-                                type="primary" 
-                                onClick={() => {
-                                    drawerForm.submit();
-                                }}
-                                loading={submitLoading}
-                                icon={<CheckOutlined />}
-                                style={{ borderRadius: 6 }}
-                            >
-                                Accept
-                            </Button>
-                        </Space>
-                    )
-                }
-                footer={
-                    isMobile && (
-                        <div style={{ display: 'flex', gap: 12, padding: '4px 0' }}>
-                            <Button 
-                                type="primary" 
-                                danger
-                                onClick={() => {
-                                    setIsDetailOpen(false);
-                                    openReviewModal(selectedThesis, 'reject');
-                                }}
-                                icon={<CloseOutlined />}
-                                style={{ flex: 1, borderRadius: 6 }}
-                                size="large"
-                            >
-                                Reject
-                            </Button>
-                            <Button 
-                                type="primary" 
-                                onClick={() => {
-                                    drawerForm.submit();
-                                }}
-                                loading={submitLoading}
-                                icon={<CheckOutlined />}
-                                style={{ flex: 1, borderRadius: 6 }}
-                                size="large"
-                            >
-                                Accept
-                            </Button>
-                        </div>
-                    )
+                    <Space>
+                        <Button 
+                            type="primary" 
+                            danger
+                            onClick={() => {
+                                setIsDetailOpen(false);
+                                openReviewModal(selectedThesis, 'reject');
+                            }}
+                            icon={<CloseOutlined />}
+                            style={{ borderRadius: 6 }}
+                        >
+                            Reject
+                        </Button>
+                        <Button 
+                            type="primary" 
+                            onClick={() => {
+                                drawerForm.submit();
+                            }}
+                            loading={submitLoading}
+                            icon={<CheckOutlined />}
+                            style={{ borderRadius: 6 }}
+                        >
+                            Accept
+                        </Button>
+                    </Space>
                 }
             >
                 {selectedThesis ? (
-                    <Tabs
-                        defaultActiveKey="1"
-                        style={{ height: '100%' }}
-                        tabBarStyle={{ padding: '0 24px', margin: 0, background: token.colorBgContainer }}
-                        items={[
-                            {
-                                key: '1',
-                                label: 'Overview',
-                                children: (
-                                    <Form form={drawerForm} layout="vertical" onFinish={handleDrawerAcceptSubmit}>
-                                        <div style={{ padding: 24, overflowY: 'auto', height: 'calc(100vh - 110px)' }}>
-                                            <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-                                            <Col xs={24} lg={12}>
-                                                <Card size="small" variant="borderless" style={{ background: token.colorFillAlter, borderRadius: 12, height: '100%' }}>
-                                                    <Descriptions title={<Space><FileTextOutlined style={{ fontSize: 16 }} /> <Text strong>Submission Details</Text></Space>} column={1} size="small" styles={{ label: { color: token.colorTextSecondary } }} layout={isMobile ? 'vertical' : 'horizontal'}>
-                                                        <Descriptions.Item label="Reference ID"><Text code>{(selectedThesis?.key || '').split('-')[0].toUpperCase()}</Text></Descriptions.Item>
-                                                        <Descriptions.Item label="Submission Date">
-                                                            <Space size={4}>
-                                                                <Calendar size={14} />
-                                                                <Text>{selectedThesis.submissionDate ? new Date(selectedThesis.submissionDate).toLocaleDateString() : 'N/A'}</Text>
-                                                            </Space>
-                                                        </Descriptions.Item>
-                                                        <Descriptions.Item label="DOI"><Text>{selectedThesis.doi || 'N/A'}</Text></Descriptions.Item>
-                                                        <Descriptions.Item label="Visibility">
-                                                            <Badge status={selectedThesis.isConfidential ? "warning" : "success"} text={selectedThesis.isConfidential ? "Confidential" : "Public"} />
-                                                        </Descriptions.Item>
-                                                        <Descriptions.Item label="Degree Type"><Tag color="blue" variant="filled">{selectedThesis.degreeType || 'N/A'}</Tag></Descriptions.Item>
-                                                    </Descriptions>
-                                                </Card>
-                                            </Col>
-                                            <Col xs={24} lg={12}>
-                                                <Card size="small" variant="borderless" style={{ background: token.colorFillAlter, borderRadius: 12, height: '100%' }}>
-                                                    <Descriptions title={<Space><BookOpen size={16} /> <Text strong>Author & Affiliation</Text></Space>} column={1} size="small" styles={{ label: { color: token.colorTextSecondary } }} layout={isMobile ? 'vertical' : 'horizontal'}>
-                                                        <Descriptions.Item label="Main Author"><Text strong>{selectedThesis.author}</Text></Descriptions.Item>
-                                                        <Descriptions.Item label="Program">
-                                                            <Text>{selectedThesis.discipline || 'N/A'}</Text>
-                                                        </Descriptions.Item>
-                                                        <Descriptions.Item label="Department">
-                                                            <Text type="secondary">{selectedThesis.department || 'N/A'}</Text>
-                                                        </Descriptions.Item>
-                                                        <Descriptions.Item label="Co-Author(s)"><Text>{selectedThesis.co_author || 'N/A'}</Text></Descriptions.Item>
-                                                        <Descriptions.Item label="Panelists"><Text>{selectedThesis.panelists || 'N/A'}</Text></Descriptions.Item>
-                                                    </Descriptions>
-                                                </Card>
-                                            </Col>
-                                        </Row>
-
-                                        <div style={{ marginBottom: 24 }}>
-                                            <Title level={5} style={{ marginBottom: 12 }}>Research Title</Title>
-                                            <Text strong style={{ fontSize: 18, color: primaryColor, display: 'block', lineHeight: 1.4 }}>
-                                                {selectedThesis.title}
-                                            </Text>
-                                        </div>
-
-                                        <div style={{ marginBottom: 24 }}>
-                                            <Title level={5} style={{ marginBottom: 12 }}>Abstract</Title>
-                                            <div style={{ padding: 16, background: '#fff', border: `1px solid ${token.colorBorderSecondary}`, borderRadius: 8, minHeight: 120 }}>
-                                                <Text type="secondary" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-                                                    {selectedThesis.abstract || 'No abstract provided for this thesis.'}
-                                                </Text>
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <Title level={5} style={{ marginBottom: 12 }}>Index Keywords</Title>
-                                            <Space wrap>
-                                                {selectedThesis.keywords && selectedThesis.keywords.length > 0 ? (
-                                                    selectedThesis.keywords.map(kw => (
-                                                        <Tag key={kw} style={{ borderRadius: 4, padding: '2px 10px', margin: '4px 0' }}>{kw}</Tag>
-                                                    ))
-                                                ) : <Text type="secondary" italic>No keywords defined</Text>}
-                                            </Space>
-                                        </div>
-
-                                        <Divider style={{ margin: '32px 0' }} />
-
-                                        <div>
-                                            <Title level={5} style={{ marginBottom: 12 }}>Acceptance Requirements</Title>
-                                            <Text type="secondary" style={{ display: 'block', marginBottom: 20 }}>Please complete the following checklist and details before accepting this research document.</Text>
-                                            
-                                            <div style={{ background: token.colorFillAlter, padding: '20px', borderRadius: 12, border: `1px solid ${token.colorBorderSecondary}`, marginBottom: 24 }}>
-                                                <Form.Item 
-                                                    name="review_checklist" 
-                                                    rules={[{ type: 'array', len: 3, message: 'Please complete all checklist requirements before accepting.' }]}
-                                                    style={{ marginBottom: 16 }}
-                                                >
-                                                    <Checkbox.Group style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                                        <Checkbox value="formatting">Formatting and structure verified</Checkbox>
-                                                        <Checkbox value="plagiarism">Plagiarism / Originality checked and verified</Checkbox>
-                                                        <Checkbox value="references">References and Citations reviewed</Checkbox>
-                                                    </Checkbox.Group>
-                                                </Form.Item>
-
-                                                <Divider style={{ margin: '16px 0' }} />
-
-                                                <Text type="secondary" strong style={{ display: 'block', marginBottom: 8 }}>E-Signature Authorization</Text>
-                                                <Form.Item
-                                                    name="e_signature"
-                                                    rules={[{ required: true, message: 'Please provide an e-signature to proceed.' }]}
-                                                    style={{ marginBottom: 0 }}
-                                                >
-                                                    <SignaturePad />
-                                                </Form.Item>
+                    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                        <div style={{ flex: 1, overflow: 'hidden' }}>
+                            {screens.lg ? (
+                                // Split View for Desktop
+                                <Row style={{ height: '100%' }}>
+                                    <Col span={10} style={{ height: '100%', overflowY: 'auto', borderRight: `1px solid ${token.colorBorderSecondary}`, padding: '24px' }}>
+                                        <Form form={drawerForm} layout="vertical" onFinish={handleDrawerAcceptSubmit}>
+                                            <div style={{ marginBottom: 24 }}>
+                                                <Tag color={selectedThesis.isConfidential ? "warning" : "success"} style={{ marginBottom: 12 }}>
+                                                    {selectedThesis.isConfidential ? "Private Archive" : "Publicly Archive"}
+                                                </Tag>
+                                                <Title level={4} style={{ margin: 0, lineHeight: 1.4 }}>{selectedThesis.title}</Title>
+                                                <Text type="secondary">Submitted on {selectedThesis.submissionDate ? new Date(selectedThesis.submissionDate).toLocaleDateString() : 'N/A'}</Text>
                                             </div>
 
-                                            <Row gutter={16}>
-                                                <Col xs={24} md={12}>
-                                                    <Form.Item name="recommended_by" label={<Text type="secondary" strong>Recommended By</Text>} rules={[{ required: true, message: 'Please specify the recommender.' }]}>
-                                                        <Input placeholder="Enter recommender's name" size="large" />
-                                                    </Form.Item>
-                                                </Col>
-                                                <Col xs={24} md={12}>
-                                                    <Form.Item name="archived_by" label={<Text type="secondary" strong>Archived By / Archive Handler</Text>} rules={[{ required: true, message: 'Please specify who is archiving this.' }]}>
-                                                        <Input placeholder="Enter archiver's name" size="large" />
-                                                    </Form.Item>
-                                                </Col>
-                                            </Row>
-                                        </div>
-                                    </div>
-                                    </Form>
-                                )
-                            },
-                            {
-                                key: '2',
-                                label: 'Full Document (PDF)',
-                                children: (
-                                    <div style={{ height: 'calc(100vh - 110px)', position: 'relative' }}>
-                                        {selectedThesis.hasPdf ? (
-                                            <div style={{ height: '100%', position: 'relative' }}>
-                                                <div style={{ position: 'absolute', top: 12, right: 24, zIndex: 10 }}>
-                                                    <Button 
-                                                        icon={<LinkOutlined />} 
-                                                        size="small" 
-                                                        href={selectedThesis.pdfUrl} 
-                                                        target="_blank"
-                                                        type="text"
-                                                        style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid #ddd' }}
-                                                    >
-                                                        Open Full
-                                                    </Button>
-                                                </div>
+                                            <Card size="small" variant="borderless" style={{ background: token.colorFillAlter, borderRadius: 12, marginBottom: 24 }}>
+                                                <Descriptions title={<Space><UserOutlined /> <Text strong>Author Info</Text></Space>} column={1} size="small">
+                                                    <Descriptions.Item label="Main Author"><Text strong>{selectedThesis.author}</Text></Descriptions.Item>
+                                                    <Descriptions.Item label="Program">{selectedThesis.discipline || 'N/A'}</Descriptions.Item>
+                                                    <Descriptions.Item label="Department">{selectedThesis.department || 'N/A'}</Descriptions.Item>
+                                                    <Descriptions.Item label="DOI"><Text code>{selectedThesis.doi || 'N/A'}</Text></Descriptions.Item>
+                                                </Descriptions>
+                                            </Card>
+
+                                            <div style={{ marginBottom: 24 }}>
+                                                <Title level={5}>Abstract</Title>
+                                                <Paragraph type="secondary" style={{ whiteSpace: 'pre-wrap', fontSize: 13 }}>
+                                                    {selectedThesis.abstract || 'No abstract provided.'}
+                                                </Paragraph>
+                                            </div>
+
+                                            <Divider />
+
+                                            <Title level={5}>Acceptance Checklist</Title>
+                                            <Form.Item 
+                                                name="review_checklist" 
+                                                rules={[{ type: 'array', len: 3, message: 'Complete checklist before accepting.' }]}
+                                            >
+                                                <Checkbox.Group style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                                    <Checkbox value="formatting">Formatting verified</Checkbox>
+                                                    <Checkbox value="plagiarism">Plagiarism checked</Checkbox>
+                                                    <Checkbox value="references">References reviewed</Checkbox>
+                                                </Checkbox.Group>
+                                            </Form.Item>
+
+                                            <Form.Item name="e_signature" label="E-Signature Authorization" rules={[{ required: true }]}>
+                                                <SignaturePad />
+                                            </Form.Item>
+
+                                            <Form.Item name="recommended_by" label="Recommended By" rules={[{ required: true }]}>
+                                                <Input placeholder="Approver Name" />
+                                            </Form.Item>
+
+                                            <Form.Item name="archived_by" label="Archived By" rules={[{ required: true }]}>
+                                                <Input placeholder="Handler Name" />
+                                            </Form.Item>
+                                        </Form>
+                                    </Col>
+                                    <Col span={14} style={{ height: '100%', background: '#525659' }}>
+                                        <div style={{ height: '100%', position: 'relative', display: 'flex', flexDirection: 'column' }}>
+                                            <div style={{ background: '#323639', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <Space>
+                                                    <FilePdfOutlined style={{ color: '#ff4d4f', fontSize: 18 }} />
+                                                    <Text style={{ color: '#fff', fontSize: 14 }}>{selectedThesis.pdfName || 'Thesis Catalog'}</Text>
+                                                </Space>
+                                                <Button 
+                                                    icon={<LinkOutlined />} 
+                                                    size="small" 
+                                                    href={selectedThesis.pdfUrl} 
+                                                    target="_blank"
+                                                    ghost
+                                                    style={{ fontSize: 12 }}
+                                                >
+                                                    Open Fullscreen
+                                                </Button>
+                                            </div>
+                                            {selectedThesis.hasPdf ? (
                                                 <iframe 
                                                     src={selectedThesis.pdfUrl} 
                                                     width="100%" 
                                                     height="100%" 
                                                     style={{ border: 'none' }}
-                                                    title="PDF Preview"
+                                                    title="PDF Catalog"
                                                 />
-                                            </div>
-                                        ) : (
-                                            <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                <Empty 
-                                                    image={Empty.PRESENTED_IMAGE_SIMPLE} 
-                                                    description={
-                                                        <Space direction="vertical" align="center">
-                                                            <Text type="secondary">No PDF document attached to this thesis.</Text>
-                                                            <Button type="primary" ghost size="small">Request Document</Button>
-                                                        </Space>
-                                                    } 
-                                                />
-                                            </div>
-                                        )}
-                                    </div>
-                                )
-                            }
-                        ]}
-                    />
+                                            ) : (
+                                                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f0f2f5' }}>
+                                                    <Empty description="No PDF Content Found" />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </Col>
+                                </Row>
+                            ) : (
+                                // Tabbed View for Tablet/Mobile
+                                <Tabs
+                                    defaultActiveKey="1"
+                                    style={{ height: '100%' }}
+                                    tabBarStyle={{ padding: '0 24px', margin: 0, background: token.colorBgContainer }}
+                                    items={[
+                                        {
+                                            key: '1',
+                                            label: 'Overview & Approval',
+                                            children: (
+                                                <div style={{ padding: 24, overflowY: 'auto', height: 'calc(100vh - 180px)' }}>
+                                                     <Form form={drawerForm} layout="vertical" onFinish={handleDrawerAcceptSubmit}>
+                                                        <Title level={4}>{selectedThesis.title}</Title>
+                                                        <Descriptions column={1} size="small" style={{ marginBottom: 20 }}>
+                                                            <Descriptions.Item label="Author">{selectedThesis.author}</Descriptions.Item>
+                                                            <Descriptions.Item label="Dept">{selectedThesis.department}</Descriptions.Item>
+                                                        </Descriptions>
+                                                        <Divider />
+                                                        <Title level={5}>Checklist</Title>
+                                                        <Form.Item name="review_checklist" rules={[{ type: 'array', len: 3 }]}>
+                                                            <Checkbox.Group style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                                                <Checkbox value="formatting">Formatting verified</Checkbox>
+                                                                <Checkbox value="plagiarism">Plagiarism checked</Checkbox>
+                                                                <Checkbox value="references">References reviewed</Checkbox>
+                                                            </Checkbox.Group>
+                                                        </Form.Item>
+                                                        <Form.Item name="e_signature" label="E-Signature" rules={[{ required: true }]}>
+                                                            <SignaturePad />
+                                                        </Form.Item>
+                                                        <Form.Item name="recommended_by" label="Recommended By" rules={[{ required: true }]}>
+                                                            <Input />
+                                                        </Form.Item>
+                                                        <Form.Item name="archived_by" label="Archived By" rules={[{ required: true }]}>
+                                                            <Input />
+                                                        </Form.Item>
+                                                    </Form>
+                                                </div>
+                                            )
+                                        },
+                                        {
+                                            key: '2',
+                                            label: 'PDF content',
+                                            children: (
+                                                <div style={{ height: 'calc(100vh - 180px)' }}>
+                                                    {selectedThesis.hasPdf ? (
+                                                        <iframe src={selectedThesis.pdfUrl} width="100%" height="100%" style={{ border: 'none' }} />
+                                                    ) : <Empty style={{ marginTop: 60 }} />}
+                                                </div>
+                                            )
+                                        }
+                                    ]}
+                                />
+                            )}
+                        </div>
+                    </div>
                 ) : (
                     <div style={{ padding: 40, textAlign: 'center' }}>
                         <Skeleton active />
