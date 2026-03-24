@@ -42,6 +42,32 @@
     .mobile-nav-btn { display: flex !important; }
 }
 
+.nav-item {
+    transition: all 0.3s ease;
+    position: relative;
+    opacity: 0.8;
+}
+
+.nav-item:hover {
+    opacity: 1;
+    transform: translateY(-1px);
+}
+
+.nav-item.active {
+    opacity: 1;
+}
+
+.why-archive-slider {
+    .slick-dots li button {
+        background: #000 !important;
+        opacity: 0.2;
+    }
+    .slick-dots li.slick-active button {
+        background: var(--primary-color, #2845D6) !important;
+        opacity: 1;
+    }
+}
+
 .archive-tile-bg {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
