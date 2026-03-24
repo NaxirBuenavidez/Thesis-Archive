@@ -14,6 +14,12 @@ import SystemManager from './public/pages/SystemSettings/pageSystemManager';
 import Reports from './public/pages/SystemSettings/pageReports';
 import Login from './public/pages/pageLogin';
 import PublicArchive from './public/pages/pagePublicArchive';
+import UserManual from './public/pages/Archive/SubPages/UserManual';
+import ResearchPolicy from './public/pages/Archive/SubPages/ResearchPolicy';
+import SubmissionGuide from './public/pages/Archive/SubPages/SubmissionGuide';
+import GeneralAccessFAQ from './public/pages/Archive/SubPages/GeneralAccessFAQ';
+import SubmissionFAQ from './public/pages/Archive/SubPages/SubmissionFAQ';
+import AccountHelp from './public/pages/Archive/SubPages/AccountHelp';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 
@@ -136,6 +142,12 @@ const router = createBrowserRouter([
                 path: "/archive",
                 element: <PublicArchive />,
             },
+            { path: "/user-manual", element: <UserManual /> },
+            { path: "/research-policy", element: <ResearchPolicy /> },
+            { path: "/submission-guide", element: <SubmissionGuide /> },
+            { path: "/general-access-faq", element: <GeneralAccessFAQ /> },
+            { path: "/submission-faq", element: <SubmissionFAQ /> },
+            { path: "/account-help", element: <AccountHelp /> },
             {
                 path: "/",
                 element: <ProtectedRoute><PublicLayout><Outlet /></PublicLayout></ProtectedRoute>,
