@@ -342,11 +342,12 @@ export default function Login() {
                 '--login-theme-color': primaryColor
             }}
         >
-            {init && (
-                {/* {init && (
-                    <Particles id="tsparticles" options={particlesConfig} />
-                )} */}
-            )}
+            {/* {init && (
+                <Particles
+                    id="tsparticles"
+                    options={particlesConfig}
+                />
+            )} */}
 
             <div className="login-card">
                 {/* ── Logo + Branding ── */}
