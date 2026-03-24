@@ -98,7 +98,7 @@ const GuidesSection = ({ primaryColor, primaryDark }) => {
     ];
 
     return (
-        <div id="sec_guides" style={{ padding: '100px 5%', background: '#fff', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+        <div id="guides" style={{ padding: '100px 5%', background: '#fff', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
             <div style={{ maxWidth: 1400, margin: '0 auto' }}>
                 <SectionHeading 
                     icon={<BookOutlined />} 
@@ -185,7 +185,7 @@ const GuidesSection = ({ primaryColor, primaryDark }) => {
 
 const ComplianceSection = ({ primaryColor, primaryDark }) => {
     return (
-        <div id="sec_compliance" style={{ padding: '80px 5%', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+        <div id="privacy" style={{ padding: '80px 5%', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
             <div style={{ maxWidth: 1000, margin: '0 auto' }}>
                 <SectionHeading 
                     icon="/images/npc-logo.png" 
@@ -254,63 +254,21 @@ export default function PublicArchive() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [viewThesis, setViewThesis] = useState(null);
-    const [activeSection, setActiveSection] = useState('sec_home');
     const [currentPage, setCurrentPage] = useState(1);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [particlesInitState, setParticlesInitState] = useState(false);
     const isManualScroll = useRef(false);
-    const activeSectionRef = useRef('sec_home');
     const pageSize = 12;
 
     const navItems = React.useMemo(() => [
-        { label: 'Home', id: 'sec_home', icon: <GlobalOutlined /> },
-        { label: 'Search', id: 'sec_search', icon: <SearchOutlined /> },
-        { label: 'Research Categories', id: 'sec_categories', icon: <BookOutlined /> },
-        { label: 'Manual & Guides', id: 'sec_guides', icon: <ReadOutlined /> },
-        { label: 'Compliance & Privacy', id: 'sec_compliance', icon: <SafetyCertificateOutlined /> },
+        { label: 'Home', id: 'home', icon: <GlobalOutlined /> },
+        { label: 'Search', id: 'search', icon: <SearchOutlined /> },
+        { label: 'Research Categories', id: 'categories', icon: <BookOutlined /> },
+        { label: 'Manual & Guides', id: 'guides', icon: <ReadOutlined /> },
+        { label: 'Compliance & Privacy', id: 'privacy', icon: <SafetyCertificateOutlined /> },
     ], []);
 
-    useEffect(() => {
-        console.log('[DEBUG] Active Section Changed:', activeSection);
-    }, [activeSection]);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            if (isManualScroll.current) return;
-            
-            const currentScroll = window.scrollY || window.pageYOffset;
-            const scrollThreshold = currentScroll + 150;
-            
-            let current = 'sec_home';
-            
-            for (const item of navItems) {
-                const el = document.getElementById(item.id);
-                if (el) {
-                    const rect = el.getBoundingClientRect();
-                    const top = rect.top + currentScroll;
-                    if (scrollThreshold >= top) {
-                        current = item.id;
-                    } else {
-                        break;
-                    }
-                }
-            }
-
-            if (current !== activeSectionRef.current) {
-                console.log(`[NAV] Switching from ${activeSectionRef.current} to ${current}`);
-                activeSectionRef.current = current;
-                setActiveSection(current);
-            }
-        };
-
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        const timer = setTimeout(handleScroll, 150);
-        
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-            clearTimeout(timer);
-        };
-    }, [navItems]);
+    // Navigation tracking removed for stabilization
 
     useEffect(() => {
         initParticlesEngine(async (engine) => {
@@ -447,7 +405,6 @@ export default function PublicArchive() {
                 appName={site_title} 
                 primaryColor={primaryColor} 
                 primaryDark={primaryDark}
-                activeSection={activeSection}
                 navItems={navItems}
                 scrollToSection={scrollToSection}
                 onMobileMenuOpen={() => setMobileMenuOpen(true)}
@@ -532,7 +489,7 @@ export default function PublicArchive() {
                             }}
                             style={{ cursor: 'pointer', border: 'none', padding: '16px 0' }}
                         >
-                            <Space style={{ color: String(activeSection) === String(item.id) ? primaryColor : '#555', fontWeight: String(activeSection) === String(item.id) ? 600 : 400 }}>
+                            <Space style={{ color: '#555', fontWeight: 400 }}>
                                 {item.icon}
                                 {item.label}
                             </Space>
