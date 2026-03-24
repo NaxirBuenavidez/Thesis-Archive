@@ -18,6 +18,12 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
+        Log::info('[AUTH] Login attempt', [
+            'email' => $request->email,
+            'ip' => $request->ip(),
+            'ua' => $request->userAgent()
+        ]);
+
         $credentials = $request->validate([
             'email'         => ['required', 'email'],
             'password'      => ['required'],
