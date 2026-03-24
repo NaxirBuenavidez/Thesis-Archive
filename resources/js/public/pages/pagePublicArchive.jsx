@@ -145,6 +145,22 @@ const GuidesSection = ({ primaryColor, primaryDark }) => {
                     </Row>
                 )}
             </div>
+            <div style={{ maxWidth: 1000, margin: '60px auto 0', padding: '40px', background: '#f8fafc', borderRadius: 24, border: '1px solid rgba(0,0,0,0.02)' }}>
+                <Row gutter={[32, 32]} align="middle">
+                    <Col xs={24} md={12}>
+                        <h4 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16 }}>Why use the Archive?</h4>
+                        <ul style={{ paddingLeft: 20, color: '#666', lineHeight: 1.8 }}>
+                            <li>Centralized repository for institutional research.</li>
+                            <li>Instant access to abstracts and metadata for scholars.</li>
+                            <li>Enhanced visibility for student and faculty work.</li>
+                            <li>Standards-compliant digital archival for long-term use.</li>
+                        </ul>
+                    </Col>
+                    <Col xs={24} md={12} style={{ textAlign: 'center' }}>
+                        <AntText type="secondary" style={{ fontStyle: 'italic' }}>"Advancing academic transparency through digital innovation."</AntText>
+                    </Col>
+                </Row>
+            </div>
         </div>
     );
 };
@@ -184,7 +200,23 @@ const PrivacySection = ({ primaryColor, primaryDark }) => {
                         </Row>
                     </div>
                     <div style={{ textAlign: 'center', borderTop: '1px solid rgba(0,0,0,0.05)', paddingTop: 40, width: '100%' }}>
-                        <img src="/images/npc-logo.png" alt="NPC Seal" style={{ height: 120, objectFit: 'contain', filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.1))' }} />
+                        <Row gutter={[20, 20]} justify="center" align="middle">
+                            <Col xs={12} md={8}>
+                                <div style={{ textAlign: 'center' }}>
+                                    <AntText strong style={{ display: 'block', fontSize: 12 }}>TRANSPARENCY</AntText>
+                                    <AntText type="secondary" style={{ fontSize: 11 }}>Clear data usage policies.</AntText>
+                                </div>
+                            </Col>
+                            <Col xs={12} md={8}>
+                                <img src="/images/npc-logo.png" alt="NPC Seal" style={{ height: 100, objectFit: 'contain', filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.1))' }} />
+                            </Col>
+                            <Col xs={12} md={8}>
+                                <div style={{ textAlign: 'center' }}>
+                                    <AntText strong style={{ display: 'block', fontSize: 12 }}>LEGITIMACY</AntText>
+                                    <AntText type="secondary" style={{ fontSize: 11 }}>Strict academic purpose.</AntText>
+                                </div>
+                            </Col>
+                        </Row>
                         <AntText strong style={{ display: 'block', marginTop: 16, fontSize: 14, color: '#666', letterSpacing: 1 }}>NPC COMPLIANT SYSTEM</AntText>
                     </div>
                 </div>
@@ -258,7 +290,14 @@ export default function PublicArchive() {
         setActiveSection(id);
         const element = document.getElementById(id);
         if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
+            const headerOffset = 85; 
+            const elementPosition = element.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
         }
     }, []);
 
