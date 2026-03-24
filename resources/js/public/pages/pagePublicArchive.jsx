@@ -259,6 +259,7 @@ export default function PublicArchive() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [particlesInitState, setParticlesInitState] = useState(false);
     const isManualScroll = useRef(false);
+    const visibleSections = useRef(new Set());
     const pageSize = 12;
 
     const navItems = React.useMemo(() => [
@@ -275,10 +276,27 @@ export default function PublicArchive() {
             
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    setActiveSection(entry.target.id);
+                    visibleSections.current.add(entry.target.id);
+                } else {
+                    visibleSections.current.delete(entry.target.id);
                 }
             });
-        }, { threshold: 0.2, rootMargin: '-85px 0px -50% 0px' });
+
+            const visible = Array.from(visibleSections.current);
+            if (visible.length > 0) {
+                const elements = visible.map(id => {
+                    const el = document.getElementById(id);
+                    return el ? { id, rect: el.getBoundingClientRect() } : null;
+                }).filter(Boolean);
+
+                elements.sort((a, b) => a.rect.top - b.rect.top);
+                const best = elements[0].id;
+                
+                setActiveSection(prev => prev !== best ? best : prev);
+            } else if (window.scrollY < 200) {
+                setActiveSection('home');
+            }
+        }, { threshold: [0, 0.1], rootMargin: '-85px 0px -60% 0px' });
 
         navItems.forEach(item => {
             const el = document.getElementById(item.id);

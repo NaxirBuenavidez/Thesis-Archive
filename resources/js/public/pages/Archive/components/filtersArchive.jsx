@@ -14,7 +14,8 @@ const filtersArchive = ({
     primaryColor
 }) => {
     return (
-        <div id="search" style={{ padding: 'clamp(40px, 6vw, 60px) 5%', maxWidth: 1400, margin: '0 auto' }}>
+        <div style={{ padding: 'clamp(40px, 6vw, 60px) 5%', maxWidth: 1400, margin: '0 auto' }}>
+            <div id="search" style={{ position: 'relative', top: -100 }} />
             <div id="categories" style={{ marginBottom: 40 }}>
                 <Title level={3} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
                     <BookOutlined style={{ color: primaryColor }} /> Research Categories
