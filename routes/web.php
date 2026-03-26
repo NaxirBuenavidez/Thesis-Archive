@@ -112,37 +112,54 @@ Route::middleware('auth:web')->group(function () {
 
 
 Route::get('/{any}', function (Illuminate\Http\Request $request) {
-    // Use the same consolidated logic for the initial boot data in the view
-    $meta = \Illuminate\Support\Facades\Cache::remember('system_boot_meta', 3600, function () {
-        return [
-            'settings'    => \App\Models\Setting::getResolved(),
-            'departments' => \App\Models\Department::all(),
-            'programs'    => \App\Models\Program::all(),
-            'roles'       => \App\Models\Role::all(),
-        ];
-    });
-
-    $bootData = [
-        'settings'      => $meta['settings'],
-        'departments'   => $meta['departments'],
-        'programs'      => $meta['programs'],
-        'roles'         => $meta['roles'],
-        'user'          => null,
-        'notifications' => [],
-        'analytics'     => null,
-    ];
-
-    if ($user = $request->user()) {
-        $bootData['user'] = $user->load('profile', 'role');
-        $bootData['notifications'] = \App\Models\Notification::forUser($user)
-            ->orderByDesc('created_at')
-            ->take(50)
-            ->get();
-            
-        if ($user->role && in_array($user->role->slug, ['spadmin', 'program_head'])) {
-            $bootData['analytics'] = \Illuminate\Support\Facades\Cache::get('dashboard_analytics');
+    try {
+        // Use the same consolidated logic for the initial boot data in the view
+        try {
+            $meta = \Illuminate\Support\Facades\Cache::remember('system_boot_meta', 3600, function () {
+                return [
+                    'settings'    => \App\Models\Setting::getResolved(),
+                    'departments' => \App\Models\Department::all(),
+                    'programs'    => \App\Models\Program::all(),
+                    'roles'       => \App\Models\Role::all(),
+                ];
+            });
+        } catch (\Throwable $e) {
+            // If cache fails (e.g. missing table for database cache driver), fetch directly
+            \Illuminate\Support\Facades\Log::warning("Cache failed in boot: " . $e->getMessage());
+            $meta = [
+                'settings'    => \App\Models\Setting::getResolved(),
+                'departments' => \App\Models\Department::all(),
+                'programs'    => \App\Models\Program::all(),
+                'roles'       => \App\Models\Role::all(),
+            ];
         }
-    }
 
-    return view('welcome', compact('bootData'));
+        $bootData = [
+            'settings'      => $meta['settings'],
+            'departments'   => $meta['departments'],
+            'programs'      => $meta['programs'],
+            'roles'         => $meta['roles'],
+            'user'          => null,
+            'notifications' => [],
+            'analytics'     => null,
+        ];
+
+        if ($user = $request->user()) {
+            $bootData['user'] = $user->load('profile', 'role');
+            $bootData['notifications'] = \App\Models\Notification::forUser($user)
+                ->orderByDesc('created_at')
+                ->take(50)
+                ->get();
+                
+            if ($user->role && in_array($user->role->slug, ['spadmin', 'program_head'])) {
+                $bootData['analytics'] = \Illuminate\Support\Facades\Cache::get('dashboard_analytics');
+            }
+        }
+
+        return view('welcome', compact('bootData'));
+    } catch (\Throwable $e) {
+        // Fallback: If boot data fails, return basic view without boot data to avoid 500
+        \Illuminate\Support\Facades\Log::error("Boot error on root: " . $e->getMessage());
+        return view('welcome');
+    }
 })->where('any', '.*');

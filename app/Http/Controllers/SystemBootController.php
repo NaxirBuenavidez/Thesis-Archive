@@ -19,14 +19,25 @@ class SystemBootController extends Controller
     public function boot(Request $request)
     {
         // 1. Fetch Shared Meta Data (Consolidated Cache)
-        $meta = Cache::remember('system_boot_meta', 3600, function () {
-            return [
+        try {
+            $meta = Cache::remember('system_boot_meta', 3600, function () {
+                return [
+                    'settings'    => Setting::getResolved(),
+                    'departments' => Department::all(),
+                    'programs'    => Program::all(),
+                    'roles'       => Role::all(),
+                ];
+            });
+        } catch (\Throwable $e) {
+            // Fallback for cache failure (e.g. missing database cache table)
+            \Illuminate\Support\Facades\Log::warning("Cache failed in API boot: " . $e->getMessage());
+            $meta = [
                 'settings'    => Setting::getResolved(),
                 'departments' => Department::all(),
                 'programs'    => Program::all(),
                 'roles'       => Role::all(),
             ];
-        });
+        }
 
         $bootData = [
             'settings'      => $meta['settings'],
