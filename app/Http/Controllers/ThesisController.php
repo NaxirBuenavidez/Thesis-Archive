@@ -43,7 +43,7 @@ class ThesisController extends Controller
 
     public function store(StoreThesisRequest $request)
     {
-        $validated = $this->sanitizeThesisData($request->validated());
+        $validated = $request->validated();
         $validated['owner_id'] = $request->user()->id;
 
         if ($request->hasFile('pdf_file')) {
@@ -72,7 +72,7 @@ class ThesisController extends Controller
 
     public function update(UpdateThesisRequest $request, Thesis $thesis)
     {
-        $validated = $this->sanitizeThesisData($request->validated());
+        $validated = $request->validated();
 
         if ($request->hasFile('pdf_file')) {
             if ($thesis->pdf_path) {
@@ -211,27 +211,4 @@ class ThesisController extends Controller
 
         return response()->json(['message' => 'Invalid format requested.'], 400);
     }
-
-    /**
-     * Sanitize thesis data by stripping HTML tags from string fields.
-     */
-    private function sanitizeThesisData(array $data): array
-    {
-        $textFields = [
-            'title', 'author', 'subtitle', 'abstract', 'discipline', 
-            'institution', 'department', 'degree_type', 'co_author', 
-            'panelists', 'recommended_by', 'archived_by'
-        ];
-        
-        foreach ($textFields as $field) {
-            if (isset($data[$field]) && is_string($data[$field])) {
-                $data[$field] = strip_tags($data[$field]);
-                $data[$field] = preg_replace('/\s+/', ' ', $data[$field]);
-                $data[$field] = trim($data[$field]);
-            }
-        }
-
-        return $data;
-    }
 }
-

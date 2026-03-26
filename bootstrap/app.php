@@ -12,6 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->append(\App\Http\Middleware\EnsureSecurityHeaders::class);
+        $middleware->append(\App\Http\Middleware\SanitizeInput::class);
         $middleware->web(append: [
             \App\Http\Middleware\EnsureSingleSession::class,
         ]);
