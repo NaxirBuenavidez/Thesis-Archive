@@ -55,7 +55,20 @@ class ThesisController extends Controller
 
         unset($validated['pdf_file']);
 
+        // --- Idempotency Check ---
+        // Prevents duplicate creation if user double-clicks or browser retries
+        $idempotencyHash = md5($request->user()->id . $validated['title'] . ($validated['author'] ?? ''));
+        if ($existingId = \Illuminate\Support\Facades\Cache::get("idempotency_thesis_{$idempotencyHash}")) {
+            if ($existingThesis = Thesis::find($existingId)) {
+                return (new ThesisResource($existingThesis->load(['owner', 'primarySupervisor'])))
+                    ->additional(['message' => 'Thesis already submitted (Duplicate prevented)']);
+            }
+        }
+
         $thesis = Thesis::create($validated);
+
+        // Store the ID in cache for 5 minutes to prevent duplicates
+        \Illuminate\Support\Facades\Cache::put("idempotency_thesis_{$idempotencyHash}", $thesis->id, 300);
 
         NotificationController::dispatch(
             'new_thesis',
