@@ -21,8 +21,8 @@ export default function GlobalLoader() {
             if (countRef.current === 1) {
                 clearTimeout(timerRef.current);
                 setIsLoading(true);
-                // 350ms delay before showing to avoid flicker on fast (Redis) responses
-                timerRef.current = setTimeout(() => setVisible(true), 50);
+                // 250ms delay before showing to avoid flicker on fast responses
+                timerRef.current = setTimeout(() => setVisible(true), 250);
             }
         };
 

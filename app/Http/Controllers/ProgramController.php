@@ -30,7 +30,7 @@ class ProgramController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        \Illuminate\Support\Facades\Cache::forget('system_programs');
+        \App\Http\Controllers\SystemBootController::clearCache();
         $program = Program::create($validated);
         return response()->json($program->load('department'), 201);
     }
@@ -44,14 +44,14 @@ class ProgramController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        \Illuminate\Support\Facades\Cache::forget('system_programs');
+        \App\Http\Controllers\SystemBootController::clearCache();
         $program->update($validated);
         return response()->json($program->load('department'));
     }
 
     public function destroy(Program $program)
     {
-        \Illuminate\Support\Facades\Cache::forget('system_programs');
+        \App\Http\Controllers\SystemBootController::clearCache();
         $program->delete();
         return response()->json(['message' => 'Program deleted successfully']);
     }

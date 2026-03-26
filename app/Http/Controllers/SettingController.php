@@ -36,7 +36,7 @@ class SettingController extends Controller
             );
         }
 
-        \Illuminate\Support\Facades\Cache::forget('system_settings');
+        \App\Http\Controllers\SystemBootController::clearCache();
         return response()->json(['message' => 'Settings updated successfully', 'settings' => Setting::getResolved()]);
     }
 }

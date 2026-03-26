@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useSystemConfig } from '../../context/SystemConfigContext';
 import { loginArg } from '../../private/api/auth';
 import { handleFormErrors } from '../../utils/formUtils';
+import 'placeholder-loading/dist/css/placeholder-loading.min.css';
 
 const { Title, Text } = Typography;
 
@@ -181,6 +182,32 @@ function injectStyles() {
     styleInjected = true;
 }
 
+const SkeletonLogin = ({ primaryColor }) => (
+    <div className="login-card" style={{ background: '#fff', border: 'none' }}>
+        <div style={{ textAlign: 'center', marginBottom: 28 }}>
+            <div className="login-logo-wrap ph-item" style={{ background: '#f1f5f9', border: 'none', marginBottom: 24, padding: 0 }}>
+                <div className="ph-picture" style={{ height: '100%', width: '100%', borderRadius: 18 }}></div>
+            </div>
+            <div className="ph-item" style={{ background: 'transparent', padding: 0, border: 'none' }}>
+                <div className="ph-col-12" style={{ padding: 0 }}>
+                    <div className="ph-row" style={{ justifyContent: 'center' }}>
+                        <div className="ph-col-8 big" style={{ height: 24, borderRadius: 12 }}></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div className="ph-item" style={{ background: 'transparent', padding: 0, border: 'none' }}>
+            <div className="ph-col-12" style={{ padding: 0 }}>
+                <div className="ph-row">
+                    <div className="ph-col-12" style={{ height: 46, borderRadius: 12, marginBottom: 24 }}></div>
+                    <div className="ph-col-12" style={{ height: 46, borderRadius: 12, marginBottom: 24 }}></div>
+                    <div className="ph-col-12" style={{ height: 48, borderRadius: 12, marginBottom: 16 }}></div>
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
 export default function Login() {
     const { message } = App.useApp();
     const [form] = Form.useForm();
@@ -203,9 +230,6 @@ export default function Login() {
     // Check for error from URL params (e.g. Google OAuth fail)
     const hasError = searchParams.has('error');
 
-    // Show error from URL params (e.g. Google OAuth fail)
-
-
     useEffect(() => {
         if (hasError) {
             const errorMsg = searchParams.get('error');
@@ -224,7 +248,7 @@ export default function Login() {
         setLoading(true);
         setSubmitted(true);
         const token = recaptchaRef.current?.getValue() || '';
-        const skipCaptcha = true; // Temporary deactivation as requested by user // import.meta.env.VITE_SKIP_CAPTCHA === 'true' || import.meta.env.VITE_SKIP_CAPTCHA === true;
+        const skipCaptcha = true;
 
         if (!token && !skipCaptcha) {
             message.error('Please complete the security verification');
@@ -233,15 +257,10 @@ export default function Login() {
             return;
         }
 
-        if (skipCaptcha && !token) {
-            console.warn('[AUTH] Bypassing reCAPTCHA check as VITE_SKIP_CAPTCHA is enabled.');
-        }
-
         try {
             const response = await loginArg({ ...values, captcha_token: token });
             message.success('Login successful');
             
-            // If the response contains the user, we can login immediately
             if (response.data?.user) {
                 login(response.data.user);
             }
@@ -255,10 +274,8 @@ export default function Login() {
                     message.error('Too many login attempts. Please wait a minute before trying again.');
                 } else if (error.response?.data?.message) {
                     message.error(error.response.data.message);
-                } else if (error.response?.data?.errors?.email) {
-                    message.error('Invalid email or password. Please try again.');
                 } else {
-                    message.error('Login failed. Please check your credentials and try again.');
+                    message.error('Login failed. Please check your credentials.');
                 }
             }
             setSubmitted(false);
@@ -272,8 +289,11 @@ export default function Login() {
         window.location.href = `${window.location.origin}/auth/google/redirect`;
     };
 
-    // Don't render login page at all while we check if user is already authenticated
-    if (authLoading) return null;
+    if (authLoading) return (
+        <div className="login-root">
+            <SkeletonLogin primaryColor={primaryColor} />
+        </div>
+    );
 
     // Gradient for shimmer button
     const btnGradient = `linear-gradient(90deg, ${primaryColor} 0%, ${primaryDark} 40%, ${primaryColor} 80%, ${primaryDark} 100%)`;

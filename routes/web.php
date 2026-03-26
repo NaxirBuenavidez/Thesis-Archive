@@ -15,49 +15,7 @@ Route::get('/auth/google/redirect', [AuthController::class, 'redirectToGoogle'])
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
 // Consolidated Boot API — returns branding + user in 1 request to slash load times on Vercel
-Route::get('/api/boot', function (Illuminate\Http\Request $request) {
-    $settings = \Illuminate\Support\Facades\Cache::remember('system_settings', 3600, function () {
-        return \App\Models\Setting::getResolved();
-    });
-
-    $departments = \Illuminate\Support\Facades\Cache::remember('system_departments', 3600, function () {
-        return \App\Models\Department::all();
-    });
-
-    $programs = \Illuminate\Support\Facades\Cache::remember('system_programs', 3600, function () {
-        return \App\Models\Program::all();
-    });
-
-    $roles = \Illuminate\Support\Facades\Cache::remember('system_roles', 3600, function () {
-        return \App\Models\Role::all();
-    });
-
-    $bootData = [
-        'settings'      => $settings,
-        'departments'   => $departments,
-        'programs'      => $programs,
-        'roles'         => $roles,
-        'user'          => null,
-        'notifications' => [],
-        'analytics'     => null,
-    ];
-
-    if ($user = $request->user()) {
-        $bootData['user'] = $user->load('profile', 'role');
-        
-        $bootData['notifications'] = \App\Models\Notification::forUser($user)
-            ->orderByDesc('created_at')
-            ->take(50)
-            ->get();
-            
-        // For admin dashboard, optionally pre-load analytics
-        if ($user->role && in_array($user->role->slug, ['spadmin', 'program_head'])) {
-           $bootData['analytics'] = \Illuminate\Support\Facades\Cache::get('dashboard_analytics');
-        }
-    }
-
-    return response()->json($bootData);
-});
+Route::get('/api/boot', [App\Http\Controllers\SystemBootController::class, 'boot']);
 
 // Public settings endpoint - branding always accessible
 Route::get('/api/settings', [App\Http\Controllers\SettingController::class, 'index']);
@@ -154,29 +112,21 @@ Route::middleware('auth:web')->group(function () {
 
 
 Route::get('/{any}', function (Illuminate\Http\Request $request) {
-    // 1. Fetch Shared Resources (Cached)
-    $settings = \Illuminate\Support\Facades\Cache::remember('system_settings', 3600, function () {
-        return \App\Models\Setting::getResolved();
+    // Use the same consolidated logic for the initial boot data in the view
+    $meta = \Illuminate\Support\Facades\Cache::remember('system_boot_meta', 3600, function () {
+        return [
+            'settings'    => \App\Models\Setting::getResolved(),
+            'departments' => \App\Models\Department::all(),
+            'programs'    => \App\Models\Program::all(),
+            'roles'       => \App\Models\Role::all(),
+        ];
     });
 
-    $departments = \Illuminate\Support\Facades\Cache::remember('system_departments', 3600, function () {
-        return \App\Models\Department::all();
-    });
-
-    $programs = \Illuminate\Support\Facades\Cache::remember('system_programs', 3600, function () {
-        return \App\Models\Program::all();
-    });
-
-    $roles = \Illuminate\Support\Facades\Cache::remember('system_roles', 3600, function () {
-        return \App\Models\Role::all();
-    });
-
-    // 2. Wrap everything in a boot object
     $bootData = [
-        'settings'      => $settings,
-        'departments'   => $departments,
-        'programs'      => $programs,
-        'roles'         => $roles,
+        'settings'      => $meta['settings'],
+        'departments'   => $meta['departments'],
+        'programs'      => $meta['programs'],
+        'roles'         => $meta['roles'],
         'user'          => null,
         'notifications' => [],
         'analytics'     => null,

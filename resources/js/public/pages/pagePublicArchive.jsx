@@ -83,13 +83,9 @@ const SectionSkeleton = ({ cards = 3 }) => (
 );
 
 const GuidesSection = ({ primaryColor, primaryDark }) => {
-    const { user_manual_path, research_policy_path, submission_guide_path } = useSystemConfig();
-    const [isLoading, setIsLoading] = useState(true);
+    const { user_manual_path, research_policy_path, submission_guide_path, loading: configLoading } = useSystemConfig();
     
-    useEffect(() => {
-        const timer = setTimeout(() => setIsLoading(false), 2000);
-        return () => clearTimeout(timer);
-    }, []);
+    const isLoading = configLoading;
 
     const guides = [
         { title: 'User Manual', desc: 'Step-by-step navigation guide.', icon: user_manual_path || '/images/user-manual.png' },
