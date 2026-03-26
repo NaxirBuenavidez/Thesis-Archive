@@ -20,7 +20,11 @@
 
         <!-- Scripts -->
         @viteReactRefresh
-        @vite(['resources/css/app.css', 'resources/js/app.jsx'])
+        @if(file_exists(public_path('build/manifest.json')))
+            @vite(['resources/css/app.css', 'resources/js/app.jsx'])
+        @else
+            <script>console.warn('Vite manifest not found. Please run npm run build.');</script>
+        @endif
     </head>
     <body class="antialiased">
         <div id="app"></div>

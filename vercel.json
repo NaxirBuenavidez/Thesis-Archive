@@ -6,7 +6,7 @@
             "src": "api/index.php",
             "use": "vercel-php@0.6.2",
             "config": {
-                "includeFiles": ["public/**"]
+                "includeFiles": ["public/**", "public/build/**"]
             }
         },
         {
