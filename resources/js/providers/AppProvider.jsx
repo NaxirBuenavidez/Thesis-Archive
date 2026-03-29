@@ -26,6 +26,10 @@ function ThemedApp({ children }) {
                     colorInfo: primary_color,
                     colorWarning: '#fa8c16',
                     borderRadius: 6,
+                    // Override Ant Design's default fontFamily which includes 'Roboto'.
+                    // Without this, browsers attempt to fetch Roboto-Regular.ttf from
+                    // the deploy URL and fail with an OTS font decode error.
+                    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif",
                 },
                 components: {
                     Layout: {

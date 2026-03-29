@@ -1,37 +1,29 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
-use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| This file is the sole entry point for the SPA shell. All API routes
+| (auth, data, settings) are defined in routes/api.php under the /api/*
+| prefix. Do NOT register API or auth routes here.
+|
+*/
 
-// Sanctum CSRF seeding — MUST be called before any stateful POST
-Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show'])
-    ->middleware('web');
-
-// Throttle login to 3 attempts per minute per IP to prevent brute-force
-Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:3,1');
-Route::get('/auth/google/redirect', [AuthController::class, 'redirectToGoogle']);
-Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
-
-// Consolidated Boot API — returns branding + user in 1 request to slash load times on Vercel
-Route::get('/api/boot', [App\Http\Controllers\SystemBootController::class, 'boot']);
-
-// Public settings endpoint - branding always accessible
-Route::get('/api/settings', [App\Http\Controllers\SettingController::class, 'index']);
-
-// Public Thesis Archive Repository
-Route::get('/api/public/theses', [App\Http\Controllers\ThesisController::class, 'publicIndex'])->name('theses.publicIndex');
-
-// S3 Image Proxy Fallback
-// Image Proxy with S3 to Local fallback for Vercel
+// S3 → Local image proxy (must be web middleware for session/cookie context)
 Route::get('/images/{filename}', function ($filename) {
-    // 1. Try S3 first (User uploaded assets/branding)
+    // 1. Try S3 first (user-uploaded assets/branding)
     if (env('FILESYSTEM_DISK') === 's3' && \Illuminate\Support\Facades\Storage::disk('s3')->exists($filename)) {
         return \Illuminate\Support\Facades\Storage::disk('s3')->response($filename);
     }
-    
-    // 2. Fallback to Local Public (Static system assets like npc-logo.png)
+
+    // 2. Fallback to local public (static system assets)
     $localPath = public_path('images/' . $filename);
     if (file_exists($localPath)) {
         return response()->file($localPath);
@@ -40,99 +32,23 @@ Route::get('/images/{filename}', function ($filename) {
     abort(404);
 })->where('filename', '.*');
 
-Route::get('/debug-env', function () {
-    return response()->json([
-        'APP_KEY' => env('APP_KEY') ? 'EXISTS' : 'CRITICAL: MISSING',
-        'APP_ENV' => env('APP_ENV'),
-        'APP_DEBUG' => env('APP_DEBUG'),
-        'DB_CONNECTION' => env('DB_CONNECTION'),
-        'DB_HOST' => env('DB_HOST') ? env('DB_HOST') : 'CRITICAL: MISSING',
-        'FILESYSTEM_DISK' => env('FILESYSTEM_DISK'),
-        'CACHE_STORE' => env('CACHE_STORE'),
-        'SESSION_DRIVER' => env('SESSION_DRIVER'),
-        'AWS_URL' => env('AWS_URL') ? 'EXISTS' : 'MISSING',
-    ]);
-});
-
-Route::get('/debug-auth', function () {
-    $admin = \App\Models\User::where('email', 'admin@admin.com')->first();
-    return response()->json([
-        'admin_exists' => $admin ? true : false,
-        'admin_role' => $admin ? $admin->role?->slug : null,
-        'roles_count' => \App\Models\Role::count(),
-        'users_count' => \App\Models\User::count(),
-        'current_session_driver' => config('session.driver'),
-    ]);
-});
-
-Route::middleware('auth:web')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/api/user', function (Illuminate\Http\Request $request) {
-        return $request->user()->load('profile', 'role');
-    });
-    
-    Route::post('/api/profile', [App\Http\Controllers\ProfileController::class, 'update']);
-    Route::post('/api/profile/avatar', [App\Http\Controllers\ProfileController::class, 'uploadAvatar']);
-    Route::post('/api/profile/account', [App\Http\Controllers\ProfileController::class, 'updateAccount']);
-    Route::post('/api/profile/verify-password', [App\Http\Controllers\ProfileController::class, 'verifyPassword']);
-
-    // Educational Background Routes
-    Route::get('/api/education', [App\Http\Controllers\EducationController::class, 'index']);
-    Route::post('/api/education', [App\Http\Controllers\EducationController::class, 'store']);
-    Route::put('/api/education/{education}', [App\Http\Controllers\EducationController::class, 'update']);
-    Route::delete('/api/education/{education}', [App\Http\Controllers\EducationController::class, 'destroy']);
-
-    // User Management Routes
-    Route::get('/api/users', [App\Http\Controllers\UserController::class, 'index']);
-    Route::post('/api/users', [App\Http\Controllers\UserController::class, 'store']);
-    Route::get('/api/roles', [App\Http\Controllers\UserController::class, 'getRoles']);
-
-    // Thesis Management Routes
-    Route::apiResource('/api/theses', App\Http\Controllers\ThesisController::class);
-    Route::post('/api/theses/bulk-delete', [App\Http\Controllers\ThesisController::class, 'bulkDelete']);
-    Route::patch('/api/theses/{thesis}/review', [App\Http\Controllers\ThesisController::class, 'review']);
-    Route::patch('/api/theses/{thesis}/publish', [App\Http\Controllers\ThesisController::class, 'publish']);
-    Route::patch('/api/theses/{thesis}/toggle-confidential', [App\Http\Controllers\ThesisController::class, 'toggleConfidential']);
-    Route::post('/api/theses/{thesis}/download', [App\Http\Controllers\ThesisController::class, 'download']);
-
-    // Dashboard Analytics
-    Route::get('/api/dashboard/analytics', [App\Http\Controllers\DashboardController::class, 'analytics']);
-
-    // System Settings Routes
-    Route::post('/api/settings', [App\Http\Controllers\SettingController::class, 'update']);
-    Route::apiResource('/api/departments', App\Http\Controllers\DepartmentController::class);
-    Route::get('/api/senior-high-programs', [App\Http\Controllers\ProgramController::class, 'seniorHigh']);
-    Route::apiResource('/api/programs', App\Http\Controllers\ProgramController::class);
-
-    // Notification Routes
-    Route::get('/api/notifications', [App\Http\Controllers\NotificationController::class, 'index']);
-    Route::post('/api/notifications/mark-read', [App\Http\Controllers\NotificationController::class, 'markRead']);
-    Route::post('/api/notifications/{id}/mark-read', [App\Http\Controllers\NotificationController::class, 'markOne']);
-});
-
-
-Route::get('/{any}', function (Illuminate\Http\Request $request) {
+/**
+ * SPA catch-all — serves the React shell for every non-API, non-asset route.
+ *
+ * Boot data is injected as window.__boot_data to eliminate a separate /api/boot
+ * round-trip on the first paint, significantly reducing Time to Interactive.
+ */
+Route::get('/{any}', function (Request $request) {
     try {
-        // Use the same consolidated logic for the initial boot data in the view
-        try {
-            $meta = \Illuminate\Support\Facades\Cache::remember('system_boot_meta', 3600, function () {
-                return [
-                    'settings'    => \App\Models\Setting::getResolved(),
-                    'departments' => \App\Models\Department::all(),
-                    'programs'    => \App\Models\Program::all(),
-                    'roles'       => \App\Models\Role::all(),
-                ];
-            });
-        } catch (\Throwable $e) {
-            // If cache fails (e.g. missing table for database cache driver), fetch directly
-            \Illuminate\Support\Facades\Log::warning("Cache failed in boot: " . $e->getMessage());
-            $meta = [
+        // Load meta (settings, dept, programs, roles) from cache (1h TTL)
+        $meta = Cache::remember('system_boot_meta', 3600, function () {
+            return [
                 'settings'    => \App\Models\Setting::getResolved(),
                 'departments' => \App\Models\Department::all(),
                 'programs'    => \App\Models\Program::all(),
                 'roles'       => \App\Models\Role::all(),
             ];
-        }
+        });
 
         $bootData = [
             'settings'      => $meta['settings'],
@@ -144,22 +60,25 @@ Route::get('/{any}', function (Illuminate\Http\Request $request) {
             'analytics'     => null,
         ];
 
+        // Authenticated-only data — skip for public routes to save DB queries
         if ($user = $request->user()) {
             $bootData['user'] = $user->load('profile', 'role');
             $bootData['notifications'] = \App\Models\Notification::forUser($user)
                 ->orderByDesc('created_at')
                 ->take(50)
                 ->get();
-                
+
             if ($user->role && in_array($user->role->slug, ['spadmin', 'program_head'])) {
-                $bootData['analytics'] = \Illuminate\Support\Facades\Cache::get('dashboard_analytics');
+                $bootData['analytics'] = Cache::get('dashboard_analytics');
             }
         }
 
         return view('welcome', compact('bootData'));
     } catch (\Throwable $e) {
-        // Fallback: If boot data fails, return basic view without boot data to avoid 500
-        \Illuminate\Support\Facades\Log::error("Boot error on root: " . $e->getMessage());
+        // Fallback: serve the SPA shell without boot data rather than returning a 500
+        Log::error('[BOOT] Failed to build boot data: ' . $e->getMessage(), [
+            'file' => $e->getFile() . ':' . $e->getLine(),
+        ]);
         return view('welcome');
     }
 })->where('any', '.*');

@@ -32,6 +32,27 @@
                     "value": "no-cache, no-store, must-revalidate"
                 }
             ]
+        },
+        {
+            "source": "/(.+).ttf",
+            "headers": [
+                { "key": "Content-Type", "value": "font/truetype" },
+                { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+            ]
+        },
+        {
+            "source": "/(.+).woff",
+            "headers": [
+                { "key": "Content-Type", "value": "font/woff" },
+                { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+            ]
+        },
+        {
+            "source": "/(.+).woff2",
+            "headers": [
+                { "key": "Content-Type", "value": "font/woff2" },
+                { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+            ]
         }
     ],
 
