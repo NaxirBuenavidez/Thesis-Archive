@@ -32,6 +32,13 @@ Route::get('/images/{filename}', function ($filename) {
     abort(404);
 })->where('filename', '.*');
 
+// ── Font Shielding ──
+// Explicitly 404 common font extensions BEFORE the SPA catch-all to prevent
+// 'invalid sfntVersion' errors caused by the server returning HTML instead of a font.
+Route::get('/{any}', function () {
+    abort(404);
+})->where('any', '.*\.(ttf|woff2?|eot|otf)$');
+
 /**
  * SPA catch-all — serves the React shell for every non-API, non-asset route.
  *
