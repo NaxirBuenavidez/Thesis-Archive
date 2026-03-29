@@ -83,15 +83,12 @@ class ProfileController extends Controller
         if ($request->hasFile('avatar')) {
             $file = $request->file('avatar');
 
-            // Delete old avatar from local storage if it was stored locally (legacy)
             if ($profile->avatar && !str_starts_with($profile->avatar, 'http') && !str_starts_with($profile->avatar, 'data:image')) {
                 Storage::disk('public')->delete($profile->avatar);
             }
 
-            // Upload the new image to Cloudflare R2 (S3 disk)
             $path = $file->store('avatars', 's3');
             
-            // Save the raw path to the database
             $profile->update(['avatar' => $path]);
         }
 

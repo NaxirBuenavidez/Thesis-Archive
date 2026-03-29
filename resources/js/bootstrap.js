@@ -46,7 +46,7 @@ window.axios.interceptors.response.use(
         // Handle CSRF Token Mismatch (419) with a single retry
         if (error.response && error.response.status === 419 && !originalRequest._retry) {
             originalRequest._retry = true;
-            return axios.get('/sanctum/csrf-cookie', { silent: originalRequest.silent }).then(() => {
+            return axios.get('/api/sanctum/csrf-cookie', { silent: originalRequest.silent }).then(() => {
                 return axios(originalRequest);
             });
         }

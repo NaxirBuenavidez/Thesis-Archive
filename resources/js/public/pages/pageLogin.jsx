@@ -286,7 +286,7 @@ export default function Login() {
     };
 
     const handleGoogleLogin = () => {
-        window.location.href = `${window.location.origin}/auth/google/redirect`;
+        window.location.href = `${window.location.origin}/api/auth/google/redirect`;
     };
 
     if (authLoading) return (
