@@ -26,7 +26,7 @@ class ThesisController extends Controller
             $query->where('owner_id', $user->id);
         }
 
-        return ThesisResource::collection($query->get());
+        return ThesisResource::collection($query->paginate(15));
     }
 
     public function publicIndex(Request $request)
@@ -36,7 +36,7 @@ class ThesisController extends Controller
             ->where('status', 'published')
             ->where('is_confidential', false)
             ->latest()
-            ->get();
+            ->paginate(12);
 
         return ThesisResource::collection($theses);
     }

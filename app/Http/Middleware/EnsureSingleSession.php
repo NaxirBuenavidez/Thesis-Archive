@@ -18,7 +18,9 @@ class EnsureSingleSession
             $user = Auth::user();
             $sessionToken = $request->session()->get('session_token');
 
-            if ($user->session_token && $sessionToken !== $user->session_token) {
+            // Only logout if we have BOTH tokens and they clearly disagree.
+            // If the session token is missing temporarily (timeout/blank), we don't force logout immediately.
+            if ($user->session_token && $sessionToken && $sessionToken !== $user->session_token) {
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
