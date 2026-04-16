@@ -287,8 +287,8 @@ export default function Users() {
                 onCancel={() => setIsModalOpen(false)}
                 footer={null}
                 centered
-                width={500}
-                style={{ maxWidth: 'calc(100vw - 32px)' }}
+                width={isMobile ? '100%' : 500}
+                style={{ maxWidth: 'calc(100vw - 32px)', margin: isMobile ? 0 : undefined, padding: isMobile ? 0 : undefined, top: isMobile ? 0 : undefined }}
             >
                 <div style={{ padding: '24px 0' }}>
                     <div style={{ textAlign: 'center', marginBottom: 24 }}>

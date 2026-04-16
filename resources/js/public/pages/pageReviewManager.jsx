@@ -413,8 +413,8 @@ export default function ReviewManager() {
                 onCancel={() => setReviewModal({ open: false, thesis: null, action: null })}
                 footer={null}
                 centered
-                width={500}
-                style={{ maxWidth: 'calc(100vw - 32px)' }}
+                width={isMobile ? '100%' : 500}
+                style={{ maxWidth: 'calc(100vw - 32px)', margin: isMobile ? 0 : undefined, padding: isMobile ? 0 : undefined, top: isMobile ? 0 : undefined }}
                 destroyOnHidden
             >
                 <div style={{ padding: '24px 0' }}>
@@ -520,7 +520,7 @@ export default function ReviewManager() {
                     header: { borderBottom: `1px solid ${token.colorBorderSecondary}`, padding: '16px 24px' },
                     body: { padding: 0, overflow: 'hidden' }
                 }}
-                extra={
+                extra={!isMobile ? (
                     <Space>
                         <Button 
                             type="primary" 
@@ -546,7 +546,34 @@ export default function ReviewManager() {
                             Accept
                         </Button>
                     </Space>
-                }
+                ) : null}
+                footer={isMobile ? (
+                    <div style={{ display: 'flex', gap: 12, padding: '4px 0' }}>
+                        <Button 
+                            type="primary" 
+                            danger
+                            onClick={() => {
+                                setIsDetailOpen(false);
+                                openReviewModal(selectedThesis, 'reject');
+                            }}
+                            icon={<CloseOutlined />}
+                            style={{ borderRadius: 6, flex: 1 }}
+                        >
+                            Reject
+                        </Button>
+                        <Button 
+                            type="primary" 
+                            onClick={() => {
+                                drawerForm.submit();
+                            }}
+                            loading={submitLoading}
+                            icon={<CheckOutlined />}
+                            style={{ borderRadius: 6, flex: 1 }}
+                        >
+                            Accept
+                        </Button>
+                    </div>
+                ) : null}
             >
                 {selectedThesis ? (
                     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>

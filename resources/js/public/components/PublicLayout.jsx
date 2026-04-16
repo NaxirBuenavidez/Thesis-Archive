@@ -169,8 +169,8 @@ export default function PublicLayout({ children }) {
 
                 <HeaderContent collapsed={collapsed} setCollapsed={setCollapsed} isMobile={isMobile} logoPath={logo_path} appName={appName} appDescription={appDescription} appInitials={appInitials} primaryColor={colorPrimary} sidebarBg={sidebarBg} setDrawerVisible={setDrawerVisible} />
 
-                <Content style={{ margin: '0 16px', display: 'flex', flexDirection: 'column', minHeight: 'calc(100dvh - 64px)', position: 'relative', zIndex: 1, paddingBottom: isMobile ? 80 : 0 }}>
-                    <Breadcrumb style={{ margin: '16px 0' }} items={breadcrumbItems} />
+                <Content style={{ margin: isMobile ? '0 8px' : '0 16px', display: 'flex', flexDirection: 'column', minHeight: 'calc(100dvh - 64px)', position: 'relative', zIndex: 1, paddingBottom: isMobile ? 80 : 0 }}>
+                    <Breadcrumb style={{ margin: isMobile ? '12px 0 8px' : '16px 0' }} items={breadcrumbItems} />
                     <div style={{ padding: isMobile ? 12 : 24, background: colorBgContainer, borderRadius: borderRadiusLG, marginBottom: 16, flex: 1 }}>
                         {children || 'Select an item from the menu'}
                     </div>

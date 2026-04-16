@@ -759,6 +759,8 @@ export default function Repository() {
                 confirmLoading={submitLoading}
                 centered
                 destroyOnHidden
+                width={isMobile ? '100%' : 520}
+                style={{ maxWidth: 'calc(100vw - 32px)', margin: isMobile ? 0 : undefined, padding: isMobile ? 0 : undefined, top: isMobile ? 0 : undefined }}
             >
                 <div style={{ marginBottom: 16 }}>
                     <Text type="secondary" style={{ display: 'block', marginBottom: 12 }}>
