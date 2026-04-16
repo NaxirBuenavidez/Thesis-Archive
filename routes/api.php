@@ -79,6 +79,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Settings
     Route::post('settings', [App\Http\Controllers\SettingController::class, 'update']);
 
+    // Reports
+    Route::get('reports/preview', [App\Http\Controllers\ReportController::class, 'preview']);
+    Route::get('reports/export', [App\Http\Controllers\ReportController::class, 'export']);
+
     // Departments & Programs
     Route::apiResource('departments', App\Http\Controllers\DepartmentController::class);
     Route::get('senior-high-programs', [App\Http\Controllers\ProgramController::class, 'seniorHigh']);
