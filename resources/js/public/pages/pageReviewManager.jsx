@@ -22,7 +22,7 @@ import SignaturePad from '../components/UI/SignaturePad';
 import thesesApi from '../../api/thesesApi';
 import { sessionCache } from '../../utils/sessionCache';
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
 const { useBreakpoint } = Grid;
 
